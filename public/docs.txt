@@ -2,3 +2,9 @@
 
 -- Start php server command
 php -S localhost:6886
+
+
+composer require league/route
+
+-- PSR-7 Compliance
+composer require zendframework/zend-diactoros
