@@ -19,7 +19,6 @@ class BaseController
     {
         $this->twig = $twig;
         $this->response = $response;
-        
     }
     
     public function render(string $view, array $arguments): ResponseInterface
