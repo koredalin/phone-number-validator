@@ -7,4 +7,7 @@ php -S localhost:6886
 composer require league/route
 
 -- PSR-7 Compliance
-composer require zendframework/zend-diactoros
+composer require zendframework/zend-diactoros // abandoned
+#instead of:
+composer require laminas/laminas-diactoros
+# composer require laminas/laminas-json

@@ -1,15 +1,5 @@
 <?php
 
-use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequestFactory;
+define('URL_SUBFOLDER', '/phone_validator/public');
+//define('URL_SUBFOLDER', '');
 
-return [
-    // Setup request/responce
-    'request' => function () {
-        return ServerRequestFactory::fromGlobals(
-            $_SERVER, $_GET, $_COOKIE, $_FILES
-        );
-    },
-            
-    'responce' => new Response(),
-];
