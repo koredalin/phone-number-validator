@@ -10,4 +10,7 @@ composer require league/route
 composer require zendframework/zend-diactoros // abandoned
 #instead of:
 composer require laminas/laminas-diactoros
-# composer require laminas/laminas-json
+# composer require laminas/laminas-json\
+
+# Routes
+https://route.thephpleague.com/5.x/usage/

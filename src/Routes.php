@@ -5,9 +5,9 @@ namespace App;
 use DI\Container;
 use League\Route\RouteCollectionInterface;
 use League\Route\Router;
-use Swoole\Http\Response;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use App\Http\Controllers\GreetingsController;
 
 /**
  * Description of Routes
@@ -16,18 +16,27 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Routes
 {
-    public static function routes(Container $container, Router $route): RouteCollectionInterface
+    public static function routes(Container $container, Router $router): RouteCollectionInterface
     {
-//        print_r($route); exit;
-        $route->map('GET', URL_SUBFOLDER.'/', function (ServerRequestInterface $request) use ($container): ResponseInterface { // use ($containerRequest, $containerResponse) {
+        $router->map('GET', URL_SUBFOLDER.'/', function (ServerRequestInterface $request) use ($container): ResponseInterface {
             $response = $container->get('response');
             $response->getBody()->write('<h2>Maskaaaaa</h2>');
             
             return $response;
         });
-//        echo ' ||||||||||||||||||||| '.__LINE__.' ||||||||||||||||||||| ';
-//        exit;
         
-        return $route;
+//        $router->map('GET', URL_SUBFOLDER.'/hello', function (ServerRequestInterface $request) use ($container): ResponseInterface {
+//            $response = $container->get('response');
+//            $response->getBody()->write('<h2>Maskaaaaa22222222222222</h2>');
+//            
+//            return $response;
+//        });
+        
+        
+        $router->map('GET', URL_SUBFOLDER.'/hello/{name}', GreetingsController::class.'::index');
+        
+//        print_r($route); exit;
+        
+        return $router;
     }
 }

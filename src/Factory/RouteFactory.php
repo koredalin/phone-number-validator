@@ -3,7 +3,9 @@
 namespace App\Factory;
 
 use DI\Container;
+//use DI\get;
 use League\Route\RouteCollectionInterface;
+use League\Route\Strategy\ApplicationStrategy;
 use League\Route\Router;
 use App\Routes;
 
@@ -16,16 +18,10 @@ class RouteFactory
 {
     public static function build(Container $container): RouteCollectionInterface
     {
-        $route = $container->get(Router::class);
-//        $route->setStrategy($container->get('responseStrategy'));
+        $strategy = $container->get(ApplicationStrategy::class)->setContainer($container);
+        $router = $container->get(Router::class)->setStrategy($strategy);
+        Routes::routes($container, $router);
         
-//        $route = new Router($container);
-        // print_r($route);
-        
-        Routes::routes($container, $route);
-//        echo ' ||||||||||||||||||||| '.__LINE__.' ||||||||||||||||||||| ';
-//        exit;
-        
-        return $route;
+        return $router;
     }
 }

@@ -8,18 +8,15 @@ use DI\ContainerBuilder;
 use App\Factory\RouteFactory;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 
+
 $containerBuilder = new ContainerBuilder();
 $containerBuilder->addDefinitions(__DIR__.'/../di_config.php');
 $container = $containerBuilder->build();
 
 $route = RouteFactory::build($container);
 
-//print_r($container->get('response')); exit;
+$response = $route->dispatch($container->get(CONTAINER_REQUEST));
 
-$response = $route->dispatch($container->get('request'));
-//        echo ' ||||||||||||||||||||| '.__LINE__.' ||||||||||||||||||||| ';
-//        exit;
-//print_r($response); exit;
 $container->get(SapiEmitter::class)->emit($response);
 
 ?>
