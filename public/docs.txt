@@ -1,0 +1,4 @@
+
+
+-- Start php server command
+php -S localhost:6886

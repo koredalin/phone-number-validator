@@ -1,0 +1,14 @@
+{
+    "name": "phone-validator/phone-validator",
+    "description": "A small framerwork for real phone validation.\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[Dnunber \u001b[2~validation.",
+    "type": "framework",
+    "authors": [
+        {
+            "name": "Hristo Hristov",
+            "email": "koredalin@gmail.com"
+        }
+    ],
+    "require": {
+        "php-di/php-di": "^6.3"
+    }
+}
