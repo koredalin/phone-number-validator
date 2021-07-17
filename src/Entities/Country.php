@@ -2,13 +2,11 @@
 
 namespace App\Entities;
 
-use DateTime;
-
 /**
  * @Entity
- * @Table(name="users")
+ * @Table(name="countries")
  */
-class User
+class Country
 {
     /** 
      * @Id
@@ -17,20 +15,14 @@ class User
      */
     private int $id;
     
-    /** @Column(length=100, name="user_name") */
-    private string $email;
+    /** @Column(length=100, name="country_name") */
+    private string $countryName;
     
-    /** @Column(name="phone_number_id") */
-    private int $phoneNumberId;
+    /** @Column(length=3) */
+    private string $iso3;
     
-    /** @Column(length=30) */
-    private string $password;
-    
-    /** @Column(name="created_at") */
-    private DateTime $createdAt;
-        
-    /** @Column(name="updated_at") */
-    private DateTime $updatedAt;
+    /** @Column(length=3, name="phone_code") */
+    private int $phoneCode;
     
     /**************************************************************************/
     /******************************* SETTERS **********************************/
@@ -41,19 +33,19 @@ class User
         $this->id = $id;
     }
     
-    public function setEmail(string $email): void
+    public function setCountryName(string $countryName): void
     {
-        $this->email = $email;
+        $this->countryName = $countryName;
     }
     
-    public function setPhoneNumberId(int $phoneNumberId): void
+    public function setIso3(string $iso3): void
     {
-        $this->phoneNumberId = $phoneNumberId;
+        $this->iso3 = $iso3;
     }
     
-    public function setPassword(string $password): void
+    public function setPhoneCode(int $phoneCode): void
     {
-        $this->password = $password;
+        $this->phoneCode = $phoneCode;
     }
     
     public function setCreatedAt(DateTime $createdAt): void
@@ -75,29 +67,19 @@ class User
         return $this->id;
     }
     
-    public function getEmail(): string
+    public function getCountryName(): string
     {
-        return $this->email;
+        return $this->countryName;
     }
     
-    public function getPhoneNumberId(): int
+    public function getIso3(): string
     {
-        return $this->phoneNumberId;
+        return $this->iso3;
     }
     
-    public function getPassword(): string
+    public function getPhoneCode(): int
     {
-        return $this->password;
-    }
-    
-    public function getCreatedAt(): DateTime
-    {
-        return $this->createdAt;
-    }
-    
-    public function getUpdatedAt(): DateTime
-    {
-        return $this->updatedAt;
+        return $this->phoneCode;
     }
     
     /**************************************************************************/

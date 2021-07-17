@@ -6,10 +6,20 @@ use DateTime;
 
 /**
  * @Entity
- * @Table(name="users")
+ * @Table(name="phone_confirmations")
  */
-class User
+class PhoneConfirmation
 {
+    const STATUS_AWAITING_RESPONSE = 1;
+    const STATUS_CONFIRMED = 2;
+    const STATUS_ABANDONED = 3;
+    
+    const ALL_STATUSES = [
+        self::STATUS_AWAITING_RESPONSE,
+        self::STATUS_CONFIRMED,
+        self::STATUS_ABANDONED,
+    ];
+    
     /** 
      * @Id
      * @Column(type="integer")
@@ -17,14 +27,17 @@ class User
      */
     private int $id;
     
-    /** @Column(length=100, name="user_name") */
-    private string $email;
+    /** @Column(name="user_id") */
+    private int $userId;
     
-    /** @Column(name="phone_number_id") */
-    private int $phoneNumberId;
+    /** @Column(name="validation_code") */
+    private int $validationCode;
     
-    /** @Column(length=30) */
-    private string $password;
+    /** @Column(length=1, name="phone_code") */
+    private int $status;
+    
+    /** @Column(name="confirmed_at") */
+    private ?DateTime $confirmedAt;
     
     /** @Column(name="created_at") */
     private DateTime $createdAt;
@@ -41,19 +54,28 @@ class User
         $this->id = $id;
     }
     
-    public function setEmail(string $email): void
+    public function setUserId(int $userId): void
     {
-        $this->email = $email;
+        $this->userId = $userId;
     }
     
-    public function setPhoneNumberId(int $phoneNumberId): void
+    public function setValidationCode(int $validationCode): void
     {
-        $this->phoneNumberId = $phoneNumberId;
+        $this->validationCode = $validationCode;
     }
     
-    public function setPassword(string $password): void
+    public function setStatus(int $status): void
     {
-        $this->password = $password;
+        if (in_array($status, self::ALL_STATUSES)) {
+            throw new \InvalidArgumentException('Not supported phone confirmation status code: '. var_export($status, true));
+        }
+        
+        $this->status = $status;
+    }
+    
+    public function setConfirmedAt(int $confirmedAt): void
+    {
+        $this->confirmedAt = $confirmedAt;
     }
     
     public function setCreatedAt(DateTime $createdAt): void
@@ -75,19 +97,24 @@ class User
         return $this->id;
     }
     
-    public function getEmail(): string
+    public function getUserId(): int
     {
-        return $this->email;
+        return $this->userId;
     }
     
-    public function getPhoneNumberId(): int
+    public function getValidationCode(): int
     {
-        return $this->phoneNumberId;
+        return $this->validationCode;
     }
     
-    public function getPassword(): string
+    public function getStatus(): int
     {
-        return $this->password;
+        return $this->status;
+    }
+    
+    public function getConfirmedAt(): int
+    {
+        return $this->confirmedAt;
     }
     
     public function getCreatedAt(): DateTime

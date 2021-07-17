@@ -2,13 +2,11 @@
 
 namespace App\Entities;
 
-use DateTime;
-
 /**
  * @Entity
- * @Table(name="users")
+ * @Table(name="phones")
  */
-class User
+class Phone
 {
     /** 
      * @Id
@@ -17,20 +15,17 @@ class User
      */
     private int $id;
     
-    /** @Column(length=100, name="user_name") */
-    private string $email;
+    /** @Column(name="country_id") */
+    private int $countryId;
     
-    /** @Column(name="phone_number_id") */
-    private int $phoneNumberId;
-    
-    /** @Column(length=30) */
-    private string $password;
+    /** @Column(name="phone_number") */
+    private int $phoneNumber;
     
     /** @Column(name="created_at") */
-    private DateTime $createdAt;
+    private \DateTime $createdAt;
         
     /** @Column(name="updated_at") */
-    private DateTime $updatedAt;
+    private \DateTime $updatedAt;
     
     /**************************************************************************/
     /******************************* SETTERS **********************************/
@@ -41,19 +36,14 @@ class User
         $this->id = $id;
     }
     
-    public function setEmail(string $email): void
+    public function setCountryId(int $CountryId): void
     {
-        $this->email = $email;
+        $this->countryId = $CountryId;
     }
     
-    public function setPhoneNumberId(int $phoneNumberId): void
+    public function setPhoneNumber(int $phoneNumber): void
     {
-        $this->phoneNumberId = $phoneNumberId;
-    }
-    
-    public function setPassword(string $password): void
-    {
-        $this->password = $password;
+        $this->phoneNumber = $phoneNumber;
     }
     
     public function setCreatedAt(DateTime $createdAt): void
@@ -75,19 +65,14 @@ class User
         return $this->id;
     }
     
-    public function getEmail(): string
+    public function getCountryId(): int
     {
-        return $this->email;
+        return $this->counrtyId;
     }
     
-    public function getPhoneNumberId(): int
+    public function getPhoneNumber(): int
     {
-        return $this->phoneNumberId;
-    }
-    
-    public function getPassword(): string
-    {
-        return $this->password;
+        return $this->phoneNumber;
     }
     
     public function getCreatedAt(): DateTime
