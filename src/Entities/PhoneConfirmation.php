@@ -38,7 +38,7 @@ class PhoneConfirmation
     /** @Column(name="validation_code") */
     private int $validationCode;
     
-    /** @Column(name="phone_code") */
+    /** @Column(name="status") */
     private int $status;
     
     /** @Column(name="confirmed_at") */

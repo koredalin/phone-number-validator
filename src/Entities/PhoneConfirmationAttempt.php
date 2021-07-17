@@ -33,7 +33,7 @@ class PhoneConfirmationAttempt
      */
     private PhoneConfirmation $phoneConfirmation;
     
-    /** @Column(name="phone_code") */
+    /** @Column(name="status") */
     private int $status;
     
     /** @Column(name="created_at") */

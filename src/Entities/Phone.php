@@ -6,6 +6,7 @@ use DateTime;
 use App\Entities\Country;
 use App\Entities\User;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * @Entity
@@ -115,7 +116,7 @@ class Phone
         return $this->updatedAt;
     }
     
-    public function getUsers(): ArrayCollection
+    public function getUsers(): Collection|User
     {
         return $this->users;
     }
