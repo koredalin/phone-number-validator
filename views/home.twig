@@ -8,5 +8,12 @@
 	</head>
 	<body>
 		<h2>Hello {{ name }}!</h2>
+		<h3>Already inserted users:</h3>
+		<ul>
+{#			{{ dump(users) }}#}
+		{% for user in users %}
+			<li>{{  user['user_name'] }}</li>
+		{% endfor %}
+		</ul>
 	</body>
 </html>

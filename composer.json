@@ -18,6 +18,7 @@
         "league/route": "^5.1",
         "laminas/laminas-diactoros": "^2.6",
         "laminas/laminas-httphandlerrunner": "^2.0",
-        "twig/twig": "^3.3"
+        "twig/twig": "^3.3",
+        "doctrine/dbal": "^3.1"
     }
 }

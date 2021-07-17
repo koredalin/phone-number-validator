@@ -34,6 +34,7 @@ class Routes
         
         
         $router->map('GET', URL_SUBFOLDER.'/hello/{name}', GreetingsController::class.'::index');
+        $router->map('GET', URL_SUBFOLDER.'/add/{name}', GreetingsController::class.'::store');
         
 //        print_r($route); exit;
         

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Twig\Environment;
 use Psr\Http\Message\ResponseInterface;
+use Twig\Extension\DebugExtension;
 
 /**
  * Description of BaseController
@@ -18,6 +19,7 @@ class BaseController
     public function __construct(Environment $twig, ResponseInterface $response)
     {
         $this->twig = $twig;
+        $this->twig->addExtension(new DebugExtension());
         $this->response = $response;
     }
     

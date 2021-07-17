@@ -7,11 +7,14 @@ use League\Route\Router;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
-use App\Http\Controllers\GreetingsController;
-use App\Common\Interfaces\DbInstanceInterface;
-use App\Common\Database;
+use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\DBAL\DriverManager;
 use App\Common\Interfaces\DateTimeManagerInterface;
 use App\Common\DateTimeManager;
+// Controllers
+use App\Http\Controllers\GreetingsController;
+// Repositories
+use App\Users\UserRepository;
 
 
 define('CONTAINER_TWIG_ENVIRONMENT', 'Twig_Environment');
@@ -38,12 +41,32 @@ return [
         ->constructor(__DIR__.'/../views'),
     
     CONTAINER_TWIG_ENVIRONMENT => DI\create(Environment::class)
-        ->constructor(DI\get(FilesystemLoader::class), ['cache' => __DIR__.'/../views/cache']),
-    
-    DbInstanceInterface::class => DI\create(Database::class),
+        ->constructor(DI\get(
+            FilesystemLoader::class),
+            [
+                'cache' => __DIR__.'/../views/cache',
+                'debug' => true,
+            ]),
+        
+    QueryBuilder::class => function () {
+        $options = [
+            'dbname' => 'phone_validator',
+            'user' => 'phone_validator',
+            'password' => 'validator',
+            'host' => 'localhost:3306',
+            'driver' => 'pdo_mysql',
+        ];
+        $connection = DriverManager::getConnection($options);
+        
+        return $connection->createQueryBuilder();
+    },
         
     DateTimeManagerInterface::class => DI\create(DateTimeManager::class),
 
+    UserRepository::class => DI\create(UserRepository::class)
+        ->constructor(DI\get(QueryBuilder::class)),
+        
     GreetingsController::class => DI\create(GreetingsController::class)
-        ->constructor(DI\get(CONTAINER_TWIG_ENVIRONMENT), DI\get(CONTAINER_RESPONSE)),
+        ->constructor(DI\get(CONTAINER_TWIG_ENVIRONMENT), DI\get(CONTAINER_RESPONSE), DI\get(UserRepository::class)),
+        
 ];
