@@ -5,13 +5,9 @@ use Laminas\Diactoros\Response;
 use League\Route\Strategy\ApplicationStrategy;
 use League\Route\Router;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
-use Twig\Environment;
-use Twig\Loader\FilesystemLoader;
 use App\Common\Interfaces\DateTimeManagerInterface;
 use App\Common\DateTimeManager;
 
-
-define('CONTAINER_TWIG_ENVIRONMENT', 'Twig_Environment');
 define('CONTAINER_REQUEST', 'request');
 define('CONTAINER_RESPONSE', 'response');
 
@@ -31,17 +27,6 @@ $containerDeclarations = [
     
     SapiEmitter::class => DI\create(SapiEmitter::class),
     
-    FilesystemLoader::class => DI\create(FilesystemLoader::class)
-        ->constructor(__DIR__.'/../views'),
-    
-    CONTAINER_TWIG_ENVIRONMENT => DI\create(Environment::class)
-        ->constructor(DI\get(
-            FilesystemLoader::class),
-            [
-                'cache' => __DIR__.'/../views/cache',
-                'debug' => true,
-            ]),
-    
     DateTimeManagerInterface::class => DI\create(DateTimeManager::class),
 ];
 $containerDeclarations = array_merge($containerDeclarations, require_once __DIR__.DIRECTORY_SEPARATOR.'di_config_query_builder.php');
@@ -49,6 +34,7 @@ $containerDeclarations = array_merge($containerDeclarations, require_once __DIR_
 //$containerDeclarations = array_merge($containerDeclarations, require_once __DIR__.DIRECTORY_SEPARATOR.'di_config_console_helper_set.php');
 $containerDeclarations = array_merge($containerDeclarations, require_once __DIR__.DIRECTORY_SEPARATOR.'di_config_repositories.php');
 $containerDeclarations = array_merge($containerDeclarations, require_once __DIR__.DIRECTORY_SEPARATOR.'di_config_queries.php');
+$containerDeclarations = array_merge($containerDeclarations, require_once __DIR__.DIRECTORY_SEPARATOR.'di_config_twig.php');
 $containerDeclarations = array_merge($containerDeclarations, require_once __DIR__.DIRECTORY_SEPARATOR.'di_config_controllers.php');
 
 return $containerDeclarations;
