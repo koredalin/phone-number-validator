@@ -11,32 +11,28 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\DriverManager;
 use App\Common\Interfaces\DateTimeManagerInterface;
 use App\Common\DateTimeManager;
-// Controllers
-use App\Http\Controllers\GreetingsController;
-// Repositories
-use App\Users\UserRepository;
 
 
 define('CONTAINER_TWIG_ENVIRONMENT', 'Twig_Environment');
 define('CONTAINER_REQUEST', 'request');
 define('CONTAINER_RESPONSE', 'response');
 
-return [
+$containerDeclarations = [
     // Setup request/responce
     CONTAINER_REQUEST => function () {
         return ServerRequestFactory::fromGlobals(
             $_SERVER, $_GET, $_POST, $_COOKIE, $_FILES
         );
     },
-            
+    
     CONTAINER_RESPONSE => DI\create(Response::class),
-        
+    
     ApplicationStrategy::class => DI\create(ApplicationStrategy::class),
     
     Router::class => DI\create(Router::class),
-        
+    
     SapiEmitter::class => DI\create(SapiEmitter::class),
-        
+    
     FilesystemLoader::class => DI\create(FilesystemLoader::class)
         ->constructor(__DIR__.'/../views'),
     
@@ -47,7 +43,7 @@ return [
                 'cache' => __DIR__.'/../views/cache',
                 'debug' => true,
             ]),
-        
+    
     QueryBuilder::class => function () {
         $options = [
             'dbname' => 'phone_validator',
@@ -60,13 +56,10 @@ return [
         
         return $connection->createQueryBuilder();
     },
-        
+    
     DateTimeManagerInterface::class => DI\create(DateTimeManager::class),
-
-    UserRepository::class => DI\create(UserRepository::class)
-        ->constructor(DI\get(QueryBuilder::class)),
-        
-    GreetingsController::class => DI\create(GreetingsController::class)
-        ->constructor(DI\get(CONTAINER_TWIG_ENVIRONMENT), DI\get(CONTAINER_RESPONSE), DI\get(UserRepository::class)),
-        
 ];
+$containerDeclarations = array_merge($containerDeclarations, require_once __DIR__.DIRECTORY_SEPARATOR.'di_config_controllers.php');
+$containerDeclarations = array_merge($containerDeclarations, require_once __DIR__.DIRECTORY_SEPARATOR.'di_config_repositories.php');
+
+return $containerDeclarations;
