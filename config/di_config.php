@@ -8,6 +8,10 @@ use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 use App\Http\Controllers\GreetingsController;
+use App\Common\Interfaces\DbInstanceInterface;
+use App\Common\Database;
+use App\Common\Interfaces\DateTimeManagerInterface;
+use App\Common\DateTimeManager;
 
 
 define('CONTAINER_TWIG_ENVIRONMENT', 'Twig_Environment');
@@ -31,11 +35,15 @@ return [
     SapiEmitter::class => DI\create(SapiEmitter::class),
         
     FilesystemLoader::class => DI\create(FilesystemLoader::class)
-        ->constructor(__DIR__.'/views'),
+        ->constructor(__DIR__.'/../views'),
     
     CONTAINER_TWIG_ENVIRONMENT => DI\create(Environment::class)
-        ->constructor(DI\get(FilesystemLoader::class), ['cache' => __DIR__.'/views/cache']),
+        ->constructor(DI\get(FilesystemLoader::class), ['cache' => __DIR__.'/../views/cache']),
+    
+    DbInstanceInterface::class => DI\create(Database::class),
         
-     GreetingsController::class => DI\create(GreetingsController::class)
+    DateTimeManagerInterface::class => DI\create(DateTimeManager::class),
+
+    GreetingsController::class => DI\create(GreetingsController::class)
         ->constructor(DI\get(CONTAINER_TWIG_ENVIRONMENT), DI\get(CONTAINER_RESPONSE)),
 ];

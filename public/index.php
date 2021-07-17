@@ -2,7 +2,7 @@
 
 require_once __DIR__.'/../vendor/autoload.php';
 
-require_once __DIR__.'/../config.php';
+require_once __DIR__.'/../config/config.php';
 
 use DI\ContainerBuilder;
 use App\Factory\RouteFactory;
@@ -10,7 +10,7 @@ use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 
 
 $containerBuilder = new ContainerBuilder();
-$containerBuilder->addDefinitions(__DIR__.'/../di_config.php');
+$containerBuilder->addDefinitions(__DIR__.'/../config/di_config.php');
 $container = $containerBuilder->build();
 
 $route = RouteFactory::build($container);
