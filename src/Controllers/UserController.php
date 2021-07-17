@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use App\Entities\User;
 use Psr\Http\Message\ServerRequestInterface;
 use Laminas\Diactoros\Response\RedirectResponse;
-use Doctrine\ORM\EntityManager;
+use App\Repositories\Services\UserService;
 
 /**
  * Description of UserController
@@ -17,22 +17,27 @@ use Doctrine\ORM\EntityManager;
  */
 class UserController extends BaseController
 {
-    private EntityManager $em;
+    private UserService $userService;
     
-    public function __construct(Environment $twig, ResponseInterface $response, EntityManager $em)
+    public function __construct(Environment $twig, ResponseInterface $response, UserService $userService)
     {
         parent::__construct($twig, $response);
-        $this->em = $em;
+        $this->userService = $userService;
     }
     
     public function index(ServerRequestInterface $request, array $arguments): ResponseInterface
     {
-        $dbUsers = $this->em->find(User::class, 1);
+//        $article = $this->em->find(User::class, 16);
+//        $article->setUserName('Tractor');
+//        $this->em->persist($article);
+//        $this->em->flush();
 //        $users = array_merge($arguments, ['users' => $dbUsers]);
 //        print_r($this->em);
-        var_dump($dbUsers); exit;
+//        $article = $this->userService->findOneById(1);
+        $article = $this->userService->all();
+        var_dump($article); exit;
         
-        return $this->render('home', $dbUsers);
+        return $this->render('home', $article);
     }
     
     public function store(ServerRequestInterface $request, array $arguments): ResponseInterface
