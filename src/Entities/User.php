@@ -3,6 +3,7 @@
 namespace App\Entities;
 
 use DateTime;
+use App\Entities\Phone;
 
 /**
  * @Entity
@@ -12,7 +13,7 @@ class User
 {
     /** 
      * @Id
-     * @Column(type="integer")
+     * @Column(type="bigint")
      * @GeneratedValue
      */
     private int $id;
@@ -20,8 +21,12 @@ class User
     /** @Column(length=100, name="user_name") */
     private string $email;
     
-    /** @Column(name="phone_number_id") */
-    private int $phoneNumberId;
+    /**
+     * @Column(name="phone_number_id")
+     * 
+     * @ManyToOne(targetEntity="Phone")
+     */
+    private Phone $phone;
     
     /** @Column(length=30) */
     private string $password;
@@ -46,9 +51,9 @@ class User
         $this->email = $email;
     }
     
-    public function setPhoneNumberId(int $phoneNumberId): void
+    public function setPhone(int $phone): void
     {
-        $this->phoneNumberId = $phoneNumberId;
+        $this->phone = $phone;
     }
     
     public function setPassword(string $password): void
@@ -80,9 +85,9 @@ class User
         return $this->email;
     }
     
-    public function getPhoneNumberId(): int
+    public function getPhone(): int
     {
-        return $this->phoneNumberId;
+        return $this->phone;
     }
     
     public function getPassword(): string

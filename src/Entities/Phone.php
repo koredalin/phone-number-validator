@@ -2,6 +2,9 @@
 
 namespace App\Entities;
 
+use DateTime;
+use App\Entities\Country;
+
 /**
  * @Entity
  * @Table(name="phones")
@@ -10,22 +13,26 @@ class Phone
 {
     /** 
      * @Id
-     * @Column(type="integer")
+     * @Column(type="bigint")
      * @GeneratedValue
      */
     private int $id;
     
-    /** @Column(name="country_id") */
-    private int $countryId;
+    /**
+     * @Column(name="country_id")
+     * 
+     * @ManyToOne(targetEntity="Country")
+     */
+    private Country $country;
     
-    /** @Column(name="phone_number") */
+    /** @Column(name="phone_number", type="bigint") */
     private int $phoneNumber;
     
     /** @Column(name="created_at") */
-    private \DateTime $createdAt;
+    private DateTime $createdAt;
         
     /** @Column(name="updated_at") */
-    private \DateTime $updatedAt;
+    private DateTime $updatedAt;
     
     /**************************************************************************/
     /******************************* SETTERS **********************************/
@@ -36,9 +43,9 @@ class Phone
         $this->id = $id;
     }
     
-    public function setCountryId(int $CountryId): void
+    public function setCountry(int $Country): void
     {
-        $this->countryId = $CountryId;
+        $this->country = $Country;
     }
     
     public function setPhoneNumber(int $phoneNumber): void
@@ -65,9 +72,9 @@ class Phone
         return $this->id;
     }
     
-    public function getCountryId(): int
+    public function getCountry(): int
     {
-        return $this->counrtyId;
+        return $this->counrty;
     }
     
     public function getPhoneNumber(): int

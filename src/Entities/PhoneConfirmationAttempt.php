@@ -3,6 +3,7 @@
 namespace App\Entities;
 
 use DateTime;
+use App\Entities\PhoneConfirmation;
 
 /**
  * @Entity
@@ -20,15 +21,19 @@ class PhoneConfirmationAttempt
     
     /** 
      * @Id
-     * @Column(type="integer")
+     * @Column(type="bigint")
      * @GeneratedValue
      */
     private int $id;
     
-    /** @Column(name="phone_confirmation_id") */
-    private int $phoneConfirmationId;
+    /**
+     * @Column(name="phone_confirmation_id")
+     * 
+     * @ManyToOne(targetEntity="PhoneConfirmation")
+     */
+    private PhoneConfirmation $phoneConfirmation;
     
-    /** @Column(length=1, name="phone_code") */
+    /** @Column(name="phone_code") */
     private int $status;
     
     /** @Column(name="created_at") */
@@ -51,15 +56,15 @@ class PhoneConfirmationAttempt
         $this->userId = $userId;
     }
     
-    public function setPhoneConfirmationId(int $phoneConfirmationId): void
+    public function setPhoneConfirmation(int $phoneConfirmation): void
     {
-        $this->phoneConfirmationId = $phoneConfirmationId;
+        $this->phoneConfirmation = $phoneConfirmation;
     }
     
     public function setStatus(int $status): void
     {
         if (in_array($status, self::ALL_STATUSES)) {
-            throw new \InvalidArgumentException('Not supported phone confirmation status code: '. var_export($status, true));
+            throw new \InvalidArgumentException('Not supported phone confirmation status code: '.var_export($status, true));
         }
         
         $this->status = $status;
@@ -84,9 +89,9 @@ class PhoneConfirmationAttempt
         return $this->id;
     }
     
-    public function getPhoneConfirmationId(): int
+    public function getPhoneConfirmation(): int
     {
-        return $this->phoneConfirmationId;
+        return $this->phoneConfirmation;
     }
     
     public function getStatus(): int

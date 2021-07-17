@@ -21,7 +21,7 @@ class Country
     /** @Column(length=3) */
     private string $iso3;
     
-    /** @Column(length=3, name="phone_code") */
+    /** @Column(name="phone_code") */
     private int $phoneCode;
     
     /**************************************************************************/
