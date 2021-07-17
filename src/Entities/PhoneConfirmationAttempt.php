@@ -27,7 +27,7 @@ class PhoneConfirmationAttempt
     private int $id;
     
     /**
-     * @Column(name="phone_confirmation_id")
+     * @Column(name="phone_confirmation_id", type="bigint")
      * 
      * @ManyToOne(targetEntity="PhoneConfirmation")
      */

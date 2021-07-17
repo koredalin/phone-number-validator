@@ -4,6 +4,8 @@ namespace App\Entities;
 
 use DateTime;
 use App\Entities\Country;
+use App\Entities\User;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @Entity
@@ -19,7 +21,7 @@ class Phone
     private int $id;
     
     /**
-     * @Column(name="country_id")
+     * @Column(name="country_id", type="integer")
      * 
      * @ManyToOne(targetEntity="Country")
      */
@@ -33,6 +35,17 @@ class Phone
         
     /** @Column(name="updated_at") */
     private DateTime $updatedAt;
+    
+    /**
+     * @OneToMany(targetEntity="User", mappedBy="phone")
+     */
+    private ArrayCollection $users;
+    
+//    public function __construct(Country $country)
+//    {
+//        $this->country = $country;
+//        $this->users = new ArrayCollection();
+//    }
     
     /**************************************************************************/
     /******************************* SETTERS **********************************/
@@ -61,6 +74,16 @@ class Phone
     public function setUpdatedAt(DateTime $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
+    }
+    
+    public function addUser(User $user): void
+    {
+        $this->users->add($user);
+    }
+    
+    public function removeUser(User $user): void
+    {
+        $this->users->removeElement($user);
     }
     
     /**************************************************************************/
@@ -92,6 +115,12 @@ class Phone
         return $this->updatedAt;
     }
     
+    public function getUsers(): ArrayCollection
+    {
+        return $this->users;
+    }
+
+
     /**************************************************************************/
     /**************************************************************************/
     /**************************************************************************/

@@ -29,7 +29,7 @@ class PhoneConfirmation
     private int $id;
     
     /**
-     * @Column(name="user_id")
+     * @Column(name="user_id", type="bigint")
      * 
      * @ManyToOne(targetEntity="User")
      */

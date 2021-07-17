@@ -22,9 +22,10 @@ class User
     private string $email;
     
     /**
-     * @Column(name="phone_number_id")
+     * @Column(name="phone_number_id", type="bigint")
      * 
-     * @ManyToOne(targetEntity="Phone")
+     * @ManyToOne(targetEntity="Phone", inversedBy="users")
+     * @JoinColumn(name="phone_id", nullable="false", referencedColumnName="id")
      */
     private Phone $phone;
     
