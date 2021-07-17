@@ -1,36 +1,38 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Controllers;
 
-use App\Http\Controllers\BaseController;
+use App\Controllers\BaseController;
 use Twig\Environment;
 use Psr\Http\Message\ResponseInterface;
-use App\Users\UserRepository;
+use App\Entities\User;
 use Psr\Http\Message\ServerRequestInterface;
 use Laminas\Diactoros\Response\RedirectResponse;
+use Doctrine\ORM\EntityManager;
 
 /**
- * Description of GreetingsController
+ * Description of UserController
  *
  * @author Hristo
  */
-class GreetingsController extends BaseController
+class UserController extends BaseController
 {
-    private UserRepository $userRepository;
+    private EntityManager $em;
     
-    public function __construct(Environment $twig, ResponseInterface $response, UserRepository $userRepository)
+    public function __construct(Environment $twig, ResponseInterface $response, EntityManager $em)
     {
         parent::__construct($twig, $response);
-        $this->userRepository = $userRepository;
+        $this->em = $em;
     }
     
     public function index(ServerRequestInterface $request, array $arguments): ResponseInterface
     {
-        $dbUsers = $this->userRepository->getAll();
-        $users = array_merge($arguments, ['users' => $dbUsers]);
-//        print_r($users); exit;
+        $dbUsers = $this->em->find(User::class, 1);
+//        $users = array_merge($arguments, ['users' => $dbUsers]);
+//        print_r($this->em);
+        var_dump($dbUsers); exit;
         
-        return $this->render('home', $users);
+        return $this->render('home', $dbUsers);
     }
     
     public function store(ServerRequestInterface $request, array $arguments): ResponseInterface

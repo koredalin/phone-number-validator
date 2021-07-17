@@ -7,8 +7,6 @@ use League\Route\Router;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
-use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\DBAL\DriverManager;
 use App\Common\Interfaces\DateTimeManagerInterface;
 use App\Common\DateTimeManager;
 
@@ -44,22 +42,12 @@ $containerDeclarations = [
                 'debug' => true,
             ]),
     
-    QueryBuilder::class => function () {
-        $options = [
-            'dbname' => 'phone_validator',
-            'user' => 'phone_validator',
-            'password' => 'validator',
-            'host' => 'localhost:3306',
-            'driver' => 'pdo_mysql',
-        ];
-        $connection = DriverManager::getConnection($options);
-        
-        return $connection->createQueryBuilder();
-    },
-    
     DateTimeManagerInterface::class => DI\create(DateTimeManager::class),
 ];
-$containerDeclarations = array_merge($containerDeclarations, require_once __DIR__.DIRECTORY_SEPARATOR.'di_config_controllers.php');
+$containerDeclarations = array_merge($containerDeclarations, require_once __DIR__.DIRECTORY_SEPARATOR.'di_config_query_builder.php');
+$containerDeclarations = array_merge($containerDeclarations, require_once __DIR__.DIRECTORY_SEPARATOR.'di_config_entity_manager.php');
+$containerDeclarations = array_merge($containerDeclarations, require_once __DIR__.DIRECTORY_SEPARATOR.'di_config_console_helper_set.php');
 $containerDeclarations = array_merge($containerDeclarations, require_once __DIR__.DIRECTORY_SEPARATOR.'di_config_repositories.php');
+$containerDeclarations = array_merge($containerDeclarations, require_once __DIR__.DIRECTORY_SEPARATOR.'di_config_controllers.php');
 
 return $containerDeclarations;

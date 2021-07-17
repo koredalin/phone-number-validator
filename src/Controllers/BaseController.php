@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Controllers;
 
 use Twig\Environment;
 use Psr\Http\Message\ResponseInterface;

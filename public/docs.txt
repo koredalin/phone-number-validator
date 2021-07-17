@@ -20,3 +20,22 @@ composer require laminas/laminas-diactoros
 https://route.thephpleague.com/5.x/usage/
 
 composer require doctrine/dbal
+
+
+Clearing the Cache¶
+php bin/console cache:pool:clear [pool]
+cache.global_clearer
+cache.system_clearer
+cache.app_clearer
+
+#To see all available cache pools:
+php bin/console cache:pool:list
+
+#Clear one pool:
+php bin/console cache:pool:clear my_cache_pool
+
+#Clear all custom pools:
+php bin/console cache:pool:clear cache.app_clearer
+
+#Clear all caches everywhere:
+php bin/console cache:pool:clear cache.global_clearer
