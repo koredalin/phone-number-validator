@@ -3,16 +3,13 @@
 // Doctrine libs
 use Doctrine\ORM\EntityManagerInterface;
 // Repositories
-//use App\Users\UserRepository;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Repositories\UserRepository;
-use App\Repositories\Services\UserService;
+use App\Repositories\Services\UserRepositoryService;
 
 return [
-//    UserRepository::class => DI\create(UserRepository::class)
-//        ->constructor(DI\get(QueryBuilder::class)),
     UserRepositoryInterface::class => DI\create(UserRepository::class)
         ->constructor(DI\get(EntityManagerInterface::class)),
-    UserService::class => DI\create(UserService::class)
+    UserRepositoryService::class => DI\create(UserRepositoryService::class)
         ->constructor(DI\get(UserRepositoryInterface::class)),
 ];

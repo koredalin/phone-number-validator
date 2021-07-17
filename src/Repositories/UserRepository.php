@@ -42,11 +42,7 @@ final class UserRepository implements UserRepositoryInterface
     
     public function save(User $user): void
     {
-        
-    }
-    
-    public function all(): array
-    {
-        return $this->objectRepository->select('*')->from('users')->orderBy('id');
+        $this->objectRepository->persist($user);
+        $this->objectRepository->flush();
     }
 }

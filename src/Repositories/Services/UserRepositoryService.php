@@ -5,7 +5,7 @@ namespace App\Repositories\Services;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Entities\User;
 
-final class UserService
+final class UserRepositoryService
 {
     private $userRepository;
     
@@ -23,9 +23,9 @@ final class UserService
         return $this->userRepository->findOneByUserName($userName);
     }
     
-    public function updateProduct(Product $product): void
+    public function save(User $user): void
     {
-        $this->userRepository->save($product);
+        $this->userRepository->save($user);
         // Dispatch some event on every update
     }
     

@@ -8,7 +8,8 @@ use Psr\Http\Message\ResponseInterface;
 use App\Entities\User;
 use Psr\Http\Message\ServerRequestInterface;
 use Laminas\Diactoros\Response\RedirectResponse;
-use App\Repositories\Services\UserService;
+use App\Repositories\Services\UserRepositoryService;
+use App\Queries\Services\UserQueryService;
 
 /**
  * Description of UserController
@@ -17,12 +18,14 @@ use App\Repositories\Services\UserService;
  */
 class UserController extends BaseController
 {
-    private UserService $userService;
+    private UserRepositoryService $userRepositoryService;
+    private UserQueryService $userQueryService;
     
-    public function __construct(Environment $twig, ResponseInterface $response, UserService $userService)
+    public function __construct(Environment $twig, ResponseInterface $response, UserRepositoryService $userService, UserQueryService $userQueryService)
     {
         parent::__construct($twig, $response);
-        $this->userService = $userService;
+        $this->userRepositoryService = $userService;
+        $this->userQueryService = $userQueryService;
     }
     
     public function index(ServerRequestInterface $request, array $arguments): ResponseInterface
@@ -33,9 +36,9 @@ class UserController extends BaseController
 //        $this->em->flush();
 //        $users = array_merge($arguments, ['users' => $dbUsers]);
 //        print_r($this->em);
-//        $article = $this->userService->findOneById(1);
-        $article = $this->userService->all();
-        var_dump($article); exit;
+//        $article = $this->userRepositoryService->findOneById(1);
+        $article = $this->userQueryService->all();
+        print_r($article); exit;
         
         return $this->render('home', $article);
     }

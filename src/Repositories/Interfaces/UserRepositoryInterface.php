@@ -15,6 +15,4 @@ interface UserRepositoryInterface
     public function findByOneUserName(string $userName): User;
     
     public function save(User $user): void;
-    
-    public function all(): array;
 }
