@@ -4,13 +4,13 @@
 use Doctrine\DBAL\Query\QueryBuilder;
 
 // Queries
-use App\Queries\Interfaces\UserQueryInterface;
-use App\Queries\UserQuery;
-use App\Queries\Services\UserQueryService;
+use App\Queries\Interfaces\TransactionQueryInterface;
+use App\Queries\TransactionQuery;
+use App\Queries\Services\TransactionQueryService;
 
 return [
-    UserQueryInterface::class => DI\create(UserQuery::class)
+    TransactionQueryInterface::class => DI\create(TransactionQuery::class)
         ->constructor(DI\get(QueryBuilder::class)),
-    UserQueryService::class => DI\create(UserQueryService::class)
-        ->constructor(DI\get(UserQueryInterface::class)),
+    TransactionQueryService::class => DI\create(TransactionQueryService::class)
+        ->constructor(DI\get(TransactionQueryInterface::class)),
 ];

@@ -21,7 +21,7 @@ final class EmailRepositoryService
         return $this->emailRepository->findOneById($id);
     }
     
-    public function findOneByEmailName(string $emailName): Email
+    public function findOneByEmail(string $emailName): Email
     {
         return $this->emailRepository->findOneByEmailName($emailName);
     }
@@ -45,5 +45,15 @@ final class EmailRepositoryService
     public function all(): array
     {
         return $this->emailRepository->all();
+    }
+    
+    public function getOrCreateByEmail(string $email): Email
+    {
+        $emailObj = $this->findOneByEmail($email);
+        if ($emailObj === null) {
+            $emailObj = $this->make($email);
+        }
+        
+        return $emailObj;
     }
 }

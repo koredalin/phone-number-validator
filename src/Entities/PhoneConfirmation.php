@@ -3,7 +3,7 @@
 namespace App\Entities;
 
 use DateTime;
-use App\Entities\User;
+use App\Entities\Transaction;
 
 /**
  * @Entity
@@ -31,9 +31,9 @@ class PhoneConfirmation
     /**
      * @Column(name="user_id", type="bigint")
      * 
-     * @ManyToOne(targetEntity="User")
+     * @ManyToOne(targetEntity="Transaction")
      */
-    private User $user;
+    private Transaction $user;
     
     /**
      * @Column(name="validation_code")

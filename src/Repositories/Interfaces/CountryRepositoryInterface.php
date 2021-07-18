@@ -3,6 +3,7 @@
 namespace App\Repositories\Interfaces;
 
 use App\Entities\Country;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  *
@@ -18,6 +19,10 @@ interface CountryRepositoryInterface
     public function findOneById(int $id): Country;
     
     public function findByOneCountryName(string $countryName): Country;
+    
+    public function findOneByPhoneCode(int $phoneCode): Country;
+    
+    public function findAll(): ArrayCollection;
     
     public function save(Country $email): void;
 }

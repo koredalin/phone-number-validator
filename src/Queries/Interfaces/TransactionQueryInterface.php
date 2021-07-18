@@ -2,13 +2,13 @@
 
 namespace App\Queries\Interfaces;
 
-use App\Entities\User;
+use App\Entities\Transaction;
 
 /**
  *
  * @author Hristo
  */
-interface UserQueryInterface
+interface TransactionQueryInterface
 {
     public function all(): array;
 }

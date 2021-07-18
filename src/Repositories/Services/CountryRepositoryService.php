@@ -44,6 +44,6 @@ final class CountryRepositoryService
     
     public function all(): array
     {
-        return $this->countryRepository->all();
+        return $this->countryRepository->findAll();
     }
 }

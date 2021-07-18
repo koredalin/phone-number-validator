@@ -5,7 +5,7 @@ namespace App\Queries;
 // Doctrine libs
 use Doctrine\DBAL\Query\QueryBuilder;
 
-use App\Queries\Interfaces\UserQueryInterface;
+use App\Queries\Interfaces\TransactionQueryInterface;
 //use App\Entities\User;
 
 /**
@@ -13,7 +13,7 @@ use App\Queries\Interfaces\UserQueryInterface;
  *
  * @author Hristo
  */
-final class UserQuery implements UserQueryInterface
+final class TransactionQuery implements TransactionQueryInterface
 {
     /**
      * @var QueryBuilder
@@ -28,7 +28,7 @@ final class UserQuery implements UserQueryInterface
     
     public function all(): array
     {
-        $query = $this->qb->select('*')->from('users')->orderBy('id');
+        $query = $this->qb->select('*')->from('transactions')->orderBy('id');
         
 //        print_r($result); exit;
         

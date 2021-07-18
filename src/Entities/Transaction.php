@@ -8,10 +8,18 @@ use App\Entities\Email;
 
 /**
  * @Entity
- * @Table(name="users")
+ * @Table(name="transactions")
  */
-class User
+class Transaction
 {
+    const STATUS_AWAITING_RESPONSE = 'awaiting_response';
+    const STATUS_CONFIRMED = 'confirmed';
+    
+    const ALL_STATUSES = [
+        self::STATUS_AWAITING_RESPONSE,
+        self::STATUS_CONFIRMED,
+    ];
+    
     /** 
      * @Id
      * @Column(type="bigint")
@@ -33,7 +41,12 @@ class User
     private Phone $phone;
     
     /**
-     * @Column(length=30)
+     * @Column(length=30, name="status")
+     */
+    private string $status;
+    
+    /**
+     * @Column(length=255)
      */
     private string $password;
     
@@ -64,6 +77,15 @@ class User
     public function setPhone(Phone $phone): void
     {
         $this->phone = $phone;
+    }
+    
+    public function setStatus(string $status): void
+    {
+        if (in_array($status, self::ALL_STATUSES, true)) {
+            throw new \InvalidArgumentException('Not supported phone confirmation status code: '.var_export($status, true));
+        }
+        
+        $this->status = $status;
     }
     
     public function setPassword(string $password): void
@@ -98,6 +120,11 @@ class User
     public function getPhone(): Phone
     {
         return $this->phone;
+    }
+    
+    public function getStatus(): string
+    {
+        return $this->status;
     }
     
     public function getPassword(): string

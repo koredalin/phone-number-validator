@@ -5,11 +5,11 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use Twig\Environment;
 use Psr\Http\Message\ResponseInterface;
-use App\Entities\User;
+use App\Entities\Transaction;
 use Psr\Http\Message\ServerRequestInterface;
 use Laminas\Diactoros\Response\RedirectResponse;
-use App\Repositories\Services\UserRepositoryService;
-use App\Queries\Services\UserQueryService;
+use App\Repositories\Services\TransactionRepositoryService;
+use App\Queries\Services\TransactionQueryService;
 
 /**
  * Description of UserController
@@ -18,10 +18,10 @@ use App\Queries\Services\UserQueryService;
  */
 class UserController extends BaseController
 {
-    private UserRepositoryService $userRepositoryService;
-    private UserQueryService $userQueryService;
+    private TransactionRepositoryService $userRepositoryService;
+    private TransactionQueryService $userQueryService;
     
-    public function __construct(Environment $twig, ResponseInterface $response, UserRepositoryService $userService, UserQueryService $userQueryService)
+    public function __construct(Environment $twig, ResponseInterface $response, TransactionRepositoryService $userService, TransactionQueryService $userQueryService)
     {
         parent::__construct($twig, $response);
         $this->userRepositoryService = $userService;

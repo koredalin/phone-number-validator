@@ -4,7 +4,7 @@ namespace App\Entities;
 
 use DateTime;
 use App\Entities\Country;
-use App\Entities\User;
+use App\Entities\Transaction;
 //use Doctrine\Common\Collections\ArrayCollection;
 //use Doctrine\Common\Collections\Collection;
 
