@@ -4,7 +4,7 @@ namespace App\Entities;
 
 /**
  * @Entity
- * @Table(name="emais")
+ * @Table(name="emails")
  */
 class Email
 {

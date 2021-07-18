@@ -23,12 +23,25 @@ final class UserRepository implements UserRepositoryInterface
      */
     private $objectRepository;
     
-    public function __construct(EntityManagerInterface $em)
+    private User $newUser;
+    
+    public function __construct(EntityManagerInterface $em, User $newUser)
     {
         $this->em = $em;
         $this->objectRepository = $this->em->getRepository(User::class);
+        $this->newUser = $newUser;
     }
     
+    
+    /**
+     * Returns an empty instance of the entity class.
+     */
+    public function new(): User
+    {
+        $serializedNewObj = \serialize($this->newUser);
+        
+        return \unserialize($serializedNewObj);
+    }
     
     public function findOneById(int $id): User
     {
