@@ -4,7 +4,7 @@ namespace App\Entities;
 
 use DateTime;
 use App\Entities\Phone;
-use App\Entities\Email;
+use App\Entities\User;
 
 /**
  * @Entity
@@ -30,7 +30,7 @@ class Transaction
     /**
      * @Column(name="email")
      */
-    private Email $email;
+    private User $email;
     
     /**
      * @Column(name="phone_number_id", type="bigint")
@@ -69,7 +69,7 @@ class Transaction
         $this->id = $id;
     }
     
-    public function setEmail(Email $email): void
+    public function setEmail(User $email): void
     {
         $this->email = $email;
     }
@@ -112,7 +112,7 @@ class Transaction
         return $this->id;
     }
     
-    public function getEmail(): Email
+    public function getEmail(): User
     {
         return $this->email;
     }

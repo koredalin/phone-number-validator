@@ -5,7 +5,7 @@ namespace App\Repositories\Services;
 use App\Repositories\Interfaces\TransactionRepositoryInterface;
 use App\Common\Interfaces\DateTimeManagerInterface;
 use App\Entities\Transaction;
-use App\Entities\Email;
+use App\Entities\User;
 use App\Entities\Phone;
 
 final class TransactionRepositoryService
@@ -23,12 +23,12 @@ final class TransactionRepositoryService
         return $this->transactionRepository->findOneById($id);
     }
     
-    public function findOneByEmailPhone(Email $email, Phone $phone): Transaction
+    public function findOneByEmailPhone(User $email, Phone $phone): Transaction
     {
         return $this->transactionRepository->findOneByUserName($email, $phone);
     }
     
-    public function make(Email $email, Phone $phone): Transaction
+    public function make(User $email, Phone $phone): Transaction
     {
         $transaction = $this->transactionRepository->new();
         $transaction->email = $email;
@@ -50,7 +50,7 @@ final class TransactionRepositoryService
         return $this->transactionRepository->all();
     }
     
-    public function getOrCreateByEmailPhone(Email $email, Phone $phone): Transaction
+    public function getOrCreateByEmailPhone(User $email, Phone $phone): Transaction
     {
         $transactionObj = $this->findOneByEmailPhone($email, $phone);
         if (is_null($transactionObj)) {

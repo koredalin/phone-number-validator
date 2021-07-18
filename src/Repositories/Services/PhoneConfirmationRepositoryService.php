@@ -5,7 +5,7 @@ namespace App\Repositories\Services;
 use App\Repositories\Interfaces\PhoneConfirmationRepositoryInterface;
 use App\Common\Interfaces\DateTimeManagerInterface;
 use App\Entities\PhoneConfirmation;
-use App\Entities\Email;
+use App\Entities\User;
 use App\Entities\Phone;
 
 final class PhoneConfirmationRepositoryService
@@ -28,7 +28,7 @@ final class PhoneConfirmationRepositoryService
         return $this->userRepository->findOneByPhoneConfirmationName($userId, $validationCode);
     }
     
-    public function make(Email $email, Phone $phone): PhoneConfirmation
+    public function make(User $email, Phone $phone): PhoneConfirmation
     {
         $user = $this->userRepository->new();
         $user->email = $email;

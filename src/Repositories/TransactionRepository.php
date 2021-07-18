@@ -5,7 +5,7 @@ namespace App\Repositories;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repositories\Interfaces\TransactionRepositoryInterface;
 use App\Entities\Transaction;
-use App\Entities\Email;
+use App\Entities\User;
 use App\Entities\Phone;
 
 /**
@@ -50,7 +50,7 @@ final class TransactionRepository implements TransactionRepositoryInterface
         return $this->objectRepository->find($id);
     }
     
-    public function findOneByEmailPhone(Email $email, Phone $phone): Transaction
+    public function findOneByEmailPhone(User $email, Phone $phone): Transaction
     {
         return $this->objectRepository->findBy(['email_id' => $email->id, 'phone_id' => $phone->id]);
     }

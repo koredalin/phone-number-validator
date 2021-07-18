@@ -3,7 +3,7 @@
 namespace App\Repositories\Interfaces;
 
 use App\Entities\Transaction;
-use App\Entities\Email;
+use App\Entities\User;
 use App\Entities\Phone;
 
 /**
@@ -18,7 +18,7 @@ interface TransactionRepositoryInterface
     
     public function findOneById(int $id): Transaction;
     
-    public function findOneByEmailPhone(Email $email, Phone $phone): Transaction;
+    public function findOneByEmailPhone(User $email, Phone $phone): Transaction;
     
     public function save(Transaction $transaction): void;
 }

@@ -4,9 +4,9 @@ namespace App\Entities;
 
 /**
  * @Entity
- * @Table(name="emails")
+ * @Table(name="users")
  */
-class Email
+class User
 {
     /** 
      * @Id
