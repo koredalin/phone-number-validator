@@ -5,23 +5,17 @@ namespace App\Common;
 use App\Common\Interfaces\PasswordGeneratorInterface;
 
 /**
- *
+ * https://deliciousbrains.com/php-encryption-methods/
  * @author Hristo
  */
 class PasswordGenerator implements PasswordGeneratorInterface
 {
     public function encode(string $nonCriptedPassword): string
     {
-        
-        $key = random_bytes(SODIUM_CRYPTO_SECRETBOX_KEYBYTES);
-
-        $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+        $key = file_get_contents(__DIR__.'/sodium_key.txt');
+        $nonce = file_get_contents(__DIR__.'/sodium_nonce.txt');
         $ciphertext = sodium_crypto_secretbox($nonCriptedPassword, $nonce, $key);
-
         $encoded = base64_encode($nonce.$ciphertext);
-        var_dump($encoded);
-
-        // string 'v6KhzRACVfUCyJKCGQF4VNoPXYfeFY+/pyRZcixz4x/0jLJOo+RbeGBTiZudMLEO7aRvg44HRecC' (length=76)
 
         return $encoded;
     }

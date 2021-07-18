@@ -7,6 +7,8 @@ use League\Route\Router;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use App\Common\Interfaces\DateTimeManagerInterface;
 use App\Common\DateTimeManager;
+use App\Common\Interfaces\PasswordGeneratorInterface;
+use App\Common\PasswordGenerator;
 
 define('CONTAINER_REQUEST', 'request');
 define('CONTAINER_RESPONSE', 'response');
@@ -28,6 +30,8 @@ $containerDeclarations = [
     SapiEmitter::class => DI\create(SapiEmitter::class),
     
     DateTimeManagerInterface::class => DI\create(DateTimeManager::class),
+    
+    PasswordGeneratorInterface::class => DI\create(PasswordGenerator::class),
 ];
 $containerDeclarations = array_merge($containerDeclarations, require_once __DIR__.DIRECTORY_SEPARATOR.'di_config_query_builder.php');
 $containerDeclarations = array_merge($containerDeclarations, require_once __DIR__.DIRECTORY_SEPARATOR.'di_config_entity_manager.php');

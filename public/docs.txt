@@ -42,3 +42,6 @@ php bin/console cache:pool:clear cache.global_clearer
 vendor/bin/doctrine orm:schema-tool:create
 vendor/bin/doctrine orm:schema-tool:update --force
 vendor/bin/doctrine orm:schema-tool:drop --force
+
+
+https://deliciousbrains.com/php-encryption-methods/
