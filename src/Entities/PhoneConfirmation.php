@@ -11,9 +11,9 @@ use App\Entities\User;
  */
 class PhoneConfirmation
 {
-    const STATUS_AWAITING_RESPONSE = 1;
-    const STATUS_CONFIRMED = 2;
-    const STATUS_ABANDONED = 3;
+    const STATUS_AWAITING_RESPONSE = 'awaiting_response';
+    const STATUS_CONFIRMED = 'confirmed';
+    const STATUS_ABANDONED = 'abandoned';
     
     const ALL_STATUSES = [
         self::STATUS_AWAITING_RESPONSE,
@@ -35,19 +35,29 @@ class PhoneConfirmation
      */
     private User $user;
     
-    /** @Column(name="validation_code") */
+    /**
+     * @Column(name="validation_code")
+     */
     private int $validationCode;
     
-    /** @Column(name="status") */
-    private int $status;
+    /**
+     * @Column(length=30, name="status")
+     */
+    private string $status;
     
-    /** @Column(name="confirmed_at") */
+    /**
+     * @Column(name="confirmed_at")
+     */
     private ?DateTime $confirmedAt;
     
-    /** @Column(name="created_at") */
+    /**
+     * @Column(name="created_at")
+     */
     private DateTime $createdAt;
         
-    /** @Column(name="updated_at") */
+    /**
+     * @Column(name="updated_at")
+     */
     private DateTime $updatedAt;
     
     /**************************************************************************/
@@ -69,16 +79,16 @@ class PhoneConfirmation
         $this->validationCode = $validationCode;
     }
     
-    public function setStatus(int $status): void
+    public function setStatus(string $status): void
     {
-        if (in_array($status, self::ALL_STATUSES)) {
+        if (in_array($status, self::ALL_STATUSES, true)) {
             throw new \InvalidArgumentException('Not supported phone confirmation status code: '.var_export($status, true));
         }
         
         $this->status = $status;
     }
     
-    public function setConfirmedAt(int $confirmedAt): void
+    public function setConfirmedAt(?DateTime $confirmedAt): void
     {
         $this->confirmedAt = $confirmedAt;
     }
@@ -112,12 +122,12 @@ class PhoneConfirmation
         return $this->validationCode;
     }
     
-    public function getStatus(): int
+    public function getStatus(): string
     {
         return $this->status;
     }
     
-    public function getConfirmedAt(): int
+    public function getConfirmedAt(): ?DateTime
     {
         return $this->confirmedAt;
     }

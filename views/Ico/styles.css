@@ -1,0 +1,23 @@
+.rblue {
+    background-color: #283a62;
+	padding-top:10px;
+	padding-bottom:10px;
+    border-color: #E7E7E7;
+  color: #ffffff !important;
+  font-size: 18px;
+  }
+  
+  .nb {
+  color: #ffffff !important;
+  }
+  h1 {
+     color: #283a62;
+	font-size:18px;
+}
+
+
+.sr {
+	
+	width: 30%;
+}
+.error {color: #FF0000;}

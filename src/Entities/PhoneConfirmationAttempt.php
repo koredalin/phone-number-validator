@@ -11,12 +11,12 @@ use App\Entities\PhoneConfirmation;
  */
 class PhoneConfirmationAttempt
 {
-    const STATUS_AWAITING_RESPONSE = 1;
-    const STATUS_CONFIRMED = 2;
+    const STATUS_CONFIRMED = 'confirmed';
+    const STATUS_DENIED = 'denied';
     
     const ALL_STATUSES = [
-        self::STATUS_AWAITING_RESPONSE,
         self::STATUS_CONFIRMED,
+        self::STATUS_DENIED,
     ];
     
     /** 
@@ -33,13 +33,19 @@ class PhoneConfirmationAttempt
      */
     private PhoneConfirmation $phoneConfirmation;
     
-    /** @Column(name="status") */
-    private int $status;
+    /**
+     * @Column(length=30, name="status")
+     */
+    private string $status;
     
-    /** @Column(name="created_at") */
+    /**
+     * @Column(name="created_at")
+     */
     private DateTime $createdAt;
         
-    /** @Column(name="updated_at") */
+    /**
+     * @Column(name="updated_at")
+     */
     private DateTime $updatedAt;
     
     /**************************************************************************/
@@ -61,9 +67,9 @@ class PhoneConfirmationAttempt
         $this->phoneConfirmation = $phoneConfirmation;
     }
     
-    public function setStatus(int $status): void
+    public function setStatus(string $status): void
     {
-        if (in_array($status, self::ALL_STATUSES)) {
+        if (in_array($status, self::ALL_STATUSES, true)) {
             throw new \InvalidArgumentException('Not supported phone confirmation status code: '.var_export($status, true));
         }
         
@@ -94,7 +100,7 @@ class PhoneConfirmationAttempt
         return $this->phoneConfirmation;
     }
     
-    public function getStatus(): int
+    public function getStatus(): string
     {
         return $this->status;
     }

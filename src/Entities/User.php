@@ -4,6 +4,7 @@ namespace App\Entities;
 
 use DateTime;
 use App\Entities\Phone;
+use App\Entities\Email;
 
 /**
  * @Entity
@@ -18,8 +19,10 @@ class User
      */
     private int $id;
     
-    /** @Column(length=100, name="user_name") */
-    private string $email;
+    /**
+     * @Column(name="email")
+     */
+    private Email $email;
     
     /**
      * @Column(name="phone_number_id", type="bigint")
@@ -29,13 +32,19 @@ class User
      */
     private Phone $phone;
     
-    /** @Column(length=30) */
+    /**
+     * @Column(length=30)
+     */
     private string $password;
     
-    /** @Column(name="created_at") */
+    /**
+     * @Column(name="created_at")
+     */
     private DateTime $createdAt;
         
-    /** @Column(name="updated_at") */
+    /**
+     * @Column(name="updated_at")
+     */
     private DateTime $updatedAt;
     
     /**************************************************************************/
@@ -47,12 +56,12 @@ class User
         $this->id = $id;
     }
     
-    public function setEmail(string $email): void
+    public function setEmail(Email $email): void
     {
         $this->email = $email;
     }
     
-    public function setPhone(int $phone): void
+    public function setPhone(Phone $phone): void
     {
         $this->phone = $phone;
     }
@@ -81,12 +90,12 @@ class User
         return $this->id;
     }
     
-    public function getEmail(): string
+    public function getEmail(): Email
     {
         return $this->email;
     }
     
-    public function getPhone(): int
+    public function getPhone(): Phone
     {
         return $this->phone;
     }

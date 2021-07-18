@@ -2,17 +2,11 @@
 
 namespace App\Entities;
 
-use DateTime;
-use App\Entities\Country;
-use App\Entities\User;
-//use Doctrine\Common\Collections\ArrayCollection;
-//use Doctrine\Common\Collections\Collection;
-
 /**
  * @Entity
- * @Table(name="phones")
+ * @Table(name="emais")
  */
-class Phone
+class Email
 {
     /** 
      * @Id
@@ -22,16 +16,9 @@ class Phone
     private int $id;
     
     /**
-     * @Column(name="country_id", type="integer")
-     * 
-     * @ManyToOne(targetEntity="Country")
+     * @Column(name="email", length="150", unique="true")
      */
-    private Country $country;
-    
-    /**
-     * @Column(name="phone_number", type="bigint", unique="true")
-     */
-    private int $phoneNumber;
+    private string $email;
     
     /**
      * @Column(name="created_at")
@@ -43,17 +30,6 @@ class Phone
      */
     private DateTime $updatedAt;
     
-    /**
-     * @OneToMany(targetEntity="User", mappedBy="phone")
-     */
-//    private ArrayCollection $users;
-    
-//    public function __construct(Country $country)
-//    {
-//        $this->country = $country;
-//        $this->users = new ArrayCollection();
-//    }
-    
     /**************************************************************************/
     /******************************* SETTERS **********************************/
     /**************************************************************************/
@@ -63,14 +39,9 @@ class Phone
         $this->id = $id;
     }
     
-    public function setCountry(int $Country): void
+    public function setEmail(string $email): void
     {
-        $this->country = $Country;
-    }
-    
-    public function setPhoneNumber(int $phoneNumber): void
-    {
-        $this->phoneNumber = $phoneNumber;
+        $this->email = $email;
     }
     
     public function setCreatedAt(DateTime $createdAt): void
@@ -83,16 +54,6 @@ class Phone
         $this->updatedAt = $updatedAt;
     }
     
-//    public function addUser(User $user): void
-//    {
-//        $this->users->add($user);
-//    }
-//    
-//    public function removeUser(User $user): void
-//    {
-//        $this->users->removeElement($user);
-//    }
-    
     /**************************************************************************/
     /******************************* GETTERS **********************************/
     /**************************************************************************/
@@ -102,14 +63,9 @@ class Phone
         return $this->id;
     }
     
-    public function getCountry(): int
+    public function getEmail(): string
     {
-        return $this->counrty;
-    }
-    
-    public function getPhoneNumber(): int
-    {
-        return $this->phoneNumber;
+        return $this->email;
     }
     
     public function getCreatedAt(): DateTime
@@ -121,11 +77,6 @@ class Phone
     {
         return $this->updatedAt;
     }
-    
-//    public function getUsers(): ArrayCollection
-//    {
-//        return $this->users;
-//    }
 
     /**************************************************************************/
     /**************************************************************************/

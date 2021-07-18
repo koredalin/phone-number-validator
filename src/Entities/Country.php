@@ -15,13 +15,19 @@ class Country
      */
     private int $id;
     
-    /** @Column(length=100, name="country_name") */
+    /**
+     * @Column(length=100, name="country_name", unique="true")
+     */
     private string $countryName;
     
-    /** @Column(length=3) */
+    /**
+     * @Column(length=3)
+     */
     private string $iso3;
     
-    /** @Column(name="phone_code") */
+    /**
+     * @Column(name="phone_code")
+     */
     private int $phoneCode;
     
     /**************************************************************************/
