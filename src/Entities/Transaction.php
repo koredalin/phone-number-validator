@@ -28,12 +28,12 @@ class Transaction
     private int $id;
     
     /**
-     * @Column(name="email")
+     * @Column(name="user_id")
      */
-    private User $email;
+    private User $user;
     
     /**
-     * @Column(name="phone_number_id", type="bigint")
+     * @Column(name="phone_id", type="bigint")
      * 
      * @ManyToOne(targetEntity="Phone", inversedBy="users")
      * @JoinColumn(name="phone_id", nullable="false", referencedColumnName="id")
@@ -69,9 +69,9 @@ class Transaction
         $this->id = $id;
     }
     
-    public function setEmail(User $email): void
+    public function setUser(User $email): void
     {
-        $this->email = $email;
+        $this->user = $email;
     }
     
     public function setPhone(Phone $phone): void
@@ -112,9 +112,9 @@ class Transaction
         return $this->id;
     }
     
-    public function getEmail(): User
+    public function getUser(): User
     {
-        return $this->email;
+        return $this->user;
     }
     
     public function getPhone(): Phone

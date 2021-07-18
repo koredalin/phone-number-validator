@@ -29,11 +29,11 @@ class PhoneConfirmation
     private int $id;
     
     /**
-     * @Column(name="user_id", type="bigint")
+     * @Column(name="transaction_id", type="bigint")
      * 
      * @ManyToOne(targetEntity="Transaction")
      */
-    private Transaction $user;
+    private Transaction $transaction;
     
     /**
      * @Column(name="validation_code")
@@ -69,9 +69,9 @@ class PhoneConfirmation
         $this->id = $id;
     }
     
-    public function setUser(int $user): void
+    public function setTransaction(Transaction $transaction): void
     {
-        $this->user = $user;
+        $this->transaction = $transaction;
     }
     
     public function setValidationCode(int $validationCode): void
@@ -112,9 +112,9 @@ class PhoneConfirmation
         return $this->id;
     }
     
-    public function getUser(): int
+    public function getTransaction(): Transaction
     {
-        return $this->user;
+        return $this->transaction;
     }
     
     public function getValidationCode(): int

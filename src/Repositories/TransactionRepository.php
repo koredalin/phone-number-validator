@@ -25,13 +25,13 @@ final class TransactionRepository implements TransactionRepositoryInterface
      */
     private $objectRepository;
     
-    private Transaction $newUser;
+    private Transaction $newTransaction;
     
-    public function __construct(EntityManagerInterface $em, Transaction $newUser)
+    public function __construct(EntityManagerInterface $em, Transaction $newTransaction)
     {
         $this->em = $em;
         $this->objectRepository = $this->em->getRepository(Transaction::class);
-        $this->newUser = $newUser;
+        $this->newTransaction = $newTransaction;
     }
     
     
@@ -40,7 +40,7 @@ final class TransactionRepository implements TransactionRepositoryInterface
      */
     public function new(): Transaction
     {
-        $serializedNewObj = \serialize($this->newUser);
+        $serializedNewObj = \serialize($this->newTransaction);
         
         return \unserialize($serializedNewObj);
     }
@@ -50,9 +50,9 @@ final class TransactionRepository implements TransactionRepositoryInterface
         return $this->objectRepository->find($id);
     }
     
-    public function findOneByEmailPhone(User $email, Phone $phone): Transaction
+    public function findOneByEmailPhoneAwaitingStatus(User $email, Phone $phone): Transaction
     {
-        return $this->objectRepository->findBy(['email_id' => $email->id, 'phone_id' => $phone->id]);
+        return $this->objectRepository->findBy(['email_id' => $email->id, 'phone_id' => $phone->id, 'status' => Transaction::STATUS_AWAITING_REQUEST]);
     }
     
     public function save(Transaction $transaction): void
