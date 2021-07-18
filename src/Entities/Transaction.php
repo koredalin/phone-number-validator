@@ -12,11 +12,11 @@ use App\Entities\User;
  */
 class Transaction
 {
-    const STATUS_AWAITING_RESPONSE = 'awaiting_response';
+    const STATUS_AWAITING_REQUEST = 'awaiting_request';
     const STATUS_CONFIRMED = 'confirmed';
     
     const ALL_STATUSES = [
-        self::STATUS_AWAITING_RESPONSE,
+        self::STATUS_AWAITING_REQUEST,
         self::STATUS_CONFIRMED,
     ];
     

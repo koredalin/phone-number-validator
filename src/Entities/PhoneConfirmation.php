@@ -11,12 +11,12 @@ use App\Entities\Transaction;
  */
 class PhoneConfirmation
 {
-    const STATUS_AWAITING_RESPONSE = 'awaiting_response';
+    const STATUS_AWAITING_REQUEST = 'awaiting_request';
     const STATUS_CONFIRMED = 'confirmed';
     const STATUS_ABANDONED = 'abandoned';
     
     const ALL_STATUSES = [
-        self::STATUS_AWAITING_RESPONSE,
+        self::STATUS_AWAITING_REQUEST,
         self::STATUS_CONFIRMED,
         self::STATUS_ABANDONED,
     ];
