@@ -2,9 +2,6 @@
 
 // Doctrine libs
 use Doctrine\ORM\EntityManagerInterface;
-// Common
-use App\Common\Interfaces\DateTimeManagerInterface;
-use App\Common\Interfaces\PasswordGeneratorInterface;
 // Entities
 use App\Entities\User;
 use App\Entities\Country;
