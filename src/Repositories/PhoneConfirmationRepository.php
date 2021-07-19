@@ -5,6 +5,7 @@ namespace App\Repositories;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repositories\Interfaces\PhoneConfirmationRepositoryInterface;
 use App\Entities\PhoneConfirmation;
+use App\Entities\Transaction;
 
 /**
  * Description of PhoneConfirmationRepository
@@ -48,9 +49,18 @@ final class PhoneConfirmationRepository implements PhoneConfirmationRepositoryIn
         return $this->objectRepository->find($id);
     }
     
-    public function findOneByUserIdValidationCode(int $userId, int $validationCode): PhoneConfirmation
+    public function findLastByTransactionAwaitingStatus(Transaction $transaction): ?PhoneConfirmation
     {
-        return $this->objectRepository->findBy(['user_id' => $userId, 'validation_code' => $validationCode]);
+        $result = $this->objectRepository->findBy(
+            ['transaction_id' => $transaction->id, 'status' => PhoneConfirmation::STATUS_AWAITING_REQUEST],
+            ['id' => 'DESC'],
+            1
+        );
+        if (isset($result[0])) {
+            return $result[0];
+        }
+        
+        return null;
     }
     
     public function save(PhoneConfirmation $phoneConfirmation): void

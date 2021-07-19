@@ -4,6 +4,8 @@ namespace App\Repositories\Interfaces;
 
 use App\Entities\PhoneConfirmation;
 
+use App\Entities\Transaction;
+
 /**
  *
  * @author Hristo
@@ -17,7 +19,7 @@ interface PhoneConfirmationRepositoryInterface
     
     public function findOneById(int $id): PhoneConfirmation;
     
-    public function findOneByUserIdValidationCode(int $userId, int $validationCode): PhoneConfirmation;
+    public function findLastByTransactionAwaitingStatus(Transaction $transaction): PhoneConfirmation;
     
     public function save(PhoneConfirmation $phoneConfirmation): void;
 }

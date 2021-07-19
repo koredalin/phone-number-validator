@@ -25,9 +25,9 @@ final class PhoneConfirmationRepositoryService
         return $this->phoneConfirmationRepository->findOneById($id);
     }
     
-    public function findOneByUserIdValidationCode(int $userId, int $validationCode): PhoneConfirmation
+    public function findLastByTransactionAwaitingStatus(Transaction $transaction): ?PhoneConfirmation
     {
-        return $this->phoneConfirmationRepository->findOneByPhoneConfirmationName($userId, $validationCode);
+        return $this->phoneConfirmationRepository->findLastByTransactionAwaitingStatus($transaction);
     }
     
     public function make(Transaction $transaction): PhoneConfirmation
@@ -40,6 +40,16 @@ final class PhoneConfirmationRepositoryService
         $phoneConfirmationObj->updatedAt = $this->dtManager->now();
         
         return $this->save($phoneConfirmationObj);
+    }
+    
+    public function getOrCreateByTransactionAwaitingStatus(Transaction $transaction): PhoneConfirmation
+    {
+        $dbObj = $this->findLastByTransactionAwaitingStatus($transaction);
+        if (is_null($dbObj)) {
+            return $this->make($transaction);
+        }
+        
+        return $dbObj;
     }
     
     public function save(PhoneConfirmation $user): void
