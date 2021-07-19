@@ -3,50 +3,53 @@
 namespace App\Repositories\Services;
 
 use App\Repositories\Interfaces\PhoneConfirmationRepositoryInterface;
+use App\Common\Interfaces\ConfirmationCodeInterface;
 use App\Common\Interfaces\DateTimeManagerInterface;
 use App\Entities\PhoneConfirmation;
-use App\Entities\User;
-use App\Entities\Phone;
+use App\Entities\Transaction;
 
 final class PhoneConfirmationRepositoryService
 {
-    private $userRepository;
+    private $phoneConfirmationRepository;
     private DateTimeManagerInterface $dtManager;
+    private ConfirmationCodeInterface $confirmationCodeGenerator;
     
-    public function __construct(PhoneConfirmationRepositoryInterface $userRepository, DateTimeManagerInterface $dtManager){
-        $this->userRepository = $userRepository;
+    public function __construct(PhoneConfirmationRepositoryInterface $phoneConfirmationRepository, ConfirmationCodeInterface $confirmationCodeGenerator, DateTimeManagerInterface $dtManager){
+        $this->phoneConfirmationRepository = $phoneConfirmationRepository;
+        $this->confirmationCodeGenerator = $confirmationCodeGenerator;
         $this->dtManager = $dtManager;
     }
     
     public function findOneById(int $id): PhoneConfirmation
     {
-        return $this->userRepository->findOneById($id);
+        return $this->phoneConfirmationRepository->findOneById($id);
     }
     
     public function findOneByUserIdValidationCode(int $userId, int $validationCode): PhoneConfirmation
     {
-        return $this->userRepository->findOneByPhoneConfirmationName($userId, $validationCode);
+        return $this->phoneConfirmationRepository->findOneByPhoneConfirmationName($userId, $validationCode);
     }
     
-    public function make(User $email, Phone $phone): PhoneConfirmation
+    public function make(Transaction $transaction): PhoneConfirmation
     {
-        $user = $this->userRepository->new();
-        $user->email = $email;
-        $user->phone = $phone;
-        $user->createdAt = $this->dtManager->now();
-        $user->updatedAt = $this->dtManager->now();
+        $phoneConfirmationObj = $this->phoneConfirmationRepository->new();
+        $phoneConfirmationObj->transaction = $transaction;
+        $phoneConfirmationObj->confirmationCode = $this->confirmationCodeGenerator->generate();
+        $phoneConfirmationObj->status = PhoneConfirmation::STATUS_AWAITING_REQUEST;
+        $phoneConfirmationObj->createdAt = $this->dtManager->now();
+        $phoneConfirmationObj->updatedAt = $this->dtManager->now();
         
-        return $this->save($user);
+        return $this->save($phoneConfirmationObj);
     }
     
     public function save(PhoneConfirmation $user): void
     {
-        $this->userRepository->save($user);
+        $this->phoneConfirmationRepository->save($user);
         // Dispatch some event on every update
     }
     
     public function all(): array
     {
-        return $this->userRepository->all();
+        return $this->phoneConfirmationRepository->all();
     }
 }

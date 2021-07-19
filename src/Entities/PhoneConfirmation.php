@@ -36,9 +36,9 @@ class PhoneConfirmation
     private Transaction $transaction;
     
     /**
-     * @Column(name="validation_code")
+     * @Column(name="confirmation_code")
      */
-    private int $validationCode;
+    private int $confirmationCode;
     
     /**
      * @Column(length=30, name="status")
@@ -74,9 +74,9 @@ class PhoneConfirmation
         $this->transaction = $transaction;
     }
     
-    public function setValidationCode(int $validationCode): void
+    public function setConfirmationCode(int $confirmationCode): void
     {
-        $this->validationCode = $validationCode;
+        $this->confirmationCode = $confirmationCode;
     }
     
     public function setStatus(string $status): void
@@ -117,9 +117,9 @@ class PhoneConfirmation
         return $this->transaction;
     }
     
-    public function getValidationCode(): int
+    public function getConfirmationCode(): int
     {
-        return $this->validationCode;
+        return $this->confirmationCode;
     }
     
     public function getStatus(): string

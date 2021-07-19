@@ -6,7 +6,7 @@ namespace App\Common\Interfaces;
  *
  * @author Hristo
  */
-interface ConfimationCodeInterface
+interface ConfirmationCodeInterface
 {
     public function generate(): int;
 }

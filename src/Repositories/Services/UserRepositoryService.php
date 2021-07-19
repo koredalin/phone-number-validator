@@ -23,22 +23,24 @@ final class UserRepositoryService
     
     public function findOneByEmail(string $emailName): User
     {
-        return $this->userRepository->findOneByEmailName($emailName);
+        return $this->userRepository->findOneByEmail($emailName);
     }
     
     public function make(string $email): User
     {
-        $emailObj = $this->userRepository->new();
-        $emailObj->email = $email;
-        $emailObj->createdAt = $this->dtManager->now();
-        $emailObj->updatedAt = $this->dtManager->now();
+        $trimmedEmail = trim($email);
+        $userObj = $this->userRepository->new();
+        $userObj->email = $trimmedEmail;
+        $userObj->createdAt = $this->dtManager->now();
+        $userObj->updatedAt = $this->dtManager->now();
         
-        return $this->save($emailObj);
+        return $this->save($userObj);
     }
     
-    public function save(User $email): void
+    public function save(User $user): void
     {
-        $this->userRepository->save($email);
+        $user->email = trim($user->email);
+        $this->userRepository->save($user);
         // Dispatch some event on every update
     }
     
@@ -49,9 +51,10 @@ final class UserRepositoryService
     
     public function getOrCreateByEmail(string $email): User
     {
-        $emailObj = $this->findOneByEmail($email);
+        $trimmedEmail = trim($email);
+        $emailObj = $this->findOneByEmail($trimmedEmail);
         if ($emailObj === null) {
-            $emailObj = $this->make($email);
+            $emailObj = $this->make($trimmedEmail);
         }
         
         return $emailObj;

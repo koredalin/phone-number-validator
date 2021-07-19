@@ -36,6 +36,7 @@ final class TransactionRepositoryService
         $transaction = $this->transactionRepository->new();
         $transaction->email = $email;
         $transaction->phone = $phone;
+        $transaction->status = Transaction::STATUS_AWAITING_REQUEST;
         $transaction->password = $this->passwordGenerator->encode($nonCryptedPassword);
         $transaction->createdAt = $this->dtManager->now();
         $transaction->updatedAt = $this->dtManager->now();
