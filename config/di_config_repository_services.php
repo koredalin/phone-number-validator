@@ -26,23 +26,10 @@ use App\Repositories\PhoneRepository;
 use App\Repositories\TransactionRepository;
 use App\Repositories\PhoneConfirmationRepository;
 use App\Repositories\PhoneConfirmationAttemptRepository;
+// Repository Services
+use App\Repositories\Services\TransactionRepositoryService;
 
 return [
-    UserRepositoryInterface::class => DI\create(UserRepository::class)
-        ->constructor(DI\get(EntityManagerInterface::class), DI\get(User::class)),
-
-    CountryRepositoryInterface::class => DI\create(CountryRepository::class)
-        ->constructor(DI\get(EntityManagerInterface::class), DI\get(Country::class)),
-
-    PhoneRepositoryInterface::class => DI\create(PhoneRepository::class)
-        ->constructor(DI\get(EntityManagerInterface::class), DI\get(Phone::class)),
-
-    TransactionRepositoryInterface::class => DI\create(TransactionRepository::class)
-        ->constructor(DI\get(EntityManagerInterface::class), DI\get(Transaction::class)),
-
-    PhoneConfirmationRepositoryInterface::class => DI\create(PhoneConfirmationRepository::class)
-        ->constructor(DI\get(EntityManagerInterface::class), DI\get(PhoneConfirmation::class)),
-
-    PhoneConfirmationAttemptRepositoryInterface::class => DI\create(PhoneConfirmationAttemptRepository::class)
-        ->constructor(DI\get(EntityManagerInterface::class), DI\get(PhoneConfirmationAttempt::class)),
+    TransactionRepositoryService::class => DI\create(TransactionRepositoryService::class)
+        ->constructor(DI\get(TransactionRepositoryInterface::class), DI\get(PasswordGeneratorInterface::class), DI\get(DateTimeManagerInterface::class)),
 ];
