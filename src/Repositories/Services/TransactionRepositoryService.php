@@ -28,7 +28,7 @@ final class TransactionRepositoryService
     
     public function findOneByEmailPhoneAwaitingStatus(User $email, Phone $phone): Transaction
     {
-        return $this->transactionRepository->findOneByUserName($email, $phone);
+        return $this->transactionRepository->findOneByEmailPhoneAwaitingStatus($email, $phone);
     }
     
     public function make(User $email, Phone $phone, string $nonCryptedPassword): Transaction
@@ -55,7 +55,7 @@ final class TransactionRepositoryService
         return $this->transactionRepository->all();
     }
     
-    public function getOrCreateByEmailPhone(User $email, Phone $phone): Transaction
+    public function getOrCreateByEmailPhoneAwaitingStatus(User $email, Phone $phone): Transaction
     {
         $transactionObj = $this->findOneByEmailPhoneAwaitingStatus($email, $phone);
         if (is_null($transactionObj)) {
