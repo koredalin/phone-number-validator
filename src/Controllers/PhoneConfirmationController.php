@@ -27,6 +27,7 @@ class PhoneConfirmationController extends BaseController
     
     public function __construct(Environment $twig, ResponseInterface $response, UserRepositoryService $userService, PhoneRepositoryService $phoneService, TransactionRepositoryService $transactionService, PhoneConfirmationRepositoryService $phoneConfirmationService)
     {
+//        echo __LINE__.' |||||||||||| '; exit;
         parent::__construct($twig, $response);
         $this->userService = $userService;
         $this->phoneService = $phoneService;
@@ -36,7 +37,8 @@ class PhoneConfirmationController extends BaseController
     
     public function index(ServerRequestInterface $request, array $arguments): ResponseInterface
     {
-        echo __LINE__.' |||||||||||| '; exit;
+//        print_r($arguments);
+//        echo __LINE__.' |||||||||||| '; exit;
 //        $article = $this->em->find(Transaction::class, 16);
 //        $article->setTransactionName('Tractor');
 //        $this->em->persist($article);
@@ -47,7 +49,7 @@ class PhoneConfirmationController extends BaseController
 //        $article = $this->transactionQueryService->all();
 //        print_r($article); exit;
         
-        return $this->render('registration', []);
+        return $this->render('registration.html', []);
     }
     
     public function store(ServerRequestInterface $request, array $arguments): ResponseInterface

@@ -40,7 +40,7 @@ class Routes
         $router->map('GET', URL_SUBFOLDER.'/add/{name}', GreetingsController::class.'::store');
         $router->map('GET', URL_SUBFOLDER.'/user', UserController::class.'::index');
         $router->map('GET', URL_SUBFOLDER.'/registration', PhoneConfirmationController::class.'::index');
-        $router->post(URL_SUBFOLDER.'/registration', PhoneConfirmationController::class.'::index');
+//        $router->post(URL_SUBFOLDER.'/registration', PhoneConfirmationController::class.'::index');
         
 //        $router
 //            ->group('/group', function ($router) {
