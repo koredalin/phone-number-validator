@@ -22,7 +22,7 @@ interface CountryRepositoryInterface
     
     public function findOneByPhoneCode(int $phoneCode): Country;
     
-    public function findAll(): ArrayCollection;
+    public function findAll(): array;
     
     public function save(Country $email): void;
 }

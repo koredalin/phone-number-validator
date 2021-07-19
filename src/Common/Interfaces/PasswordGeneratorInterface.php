@@ -8,5 +8,5 @@ namespace App\Common\Interfaces;
  */
 interface PasswordGeneratorInterface
 {
-    public function encode(): string;
+    public function encode(string $nonCriptedPassword): string;
 }

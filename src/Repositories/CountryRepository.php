@@ -59,7 +59,7 @@ final class CountryRepository implements CountryRepositoryInterface
         return $this->objectRepository->findBy(['phone_code' => $phoneCode]);
     }
     
-    public function findAll(): ArrayCollection
+    public function findAll(): array
     {
         return $this->objectRepository->findAll();
     }

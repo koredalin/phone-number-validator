@@ -27,7 +27,7 @@ return [
         ->constructor(DI\get(CountryRepositoryInterface::class), DI\get(DateTimeManagerInterface::class)),
 
     PhoneRepositoryService::class => DI\create(PhoneRepositoryService::class)
-        ->constructor(DI\get(PhoneRepositoryInterface::class), DI\get(DateTimeManagerInterface::class)),
+        ->constructor(DI\get(PhoneRepositoryInterface::class), DI\get(CountryRepositoryInterface::class), DI\get(DateTimeManagerInterface::class)),
 
     TransactionRepositoryService::class => DI\create(TransactionRepositoryService::class)
         ->constructor(DI\get(TransactionRepositoryInterface::class), DI\get(PasswordGeneratorInterface::class), DI\get(DateTimeManagerInterface::class)),

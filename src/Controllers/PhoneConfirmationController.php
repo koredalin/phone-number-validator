@@ -36,6 +36,7 @@ class PhoneConfirmationController extends BaseController
     
     public function index(ServerRequestInterface $request, array $arguments): ResponseInterface
     {
+        echo __LINE__.' |||||||||||| '; exit;
 //        $article = $this->em->find(Transaction::class, 16);
 //        $article->setTransactionName('Tractor');
 //        $this->em->persist($article);
