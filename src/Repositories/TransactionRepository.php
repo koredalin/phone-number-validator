@@ -50,14 +50,16 @@ final class TransactionRepository implements TransactionRepositoryInterface
         return $this->objectRepository->find($id);
     }
     
-    public function findOneByEmailPhoneAwaitingStatus(User $email, Phone $phone): Transaction
+    public function findOneByEmailPhoneAwaitingStatus(User $email, Phone $phone): ?Transaction
     {
-        return $this->objectRepository->findBy(['email_id' => $email->id, 'phone_id' => $phone->id, 'status' => Transaction::STATUS_AWAITING_REQUEST]);
+        return $this->objectRepository->findOneBy(['email_id' => $email->id, 'phone_id' => $phone->id, 'status' => Transaction::STATUS_AWAITING_REQUEST]);
     }
     
-    public function save(Transaction $transaction): void
+    public function save(Transaction $transaction): Transaction
     {
         $this->objectRepository->persist($transaction);
         $this->objectRepository->flush();
+        
+        return $transaction;
     }
 }

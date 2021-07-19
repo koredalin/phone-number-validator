@@ -26,7 +26,7 @@ final class TransactionRepositoryService
         return $this->transactionRepository->findOneById($id);
     }
     
-    public function findOneByEmailPhoneAwaitingStatus(User $email, Phone $phone): Transaction
+    public function findOneByEmailPhoneAwaitingStatus(User $email, Phone $phone): ?Transaction
     {
         return $this->transactionRepository->findOneByEmailPhoneAwaitingStatus($email, $phone);
     }
@@ -44,10 +44,12 @@ final class TransactionRepositoryService
         return $this->save($transaction);
     }
     
-    public function save(Transaction $transaction): void
+    public function save(Transaction $transaction): Transaction
     {
-        $this->transactionRepository->save($transaction);
+        $newTransaction = $this->transactionRepository->save($transaction);
         // Dispatch some event on every update
+        
+        return $newTransaction;
     }
     
     public function all(): array

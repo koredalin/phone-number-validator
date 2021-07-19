@@ -19,7 +19,7 @@ interface PhoneConfirmationRepositoryInterface
     
     public function findOneById(int $id): PhoneConfirmation;
     
-    public function findLastByTransactionAwaitingStatus(Transaction $transaction): PhoneConfirmation;
+    public function findLastByTransactionAwaitingStatus(Transaction $transaction): ?PhoneConfirmation;
     
     public function save(PhoneConfirmation $phoneConfirmation): void;
 }

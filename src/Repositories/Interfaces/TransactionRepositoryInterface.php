@@ -20,5 +20,5 @@ interface TransactionRepositoryInterface
     
     public function findOneByEmailPhoneAwaitingStatus(User $email, Phone $phone): Transaction;
     
-    public function save(Transaction $transaction): void;
+    public function save(Transaction $transaction): Transaction;
 }
