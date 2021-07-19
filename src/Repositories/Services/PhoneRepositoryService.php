@@ -55,31 +55,42 @@ final class PhoneRepositoryService
     
     public function getOrCreateByAssembledPhoneNumber(string $assembledPhoneNumber): Phone
     {
-        $assembledPhoneNumberTrimmed = trim($assembledPhoneNumber);
-        $countryObj = null;
-        $phoneNumber = null;
-        if (substr($assembledPhoneNumberTrimmed, 0, 1) === '0') {
-            $countryObj = $this->countryRepository->findOneByPhoneCode(self::BG_PHONE_CODE);
-            $phoneNumber = (int)substr($assembledPhoneNumberTrimmed, 1);
-            if (strlen($phoneNumber) !== 9) {
-                throw new Exception('Validations not made yet.');
-            }
-        } else {
-            foreach ($this->countryRepository->findAll() as $country) {
-                if (strpos($assembledPhoneNumber, $country->phoneCode) === 0) {
-                    $countryObj = $country;
-                    break;
-                }
-            }
-            $phoneNumber = $this->strReplaceFirst($countryObj->phoneCode, '', $assembledPhoneNumber);
-        }
-        if (is_null($countryObj) || strlen($phoneNumber) !== 9) {
-            throw new Exception('Validations not made yet.');
-        }
+        $countryObj = $this->getCountryFromAssembledNumber($assembledPhoneNumber);
+        $phoneNumber = $this->getPhoneNumberFromAssembledNumberCountry($assembledPhoneNumber, $countryObj);
         
         $phoneObj = $this->make($countryObj, $phoneNumber);
         
         return $phoneObj;
+    }
+    
+    private function getCountryFromAssembledNumber(string $assembledPhoneNumber): Country
+    {
+        $assembledPhoneNumberTrimmed = trim($assembledPhoneNumber);
+        if (substr($assembledPhoneNumberTrimmed, 0, 1) === '0') {
+            return $this->countryRepository->findOneByPhoneCode(self::BG_PHONE_CODE);
+        }
+        
+        foreach ($this->countryRepository->findAll() as $country) {
+            if (strpos($assembledPhoneNumber, $country->phoneCode) === 0) {
+                return $country;
+            }
+        }
+        
+        throw new \Exception('Unknown phone code - Country.');
+    }
+    
+    private function getPhoneNumberFromAssembledNumberCountry(string $assembledPhoneNumber, Country $country): int
+    {
+        $assembledPhoneNumberTrimmed = trim($assembledPhoneNumber);
+        if ($country->phoneCode === self::BG_PHONE_CODE) {
+            $phoneNumber = (int)substr($assembledPhoneNumberTrimmed, 1);
+            if (strlen($phoneNumber) !== 9) {
+                throw new Exception('Validations not made yet.');
+            }
+            return $phoneNumber;
+        }
+        
+        return $this->strReplaceFirst($country->phoneCode, '', $assembledPhoneNumberTrimmed);
     }
     
     // https://stackoverflow.com/a/1252705
