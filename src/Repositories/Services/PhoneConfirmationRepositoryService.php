@@ -3,7 +3,7 @@
 namespace App\Repositories\Services;
 
 use App\Repositories\Interfaces\PhoneConfirmationRepositoryInterface;
-use App\Common\Interfaces\ConfirmationCodeInterface;
+use App\Common\Interfaces\ConfirmationCodeGeneratorInterface;
 use App\Common\Interfaces\DateTimeManagerInterface;
 use App\Entities\PhoneConfirmation;
 use App\Entities\Transaction;
@@ -12,9 +12,9 @@ final class PhoneConfirmationRepositoryService
 {
     private $phoneConfirmationRepository;
     private DateTimeManagerInterface $dtManager;
-    private ConfirmationCodeInterface $confirmationCodeGenerator;
+    private ConfirmationCodeGeneratorInterface $confirmationCodeGenerator;
     
-    public function __construct(PhoneConfirmationRepositoryInterface $phoneConfirmationRepository, ConfirmationCodeInterface $confirmationCodeGenerator, DateTimeManagerInterface $dtManager){
+    public function __construct(PhoneConfirmationRepositoryInterface $phoneConfirmationRepository, ConfirmationCodeGeneratorInterface $confirmationCodeGenerator, DateTimeManagerInterface $dtManager){
         $this->phoneConfirmationRepository = $phoneConfirmationRepository;
         $this->confirmationCodeGenerator = $confirmationCodeGenerator;
         $this->dtManager = $dtManager;
