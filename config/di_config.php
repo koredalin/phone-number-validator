@@ -4,6 +4,8 @@ use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Response;
 use League\Route\Strategy\ApplicationStrategy;
 use League\Route\Router;
+use FastRoute\RouteCollector;
+use League\Route\RouteCollectionInterface;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use App\Common\Interfaces\DateTimeManagerInterface;
 use App\Common\DateTimeManager;
@@ -27,6 +29,7 @@ $containerDeclarations = [
     
     ApplicationStrategy::class => DI\create(ApplicationStrategy::class),
     
+    Router::class => DI\create(Router::class),
     Router::class => DI\create(Router::class),
     
     SapiEmitter::class => DI\create(SapiEmitter::class),

@@ -27,7 +27,7 @@ class PhoneConfirmationController extends BaseController
     
     public function __construct(Environment $twig, ResponseInterface $response, UserRepositoryService $userService, PhoneRepositoryService $phoneService, TransactionRepositoryService $transactionService, PhoneConfirmationRepositoryService $phoneConfirmationService)
     {
-//        echo __LINE__.' |||||||||||| '; exit;
+        echo __LINE__.' |||||||||||| '; exit;
         parent::__construct($twig, $response);
         $this->userService = $userService;
         $this->phoneService = $phoneService;

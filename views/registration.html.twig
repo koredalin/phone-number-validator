@@ -4,13 +4,15 @@
 {% block body %}
 	<h2>Transaction Registration Form</h2>
 	
-	<form action="/registration" method="post">
+	<form action="{{ url('/registration') }}" method="post">
 		<label for="email">Email:</label><br>
 		<input type="text" id="email" name="email" value="John@tatata.com"><br>
+{#		{{csrf_field()}}#}
 		<label for="phone_number">Phone Number:</label><br>
 		<input type="text" id="phone_number" name="phone_number" value="353563546"><br>
 		<label for="password">Password:</label><br>
 		<input type="password" id="password" name="password" value="4444"><br><br>
+		<input type="hidden" name="token" value="{{ csrf_token('some-name bla-bla') }}">
 		<input type="submit" value="Submit">
 	</form> 
 {% endblock %}
