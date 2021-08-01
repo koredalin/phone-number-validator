@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraints\Email;
  *
  * @author Hristo
  */
-class Registration
+class RegistrationForm
 {
     /**
      * @Assert\NotBlank

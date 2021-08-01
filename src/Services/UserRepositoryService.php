@@ -16,14 +16,15 @@ final class UserRepositoryService
         $this->dtManager = $dtManager;
     }
     
-    public function findOneById(int $id): User
+    public function getOrCreateByEmail(string $email): User
     {
-        return $this->userRepository->findOneById($id);
-    }
-    
-    public function findOneByEmail(string $emailName): User
-    {
-        return $this->userRepository->findOneByEmail($emailName);
+        $trimmedEmail = trim($email);
+        $emailObj = $this->findOneByEmail($trimmedEmail);
+        if ($emailObj === null) {
+            $emailObj = $this->make($trimmedEmail);
+        }
+        
+        return $emailObj;
     }
     
     public function make(string $email): User
@@ -44,19 +45,23 @@ final class UserRepositoryService
         // Dispatch some event on every update
     }
     
-    public function all(): array
+    public function findOneById(int $id): User
     {
-        return $this->userRepository->all();
+        return $this->userRepository->findOneById($id);
     }
     
-    public function getOrCreateByEmail(string $email): User
+    public function findOneByEmail(string $emailName): User
     {
-        $trimmedEmail = trim($email);
-        $emailObj = $this->findOneByEmail($trimmedEmail);
-        if ($emailObj === null) {
-            $emailObj = $this->make($trimmedEmail);
-        }
-        
-        return $emailObj;
+        return $this->userRepository->findOneByEmail($emailName);
     }
+    
+    public function getDoctrineException(): string
+    {
+        return $this->userRepository->getDoctrineException();
+    }
+    
+//    public function all(): array
+//    {
+//        return $this->userRepository->all();
+//    }
 }

@@ -4,9 +4,10 @@ namespace App\Controllers;
 
 use App\Controllers\BaseControllerJson;
 use Psr\Http\Message\ResponseInterface;
+use App\Services\RegistrationService as RegistrationServiceInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use App\Entities\Forms\Registration as RegistrationForm;
+use App\Entities\Forms\RegistrationForm;
 use Psr\Http\Message\ServerRequestInterface;
 use App\Entities\Country;
 
@@ -21,6 +22,7 @@ class RegistrationController extends BaseControllerJson
     
     public function __construct(
         ResponseInterface $response
+        
     ) {
         parent::__construct($response);
         $this->validator = Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator();
@@ -31,6 +33,7 @@ class RegistrationController extends BaseControllerJson
         $requestBody = \json_decode($request->getBody()->getContents(), true);
         $form = $this->createForm($requestBody);
         $errors = $this->validator->validate($form);
+        var_dump($errors); exit;
         if (count($errors) > 0) {
             $errorsString = (string)$errors;
             return $this->render($errorsString, []);

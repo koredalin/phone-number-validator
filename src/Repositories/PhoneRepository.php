@@ -25,11 +25,14 @@ final class PhoneRepository implements PhoneRepositoryInterface
     
     private Phone $newPhone;
     
+    private string $doctrineException;
+    
     public function __construct(EntityManagerInterface $em, Phone $newPhone)
     {
         $this->em = $em;
         $this->objectRepository = $this->em->getRepository(Phone::class);
         $this->newPhone = $newPhone;
+        $this->doctrineException = '';
     }
     
     
@@ -53,9 +56,20 @@ final class PhoneRepository implements PhoneRepositoryInterface
         return $this->objectRepository->findBy(['phone_code' => $phoneCode, 'phone_number' => $phoneNumber]);
     }
     
-    public function save(Phone $phone): void
+    public function save(Phone $phone): Phone
     {
-        $this->objectRepository->persist($phone);
-        $this->objectRepository->flush();
+        try {
+            $this->objectRepository->persist($phone);
+            $this->objectRepository->flush();
+        } catch (\Exception $exception) {
+            $this->doctrineException = $exception;
+        }
+        
+        return $phone;
+    }
+    
+    public function getDoctrineException(): string
+    {
+        $this->doctrineException;
     }
 }

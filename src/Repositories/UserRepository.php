@@ -26,11 +26,14 @@ final class UserRepository implements UserRepositoryInterface
      */
     private User $newUser;
     
+    private string $docrineException;
+    
     public function __construct(EntityManagerInterface $em, User $newUser)
     {
         $this->em = $em;
         $this->objectRepository = $this->em->getRepository(User::class);
         $this->newUser = $newUser;
+        $this->docrineException = '';
     }
     
     
@@ -54,9 +57,20 @@ final class UserRepository implements UserRepositoryInterface
         return $this->objectRepository->findBy(['email' => $email]);
     }
     
-    public function save(User $user): void
+    public function save(User $user): User
     {
-        $this->objectRepository->persist($user);
-        $this->objectRepository->flush();
+        try {
+            $this->objectRepository->persist($user);
+            $this->objectRepository->flush();
+        } catch (Exception $exception) {
+            $this->docrineException = $exception->getMessage();
+        }
+        
+        return $user;
+    }
+    
+    public function getDoctrineException(): string
+    {
+        return $this->docrineException;
     }
 }

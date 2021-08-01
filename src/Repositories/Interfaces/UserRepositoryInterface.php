@@ -19,5 +19,7 @@ interface UserRepositoryInterface
     
     public function findOneByEmail(string $email): User;
     
-    public function save(User $email): void;
+    public function save(User $email): User;
+    
+    public function getDoctrineException(): string;
 }
