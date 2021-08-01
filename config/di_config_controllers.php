@@ -7,10 +7,11 @@ use App\Controllers\GreetingsController;
 use App\Controllers\UserController;
 use App\Controllers\PhoneConfirmationController;
 // Repository Services
-use App\Repositories\Services\UserRepositoryService;
-use App\Repositories\Services\PhoneRepositoryService;
-use App\Repositories\Services\TransactionRepositoryService;
-use App\Repositories\Services\PhoneConfirmationRepositoryService;
+use App\Services\UserRepositoryService;
+use App\Services\PhoneRepositoryService;
+use App\Services\TransactionRepositoryService;
+use App\Services\PhoneConfirmationRepositoryService;
+use App\Controllers\RegistrationController;
 // Query Services
 use App\Queries\Services\TransactionQueryService;
 
@@ -23,4 +24,7 @@ return [
     
     PhoneConfirmationController::class => DI\create(PhoneConfirmationController::class)
         ->constructor(DI\get(CONTAINER_TWIG_ENVIRONMENT), DI\get(CONTAINER_RESPONSE), DI\get(UserRepositoryService::class), DI\get(PhoneRepositoryService::class), DI\get(TransactionRepositoryService::class), DI\get(PhoneConfirmationRepositoryService::class)),
+
+    RegistrationController::class => DI\create(RegistrationController::class)
+        ->constructor(DI\get(CONTAINER_RESPONSE)),
 ];

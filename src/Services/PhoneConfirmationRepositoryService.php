@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Services;
+namespace App\Services;
 
 use App\Repositories\Interfaces\PhoneConfirmationRepositoryInterface;
 use App\Common\Interfaces\ConfirmationCodeGeneratorInterface;

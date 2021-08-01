@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Services;
+namespace App\Services;
 
 use App\Repositories\Interfaces\PhoneConfirmationAttemptRepositoryInterface;
 use App\Common\Interfaces\DateTimeManagerInterface;

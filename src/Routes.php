@@ -11,6 +11,8 @@ use Psr\Http\Message\ResponseInterface;
 use App\Http\Controllers\GreetingsController;
 use App\Controllers\UserController;
 use App\Controllers\PhoneConfirmationController;
+use App\Controllers\RegistrationController;
+use League\Route\Strategy\JsonStrategy;
 
 /**
  * Description of Routes
@@ -21,6 +23,7 @@ class Routes
 {
     public static function routes(Container $container, Router $router): RouteCollectionInterface
     {
+        
         $router->map('GET', URL_SUBFOLDER.'/', function (ServerRequestInterface $request) use ($container): ResponseInterface {
             $response = $container->get('response');
             $response->getBody()->write('<h2>Maskaaaaa</h2>');
@@ -41,7 +44,8 @@ class Routes
         $router->map('GET', URL_SUBFOLDER.'/user', UserController::class.'::index');
 //        $router->map('GET', URL_SUBFOLDER.'/registration', PhoneConfirmationController::class.'::index');
 //        $router->addRoute('POST', URL_SUBFOLDER.'/registration', PhoneConfirmationController::class.'::index');
-        $router->post(URL_SUBFOLDER.'/registration', PhoneConfirmationController::class.'::index'); // ->setStrategy(new ApplicationStrategy); //->name('post_registration');
+//        $router->post(URL_SUBFOLDER.'/registration', PhoneConfirmationController::class.'::index'); // ->setStrategy(new ApplicationStrategy); //->name('post_registration');
+        $router->map('POST', URL_SUBFOLDER.'/registration', RegistrationController::class.'::index'); // ->setStrategy($container->get(JsonStrategy::class)); // ->setStrategy(new ApplicationStrategy); //->name('post_registration');
         
 //        $router
 //            ->group('/registration', function ($router) {

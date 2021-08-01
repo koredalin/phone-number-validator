@@ -5,11 +5,11 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use Twig\Environment;
 use Psr\Http\Message\ResponseInterface;
-use App\Repositories\Services\UserRepositoryService;
-use App\Repositories\Services\PhoneRepositoryService;
-use App\Repositories\Services\TransactionRepositoryService;
-use App\Repositories\Services\PhoneConfirmationRepositoryService;
-use App\Repositories\Services\PhoneConfirmationAttemptRepositoryService;
+use App\Services\UserRepositoryService;
+use App\Services\PhoneRepositoryService;
+use App\Services\TransactionRepositoryService;
+use App\Services\PhoneConfirmationRepositoryService;
+use App\Services\PhoneConfirmationAttemptRepositoryService;
 use Psr\Http\Message\ServerRequestInterface;
 use Laminas\Diactoros\Response\RedirectResponse;
 

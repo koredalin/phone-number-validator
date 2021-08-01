@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use App\Entities\Transaction;
 use Psr\Http\Message\ServerRequestInterface;
 use Laminas\Diactoros\Response\RedirectResponse;
-use App\Repositories\Services\TransactionRepositoryService;
+use App\Services\TransactionRepositoryService;
 use App\Queries\Services\TransactionQueryService;
 
 /**

@@ -12,12 +12,12 @@ use App\Repositories\Interfaces\TransactionRepositoryInterface;
 use App\Repositories\Interfaces\PhoneConfirmationRepositoryInterface;
 use App\Repositories\Interfaces\PhoneConfirmationAttemptRepositoryInterface;
 // Repository Services
-use App\Repositories\Services\UserRepositoryService;
-use App\Repositories\Services\CountryRepositoryService;
-use App\Repositories\Services\PhoneRepositoryService;
-use App\Repositories\Services\TransactionRepositoryService;
-use App\Repositories\Services\PhoneConfirmationRepositoryService;
-use App\Repositories\Services\PhoneConfirmationAttemptRepositoryService;
+use App\Services\UserRepositoryService;
+use App\Services\CountryRepositoryService;
+use App\Services\PhoneRepositoryService;
+use App\Services\TransactionRepositoryService;
+use App\Services\PhoneConfirmationRepositoryService;
+use App\Services\PhoneConfirmationAttemptRepositoryService;
 
 return [
     UserRepositoryService::class => DI\create(UserRepositoryService::class)
