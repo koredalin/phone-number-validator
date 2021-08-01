@@ -97,12 +97,18 @@ class RegistrationService implements RegistrationInterface
     public function registrate(): ?PhoneConfirmationAttempt
     {
         $email = $this->userService->getOrCreateByEmail($this->form->email);
-        $exception = $this->userService->getDoctrineException();
-        if ($exception !== '' || !isset($email->id) || $email->id < 1) {
-            $this->dbErrors = $exception;
+        $exceptionEmail = $this->userService->getDoctrineException();
+        if ($exceptionEmail !== '' || !isset($email->id) || $email->id < 1) {
+            $this->dbErrors = $exceptionEmail;
             return null;
         }
         
+        $phone = $this->phoneService->getOrCreateByAssembledPhoneNumber($this->form->phoneNumber);
+        $exceptionPhone = $this->phoneService->getDoctrineException();
+        if ($exceptionPhone !== '' || !isset($phone->id) || $phone->id < 1) {
+            $this->dbErrors = $exceptionPhone;
+            return null;
+        }
         
     }
     
