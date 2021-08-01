@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Services\Interfaces\TransactionRepositoryServiceInterface;
 use App\Repositories\Interfaces\TransactionRepositoryInterface;
 use App\Common\Interfaces\DateTimeManagerInterface;
 use App\Common\Interfaces\PasswordGeneratorInterface;
@@ -9,7 +10,7 @@ use App\Entities\Transaction;
 use App\Entities\User;
 use App\Entities\Phone;
 
-final class TransactionRepositoryService
+final class TransactionRepositoryService implements TransactionRepositoryServiceInterface
 {
     private $transactionRepository;
     private PasswordGeneratorInterface $passwordGenerator;
@@ -21,9 +22,14 @@ final class TransactionRepositoryService
         $this->dtManager = $dtManager;
     }
     
-    public function findOneById(int $id): Transaction
+    public function getOrCreateByEmailPhoneAwaitingStatus(User $email, Phone $phone): Transaction
     {
-        return $this->transactionRepository->findOneById($id);
+        $transactionObj = $this->findOneByEmailPhoneAwaitingStatus($email, $phone);
+        if (is_null($transactionObj)) {
+            return $this->make($email, $phone);
+        }
+        
+        return $transactionObj;
     }
     
     public function findOneByEmailPhoneAwaitingStatus(User $email, Phone $phone): ?Transaction
@@ -52,18 +58,13 @@ final class TransactionRepositoryService
         return $newTransaction;
     }
     
-    public function all(): array
+    public function findOneById(int $id): Transaction
     {
-        return $this->transactionRepository->all();
+        return $this->transactionRepository->findOneById($id);
     }
     
-    public function getOrCreateByEmailPhoneAwaitingStatus(User $email, Phone $phone): Transaction
-    {
-        $transactionObj = $this->findOneByEmailPhoneAwaitingStatus($email, $phone);
-        if (is_null($transactionObj)) {
-            return $this->make($email, $phone);
-        }
-        
-        return $transactionObj;
-    }
+//    public function all(): array
+//    {
+//        return $this->transactionRepository->all();
+//    }
 }

@@ -8,6 +8,8 @@ namespace App\Entities;
  */
 class Country
 {
+    const BG_PHONE_CODE = 359;
+    
     /** 
      * @Id
      * @Column(type="integer")

@@ -6,11 +6,10 @@ use App\Repositories\Interfaces\PhoneRepositoryInterface;
 use App\Repositories\Interfaces\CountryRepositoryInterface;
 use App\Common\Interfaces\DateTimeManagerInterface;
 use App\Entities\Phone;
+use App\Entities\Country;
 
 final class PhoneRepositoryService
 {
-    private const BG_PHONE_CODE = 359;
-    
     private $phoneRepository;
     private CountryRepositoryInterface $countryRepository;
     private DateTimeManagerInterface $dtManager;
@@ -67,7 +66,7 @@ final class PhoneRepositoryService
     {
         $assembledPhoneNumberTrimmed = trim($assembledPhoneNumber);
         if (substr($assembledPhoneNumberTrimmed, 0, 1) === '0') {
-            return $this->countryRepository->findOneByPhoneCode(self::BG_PHONE_CODE);
+            return $this->countryRepository->findOneByPhoneCode(Country::BG_PHONE_CODE);
         }
         
         foreach ($this->countryRepository->findAll() as $country) {
@@ -82,7 +81,7 @@ final class PhoneRepositoryService
     private function getPhoneNumberFromAssembledNumberCountry(string $assembledPhoneNumber, Country $country): int
     {
         $assembledPhoneNumberTrimmed = trim($assembledPhoneNumber);
-        if ($country->phoneCode === self::BG_PHONE_CODE) {
+        if ($country->phoneCode === Country::BG_PHONE_CODE) {
             $phoneNumber = (int)substr($assembledPhoneNumberTrimmed, 1);
             if (strlen($phoneNumber) !== 9) {
                 throw new Exception('Validations not made yet.');

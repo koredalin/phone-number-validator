@@ -19,6 +19,8 @@ use App\Services\TransactionRepositoryService;
 use App\Services\PhoneConfirmationRepositoryService;
 use App\Services\PhoneConfirmationAttemptRepositoryService;
 
+use App\Services\Interfaces\TransactionRepositoryServiceInterface;
+
 return [
     UserRepositoryService::class => DI\create(UserRepositoryService::class)
         ->constructor(DI\get(UserRepositoryInterface::class), DI\get(DateTimeManagerInterface::class)),

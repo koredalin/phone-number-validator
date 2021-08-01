@@ -3,6 +3,7 @@
 namespace App\Entities\Forms;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\Email;
 
 /**
  * Description of Registration
@@ -13,7 +14,9 @@ class Registration
 {
     /**
      * @Assert\NotBlank
-     * @Assert\Email
+     * @Email(
+     *      message = "The email '{{ value }}' is not a valid email."
+     * )
      */
     private $email;
     
@@ -28,7 +31,7 @@ class Registration
     /**
      * @Assert\NotBlank
      * @Assert\Length(min=3)
-     * @Assert\Length(min=10)
+     * @Assert\Length(max=10)
      */
     private $password;
     

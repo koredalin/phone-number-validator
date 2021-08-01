@@ -14,6 +14,8 @@ use App\Services\PhoneConfirmationRepositoryService;
 use App\Controllers\RegistrationController;
 // Query Services
 use App\Queries\Services\TransactionQueryService;
+// Validation
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 return [
     GreetingsController::class => DI\create(GreetingsController::class)
@@ -26,5 +28,5 @@ return [
         ->constructor(DI\get(CONTAINER_TWIG_ENVIRONMENT), DI\get(CONTAINER_RESPONSE), DI\get(UserRepositoryService::class), DI\get(PhoneRepositoryService::class), DI\get(TransactionRepositoryService::class), DI\get(PhoneConfirmationRepositoryService::class)),
 
     RegistrationController::class => DI\create(RegistrationController::class)
-        ->constructor(DI\get(CONTAINER_RESPONSE)),
+        ->constructor(DI\get(CONTAINER_RESPONSE)), //, DI\get(ValidatorInterface::class)),
 ];
