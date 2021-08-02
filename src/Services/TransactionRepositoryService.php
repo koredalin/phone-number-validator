@@ -6,41 +6,33 @@ use App\Services\Interfaces\TransactionRepositoryServiceInterface;
 use App\Repositories\Interfaces\TransactionRepositoryInterface;
 use App\Common\Interfaces\DateTimeManagerInterface;
 use App\Common\Interfaces\PasswordGeneratorInterface;
-use App\Entities\Transaction;
 use App\Entities\User;
 use App\Entities\Phone;
+use App\Entities\Transaction;
 
 final class TransactionRepositoryService implements TransactionRepositoryServiceInterface
 {
-    private $transactionRepository;
+    private TransactionRepositoryInterface $transactionRepository;
     private PasswordGeneratorInterface $passwordGenerator;
     private DateTimeManagerInterface $dtManager;
+    private string $dbException;
     
     public function __construct(TransactionRepositoryInterface $transactionRepository, PasswordGeneratorInterface $passwordGenerator, DateTimeManagerInterface $dtManager){
         $this->transactionRepository = $transactionRepository;
         $this->passwordGenerator = $passwordGenerator;
         $this->dtManager = $dtManager;
+        $this->dbException = '';
     }
     
-    public function getOrCreateByEmailPhoneAwaitingStatus(User $email, Phone $phone): Transaction
+    public function findOneById(int $id): ?Transaction
     {
-        $transactionObj = $this->findOneByEmailPhoneAwaitingStatus($email, $phone);
-        if (is_null($transactionObj)) {
-            return $this->make($email, $phone);
-        }
-        
-        return $transactionObj;
+        return $this->transactionRepository->findOneById($id);
     }
     
-    public function findOneByEmailPhoneAwaitingStatus(User $email, Phone $phone): ?Transaction
-    {
-        return $this->transactionRepository->findOneByEmailPhoneAwaitingStatus($email, $phone);
-    }
-    
-    public function make(User $email, Phone $phone, string $nonCryptedPassword): Transaction
+    public function make(User $user, Phone $phone, string $nonCryptedPassword): Transaction
     {
         $transaction = $this->transactionRepository->new();
-        $transaction->email = $email;
+        $transaction->user = $user;
         $transaction->phone = $phone;
         $transaction->status = Transaction::STATUS_AWAITING_REQUEST;
         $transaction->password = $this->passwordGenerator->encode($nonCryptedPassword);
@@ -52,15 +44,14 @@ final class TransactionRepositoryService implements TransactionRepositoryService
     
     public function save(Transaction $transaction): Transaction
     {
-        $newTransaction = $this->transactionRepository->save($transaction);
-        // Dispatch some event on every update
+        $savedTransaction = $this->transactionRepository->save($transaction);
         
-        return $newTransaction;
+        return $savedTransaction;
     }
     
-    public function findOneById(int $id): Transaction
+    public function getDatabaseException(): string
     {
-        return $this->transactionRepository->findOneById($id);
+        return $this->transactionRepository->getDatabaseException();
     }
     
 //    public function all(): array

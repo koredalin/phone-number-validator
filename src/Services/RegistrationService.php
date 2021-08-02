@@ -37,7 +37,7 @@ class RegistrationService implements RegistrationInterface
     private PhoneConfirmationRepositoryService $phoneConfirmationService;
     private PhoneConfirmationAttemptRepositoryService $phoneConfirmationAttemptService;
     
-    private $dbErrors;
+    private string $dbErrors;
     
     public function __construct(
         UserRepositoryService $userService,
@@ -96,6 +96,24 @@ class RegistrationService implements RegistrationInterface
     
     public function registrate(): ?PhoneConfirmationAttempt
     {
+        $email = $this->getOrCreateEmail();
+        if (is_null($email)) {
+            return null;
+        }
+        
+        $phone = $this->getOrCreatePhone();
+        if (is_null($phone)) {
+            return null;
+        }
+        
+        $transaction = $this->createTransaction();
+        if (is_null($transaction)) {
+            return null;
+        }
+    }
+    
+    private function getOrCreateEmail(): ?Email
+    {
         $email = $this->userService->getOrCreateByEmail($this->form->email);
         $exceptionEmail = $this->userService->getDoctrineException();
         if ($exceptionEmail !== '' || !isset($email->id) || $email->id < 1) {
@@ -103,13 +121,31 @@ class RegistrationService implements RegistrationInterface
             return null;
         }
         
+        return $email;
+    }
+    
+    private function getOrCreatePhone(): ?Phone
+    {
         $phone = $this->phoneService->getOrCreateByAssembledPhoneNumber($this->form->phoneNumber);
         $exceptionPhone = $this->phoneService->getDoctrineException();
         if ($exceptionPhone !== '' || !isset($phone->id) || $phone->id < 1) {
             $this->dbErrors = $exceptionPhone;
             return null;
         }
-        
+    
+        return $phone;
+    }
+    
+    private function createTransaction(): ?Transaction
+    {
+        $transaction = $this->transactionService->getOrCreateByAssembledPhoneNumber($this->form->phoneNumber);
+        $exceptionTransaction = $this->transactionService->getDatabaseException();
+        if ($exceptionTransaction !== '' || !isset($transaction->id) || $transaction->id < 1) {
+            $this->dbErrors = $exceptionTransaction;
+            return null;
+        }
+    
+        return $transaction;
     }
     
     /**
@@ -117,7 +153,7 @@ class RegistrationService implements RegistrationInterface
      * 
      * @return type
      */
-    public function getDbErrors()
+    public function getDatabaseErrors()
     {
         return $this->dbErrors;
     }

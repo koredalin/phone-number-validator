@@ -20,5 +20,5 @@ interface RegistrationInterface
     
     public function registrate(): ?PhoneConfirmationAttempt;
     
-    public function getDbErrors();
+    public function getDatabaseErrors(): string;
 }

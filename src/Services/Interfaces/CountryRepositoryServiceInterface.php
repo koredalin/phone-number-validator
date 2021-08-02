@@ -2,6 +2,8 @@
 
 namespace App\Services\Interfaces;
 
+use App\Entities\Country;
+
 /**
  *
  * @author Hristo

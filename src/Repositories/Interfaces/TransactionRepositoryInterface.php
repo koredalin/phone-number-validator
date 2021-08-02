@@ -18,7 +18,7 @@ interface TransactionRepositoryInterface
     
     public function findOneById(int $id): Transaction;
     
-    public function findOneByEmailPhoneAwaitingStatus(User $email, Phone $phone): ?Transaction;
-    
     public function save(Transaction $transaction): Transaction;
+    
+    public function getDatabaseException(): string;
 }

@@ -27,11 +27,14 @@ final class TransactionRepository implements TransactionRepositoryInterface
     
     private Transaction $newTransaction;
     
+    private string $dbException;
+    
     public function __construct(EntityManagerInterface $em, Transaction $newTransaction)
     {
         $this->em = $em;
         $this->objectRepository = $this->em->getRepository(Transaction::class);
         $this->newTransaction = $newTransaction;
+        $this->dbException = '';
     }
     
     
@@ -50,16 +53,20 @@ final class TransactionRepository implements TransactionRepositoryInterface
         return $this->objectRepository->find($id);
     }
     
-    public function findOneByEmailPhoneAwaitingStatus(User $email, Phone $phone): ?Transaction
-    {
-        return $this->objectRepository->findOneBy(['email_id' => $email->id, 'phone_id' => $phone->id, 'status' => Transaction::STATUS_AWAITING_REQUEST]);
-    }
-    
     public function save(Transaction $transaction): Transaction
     {
-        $this->objectRepository->persist($transaction);
-        $this->objectRepository->flush();
+        try {
+            $this->objectRepository->persist($transaction);
+            $this->objectRepository->flush();
+        } catch (\Exception $exception) {
+            $this->dbException = $exception->getMessage();
+        }
         
         return $transaction;
+    }
+    
+    public function getDatabaseException(): string
+    {
+        return $this->dbException;
     }
 }

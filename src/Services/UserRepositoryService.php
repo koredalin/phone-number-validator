@@ -38,11 +38,12 @@ final class UserRepositoryService
         return $this->save($userObj);
     }
     
-    public function save(User $user): void
+    public function save(User $user): User
     {
         $user->email = trim($user->email);
-        $this->userRepository->save($user);
-        // Dispatch some event on every update
+        $savedUser = $this->userRepository->save($user);
+        
+        return $savedUser;
     }
     
     public function findOneById(int $id): User
@@ -57,7 +58,7 @@ final class UserRepositoryService
     
     public function getDoctrineException(): string
     {
-        return $this->userRepository->getDoctrineException();
+        return $this->userRepository->getDatabaseException();
     }
     
 //    public function all(): array

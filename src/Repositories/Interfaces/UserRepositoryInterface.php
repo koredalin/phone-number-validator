@@ -21,5 +21,5 @@ interface UserRepositoryInterface
     
     public function save(User $email): User;
     
-    public function getDoctrineException(): string;
+    public function getDatabaseException(): string;
 }
