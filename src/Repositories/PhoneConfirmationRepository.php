@@ -47,7 +47,7 @@ final class PhoneConfirmationRepository implements PhoneConfirmationRepositoryIn
         return \unserialize($serializedNewObj);
     }
     
-    public function findOneById(int $id): PhoneConfirmation
+    public function findOneById(int $id): ?PhoneConfirmation
     {
         return $this->objectRepository->find($id);
     }

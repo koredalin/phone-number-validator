@@ -60,9 +60,4 @@ final class UserRepositoryService
     {
         return $this->userRepository->getDatabaseException();
     }
-    
-//    public function all(): array
-//    {
-//        return $this->userRepository->all();
-//    }
 }

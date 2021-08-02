@@ -10,7 +10,7 @@ use App\Entities\Transaction;
 
 final class PhoneConfirmationRepositoryService
 {
-    private $phoneConfirmationRepository;
+    private PhoneConfirmationRepositoryInterface $phoneConfirmationRepository;
     private DateTimeManagerInterface $dtManager;
     private ConfirmationCodeGeneratorInterface $confirmationCodeGenerator;
     
@@ -20,7 +20,7 @@ final class PhoneConfirmationRepositoryService
         $this->dtManager = $dtManager;
     }
     
-    public function findOneById(int $id): PhoneConfirmation
+    public function findOneById(int $id): ?PhoneConfirmation
     {
         return $this->phoneConfirmationRepository->findOneById($id);
     }
@@ -52,14 +52,15 @@ final class PhoneConfirmationRepositoryService
         return $dbObj;
     }
     
-    public function save(PhoneConfirmation $user): void
+    public function save(PhoneConfirmation $phoneConfirmation): PhoneConfirmation
     {
-        $this->phoneConfirmationRepository->save($user);
-        // Dispatch some event on every update
+        $savedPhoneConfirmation = $this->phoneConfirmationRepository->save($phoneConfirmation);
+        
+        return $savedPhoneConfirmation;
     }
     
-    public function all(): array
+    public function getDatabaseException(): string
     {
-        return $this->phoneConfirmationRepository->all();
+        return $this->phoneConfirmationRepository->getDatabaseException();
     }
 }

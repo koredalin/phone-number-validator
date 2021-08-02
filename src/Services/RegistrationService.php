@@ -110,6 +110,21 @@ class RegistrationService implements RegistrationInterface
         if (is_null($transaction)) {
             return null;
         }
+        
+        $phoneConfirmation = $this->createPhoneConfirmation($transaction);
+        if (is_null($phoneConfirmation)) {
+            return null;
+        }
+    }
+    
+    /**
+     * Returns the errors when a new registration is not recorded into the database.
+     * 
+     * @return type
+     */
+    public function getDatabaseErrors()
+    {
+        return $this->dbErrors;
     }
     
     private function getOrCreateByEmail(): ?User
@@ -148,13 +163,15 @@ class RegistrationService implements RegistrationInterface
         return $transaction;
     }
     
-    /**
-     * Returns the errors when a new registration is not recorded into the database.
-     * 
-     * @return type
-     */
-    public function getDatabaseErrors()
+    private function createPhoneConfirmation(Transaction $transaction): ?PhoneConfirmation
     {
-        return $this->dbErrors;
+        $transaction = $this->phoneConfirmationService->getOrCreateByTransactionAwaitingStatus($transaction);
+        $exceptionPhoneConfirmation = $this->phoneConfirmationService->getDatabaseException();
+        if ($exceptionPhoneConfirmation !== '' || !isset($transaction->id) || $transaction->id < 1) {
+            $this->dbErrors = $exceptionPhoneConfirmation;
+            return null;
+        }
+    
+        return $transaction;
     }
 }
