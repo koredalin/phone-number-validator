@@ -16,5 +16,5 @@ interface UserRepositoryServiceInterface
     
     public function findOneByEmail(string $emailName): User;
     
-    public function getDoctrineException(): string;
+    public function getDatabaseException(): string;
 }

@@ -16,5 +16,5 @@ interface PhoneRepositoryServiceInterface
     
     public function findByOnePhoneCodeNumber(int $phoneCode, int $phoneNumber): Phone;
     
-    public function getDoctrineException(): string;
+    public function getDatabaseException(): string;
 }

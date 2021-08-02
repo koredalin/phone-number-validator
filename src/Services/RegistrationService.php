@@ -12,11 +12,11 @@ use App\Entities\Transaction;
 use App\Entities\PhoneConfirmation;
 use App\Entities\PhoneConfirmationAttempt;
 // Repository Services
-use App\Services\UserRepositoryService;
-use App\Services\PhoneRepositoryService;
-use App\Services\TransactionRepositoryService;
-use App\Services\PhoneConfirmationRepositoryService;
-use App\Services\PhoneConfirmationAttemptRepositoryService;
+use App\Services\Interfaces\UserRepositoryServiceInterface;
+use App\Services\Interfaces\PhoneRepositoryServiceInterface;
+use App\Services\Interfaces\TransactionRepositoryServiceInterface;
+use App\Services\Interfaces\PhoneConfirmationRepositoryServiceInterface;
+use App\Services\Interfaces\PhoneConfirmationAttemptRepositoryServiceInterface;
 
 /**
  * Description of Registration
@@ -31,20 +31,20 @@ class RegistrationService implements RegistrationInterface
     
     private ?ConstraintViolationList $formErrors;
     
-    private UserRepositoryService $userService;
-    private PhoneRepositoryService $phoneService;
-    private TransactionRepositoryService $transactionService;
-    private PhoneConfirmationRepositoryService $phoneConfirmationService;
-    private PhoneConfirmationAttemptRepositoryService $phoneConfirmationAttemptService;
+    private UserRepositoryServiceInterface $userService;
+    private PhoneRepositoryServiceInterface $phoneService;
+    private TransactionRepositoryServiceInterface $transactionService;
+    private PhoneConfirmationRepositoryServiceInterface $phoneConfirmationService;
+    private PhoneConfirmationAttemptRepositoryServiceInterface $phoneConfirmationAttemptService;
     
     private string $dbErrors;
     
     public function __construct(
-        UserRepositoryService $userService,
-        PhoneRepositoryService $phoneService,
-        TransactionRepositoryService $transactionService,
-        PhoneConfirmationRepositoryService $phoneConfirmationService,
-        PhoneConfirmationAttemptRepositoryService $phoneConfirmationAttemptService
+        UserRepositoryServiceInterface $userService,
+        PhoneRepositoryServiceInterface $phoneService,
+        TransactionRepositoryServiceInterface $transactionService,
+        PhoneConfirmationRepositoryServiceInterface $phoneConfirmationService,
+        PhoneConfirmationAttemptRepositoryServiceInterface $phoneConfirmationAttemptService
     ) {
         $this->validator = Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator();
         $this->formErrors = null;
@@ -96,8 +96,8 @@ class RegistrationService implements RegistrationInterface
     
     public function registrate(): ?PhoneConfirmationAttempt
     {
-        $email = $this->getOrCreateEmail();
-        if (is_null($email)) {
+        $user = $this->getOrCreateByEmail();
+        if (is_null($user)) {
             return null;
         }
         
@@ -106,28 +106,28 @@ class RegistrationService implements RegistrationInterface
             return null;
         }
         
-        $transaction = $this->createTransaction();
+        $transaction = $this->createTransaction($user, $phone);
         if (is_null($transaction)) {
             return null;
         }
     }
     
-    private function getOrCreateEmail(): ?Email
+    private function getOrCreateByEmail(): ?User
     {
-        $email = $this->userService->getOrCreateByEmail($this->form->email);
-        $exceptionEmail = $this->userService->getDoctrineException();
-        if ($exceptionEmail !== '' || !isset($email->id) || $email->id < 1) {
+        $user = $this->userService->getOrCreateByEmail($this->form->email);
+        $exceptionEmail = $this->userService->getDatabaseException();
+        if ($exceptionEmail !== '' || !isset($user->id) || $user->id < 1) {
             $this->dbErrors = $exceptionEmail;
             return null;
         }
         
-        return $email;
+        return $user;
     }
     
     private function getOrCreatePhone(): ?Phone
     {
         $phone = $this->phoneService->getOrCreateByAssembledPhoneNumber($this->form->phoneNumber);
-        $exceptionPhone = $this->phoneService->getDoctrineException();
+        $exceptionPhone = $this->phoneService->getDatabaseException();
         if ($exceptionPhone !== '' || !isset($phone->id) || $phone->id < 1) {
             $this->dbErrors = $exceptionPhone;
             return null;
@@ -136,9 +136,9 @@ class RegistrationService implements RegistrationInterface
         return $phone;
     }
     
-    private function createTransaction(): ?Transaction
+    private function createTransaction(User $user, Phone $phone): ?Transaction
     {
-        $transaction = $this->transactionService->getOrCreateByAssembledPhoneNumber($this->form->phoneNumber);
+        $transaction = $this->transactionService->make($user, $phone, $this->form->password);
         $exceptionTransaction = $this->transactionService->getDatabaseException();
         if ($exceptionTransaction !== '' || !isset($transaction->id) || $transaction->id < 1) {
             $this->dbErrors = $exceptionTransaction;

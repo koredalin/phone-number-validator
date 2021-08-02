@@ -14,7 +14,7 @@ interface TransactionRepositoryServiceInterface
 {
     public function findOneById(int $id): ?Transaction;
     
-    public function make(User $user, Phone $phone, string $nonCryptedPassword): Transaction;
+    public function make(User $user, Phone $phone, string $rawPassword): Transaction;
     
     public function getDatabaseException(): string;
 }

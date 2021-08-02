@@ -19,26 +19,26 @@ final class UserRepositoryService
     public function getOrCreateByEmail(string $email): User
     {
         $trimmedEmail = trim($email);
-        $emailObj = $this->findOneByEmail($trimmedEmail);
-        if ($emailObj === null) {
-            $emailObj = $this->make($trimmedEmail);
+        $user = $this->findOneByEmail($trimmedEmail);
+        if ($user === null) {
+            $user = $this->make($trimmedEmail);
         }
         
-        return $emailObj;
+        return $user;
     }
     
     public function make(string $email): User
     {
         $trimmedEmail = trim($email);
-        $userObj = $this->userRepository->new();
-        $userObj->email = $trimmedEmail;
-        $userObj->createdAt = $this->dtManager->now();
-        $userObj->updatedAt = $this->dtManager->now();
+        $user = $this->userRepository->new();
+        $user->email = $trimmedEmail;
+        $user->createdAt = $this->dtManager->now();
+        $user->updatedAt = $this->dtManager->now();
         
-        return $this->save($userObj);
+        return $this->save($user);
     }
     
-    public function save(User $user): User
+    private function save(User $user): User
     {
         $user->email = trim($user->email);
         $savedUser = $this->userRepository->save($user);
@@ -56,7 +56,7 @@ final class UserRepositoryService
         return $this->userRepository->findOneByEmail($emailName);
     }
     
-    public function getDoctrineException(): string
+    public function getDatabaseException(): string
     {
         return $this->userRepository->getDatabaseException();
     }

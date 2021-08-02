@@ -26,11 +26,14 @@ final class PhoneConfirmationRepository implements PhoneConfirmationRepositoryIn
     
     private PhoneConfirmation $newPhoneConfirmation;
     
+    private string $dbException;
+    
     public function __construct(EntityManagerInterface $em, PhoneConfirmation $newPhoneConfirmation)
     {
         $this->em = $em;
         $this->objectRepository = $this->em->getRepository(PhoneConfirmation::class);
         $this->newPhoneConfirmation = $newPhoneConfirmation;
+        $this->dbException = '';
     }
     
     
@@ -56,16 +59,27 @@ final class PhoneConfirmationRepository implements PhoneConfirmationRepositoryIn
             ['id' => 'DESC'],
             1
         );
-        if (isset($result[0])) {
+        if (isset($result[0]) && $result[0] instanceof PhoneConfirmation) {
             return $result[0];
         }
         
         return null;
     }
     
-    public function save(PhoneConfirmation $phoneConfirmation): void
+    public function save(PhoneConfirmation $phoneConfirmation): PhoneConfirmation
     {
-        $this->objectRepository->persist($phoneConfirmation);
-        $this->objectRepository->flush();
+        try {
+            $this->objectRepository->persist($phoneConfirmation);
+            $this->objectRepository->flush();
+        } catch (Exception $exception) {
+            $this->dbException = $exception->getMessage();
+        }
+        
+        return $phoneConfirmation;
+    }
+    
+    public function getDatabaseException(): string
+    {
+        return $this->dbException;
     }
 }

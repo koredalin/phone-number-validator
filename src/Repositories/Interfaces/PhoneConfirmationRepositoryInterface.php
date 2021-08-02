@@ -3,7 +3,6 @@
 namespace App\Repositories\Interfaces;
 
 use App\Entities\PhoneConfirmation;
-
 use App\Entities\Transaction;
 
 /**
@@ -21,5 +20,7 @@ interface PhoneConfirmationRepositoryInterface
     
     public function findLastByTransactionAwaitingStatus(Transaction $transaction): ?PhoneConfirmation;
     
-    public function save(PhoneConfirmation $phoneConfirmation): void;
+    public function save(PhoneConfirmation $phoneConfirmation): PhoneConfirmation;
+    
+    public function getDatabaseException(): string;
 }

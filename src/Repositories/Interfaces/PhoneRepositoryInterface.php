@@ -21,5 +21,5 @@ interface PhoneRepositoryInterface
     
     public function save(Phone $user): Phone;
     
-    public function getDoctrineException(): string;
+    public function getDatabaseException(): string;
 }

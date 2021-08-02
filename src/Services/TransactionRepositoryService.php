@@ -29,20 +29,20 @@ final class TransactionRepositoryService implements TransactionRepositoryService
         return $this->transactionRepository->findOneById($id);
     }
     
-    public function make(User $user, Phone $phone, string $nonCryptedPassword): Transaction
+    public function make(User $user, Phone $phone, string $rawPassword): Transaction
     {
         $transaction = $this->transactionRepository->new();
         $transaction->user = $user;
         $transaction->phone = $phone;
         $transaction->status = Transaction::STATUS_AWAITING_REQUEST;
-        $transaction->password = $this->passwordGenerator->encode($nonCryptedPassword);
+        $transaction->password = $this->passwordGenerator->encode($rawPassword);
         $transaction->createdAt = $this->dtManager->now();
         $transaction->updatedAt = $this->dtManager->now();
         
         return $this->save($transaction);
     }
     
-    public function save(Transaction $transaction): Transaction
+    private function save(Transaction $transaction): Transaction
     {
         $savedTransaction = $this->transactionRepository->save($transaction);
         

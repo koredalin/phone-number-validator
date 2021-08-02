@@ -2,13 +2,14 @@
 
 namespace App\Services;
 
+use App\Services\Interfaces\PhoneRepositoryServiceInterface;
 use App\Repositories\Interfaces\PhoneRepositoryInterface;
 use App\Repositories\Interfaces\CountryRepositoryInterface;
 use App\Common\Interfaces\DateTimeManagerInterface;
 use App\Entities\Phone;
 use App\Entities\Country;
 
-final class PhoneRepositoryService
+final class PhoneRepositoryService implements PhoneRepositoryServiceInterface
 {
     private $phoneRepository;
     private CountryRepositoryInterface $countryRepository;
@@ -41,15 +42,15 @@ final class PhoneRepositoryService
         return $this->save($phone);
     }
     
-    public function save(Phone $phone): void
+    private function save(Phone $phone): Phone
     {
         $this->phoneRepository->save($phone);
         // Dispatch some event on every update
     }
     
-    public function all(): array
+    public function getDatabaseException(): string
     {
-        return $this->phoneRepository->all();
+        return $this->phoneRepository->getDatabaseException();
     }
     
     public function getOrCreateByAssembledPhoneNumber(string $assembledPhoneNumber): Phone
