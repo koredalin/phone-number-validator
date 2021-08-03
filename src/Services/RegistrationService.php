@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Services\Interfaces\RegistrationServiceInterface;
 use App\Entities\Forms\RegistrationForm;
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 // Entities
 use App\Entities\User;
@@ -48,7 +50,7 @@ class RegistrationService implements RegistrationServiceInterface
         $this->phoneService = $phoneService;
         $this->transactionService = $transactionService;
         $this->phoneConfirmationService = $phoneConfirmationService;
-        $this->dbErrors = null;
+        $this->dbErrors = '';
     }
     
     
@@ -120,7 +122,7 @@ class RegistrationService implements RegistrationServiceInterface
      * 
      * @return type
      */
-    public function getDatabaseErrors()
+    public function getDatabaseErrors(): string
     {
         return $this->dbErrors;
     }

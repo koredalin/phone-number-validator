@@ -31,20 +31,4 @@ final class CountryRepositoryService implements CountryRepositoryServiceInterfac
     {
         return $this->countryRepository->findAll();
     }
-    
-//    public function make(string $country, string $iso3, int $phoneCode): Country
-//    {
-//        $countryObj = $this->countryRepository->new();
-//        $countryObj->country = $country;
-//        $countryObj->iso3 = $iso3;
-//        $countryObj->phoneCode = $phoneCode;
-//        
-//        return $this->save($countryObj);
-//    }
-    
-//    public function save(Country $country): void
-//    {
-//        $this->countryRepository->save($country);
-//        // Dispatch some event on every update
-//    }
 }

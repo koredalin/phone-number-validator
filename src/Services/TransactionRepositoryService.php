@@ -17,7 +17,11 @@ final class TransactionRepositoryService implements TransactionRepositoryService
     private DateTimeManagerInterface $dtManager;
     private string $dbException;
     
-    public function __construct(TransactionRepositoryInterface $transactionRepository, PasswordGeneratorInterface $passwordGenerator, DateTimeManagerInterface $dtManager){
+    public function __construct(
+        TransactionRepositoryInterface $transactionRepository,
+        PasswordGeneratorInterface $passwordGenerator,
+        DateTimeManagerInterface $dtManager
+    ){
         $this->transactionRepository = $transactionRepository;
         $this->passwordGenerator = $passwordGenerator;
         $this->dtManager = $dtManager;

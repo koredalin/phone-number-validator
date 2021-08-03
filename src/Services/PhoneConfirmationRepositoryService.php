@@ -15,7 +15,11 @@ final class PhoneConfirmationRepositoryService implements PhoneConfirmationRepos
     private DateTimeManagerInterface $dtManager;
     private ConfirmationCodeGeneratorInterface $confirmationCodeGenerator;
     
-    public function __construct(PhoneConfirmationRepositoryInterface $phoneConfirmationRepository, ConfirmationCodeGeneratorInterface $confirmationCodeGenerator, DateTimeManagerInterface $dtManager){
+    public function __construct(
+        PhoneConfirmationRepositoryInterface $phoneConfirmationRepository,
+        ConfirmationCodeGeneratorInterface $confirmationCodeGenerator,
+        DateTimeManagerInterface $dtManager
+    ){
         $this->phoneConfirmationRepository = $phoneConfirmationRepository;
         $this->confirmationCodeGenerator = $confirmationCodeGenerator;
         $this->dtManager = $dtManager;
