@@ -2,11 +2,12 @@
 
 namespace App\Services;
 
+use App\Services\Interfaces\UserRepositoryServiceInterface;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Entities\User;
 use App\Common\Interfaces\DateTimeManagerInterface;
 
-final class UserRepositoryService
+final class UserRepositoryService implements UserRepositoryServiceInterface
 {
     private $userRepository;
     private DateTimeManagerInterface $dtManager;

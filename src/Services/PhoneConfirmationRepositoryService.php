@@ -2,13 +2,14 @@
 
 namespace App\Services;
 
+use App\Services\Interfaces\PhoneConfirmationRepositoryServiceInterface;
 use App\Repositories\Interfaces\PhoneConfirmationRepositoryInterface;
 use App\Common\Interfaces\ConfirmationCodeGeneratorInterface;
 use App\Common\Interfaces\DateTimeManagerInterface;
 use App\Entities\PhoneConfirmation;
 use App\Entities\Transaction;
 
-final class PhoneConfirmationRepositoryService
+final class PhoneConfirmationRepositoryService implements PhoneConfirmationRepositoryServiceInterface
 {
     private PhoneConfirmationRepositoryInterface $phoneConfirmationRepository;
     private DateTimeManagerInterface $dtManager;

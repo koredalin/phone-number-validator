@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Services\Interfaces\RegistrationInterface;
+use App\Services\Interfaces\RegistrationServiceInterface;
 use App\Entities\Forms\RegistrationForm;
 use Symfony\Component\Validator\ConstraintViolationList;
 // Entities
@@ -10,20 +10,18 @@ use App\Entities\User;
 use App\Entities\Phone;
 use App\Entities\Transaction;
 use App\Entities\PhoneConfirmation;
-use App\Entities\PhoneConfirmationAttempt;
 // Repository Services
 use App\Services\Interfaces\UserRepositoryServiceInterface;
 use App\Services\Interfaces\PhoneRepositoryServiceInterface;
 use App\Services\Interfaces\TransactionRepositoryServiceInterface;
 use App\Services\Interfaces\PhoneConfirmationRepositoryServiceInterface;
-use App\Services\Interfaces\PhoneConfirmationAttemptRepositoryServiceInterface;
 
 /**
  * Description of Registration
  *
  * @author Hristo
  */
-class RegistrationService implements RegistrationInterface
+class RegistrationService implements RegistrationServiceInterface
 {
     private ValidatorInterface $validator;
     
@@ -35,7 +33,6 @@ class RegistrationService implements RegistrationInterface
     private PhoneRepositoryServiceInterface $phoneService;
     private TransactionRepositoryServiceInterface $transactionService;
     private PhoneConfirmationRepositoryServiceInterface $phoneConfirmationService;
-    private PhoneConfirmationAttemptRepositoryServiceInterface $phoneConfirmationAttemptService;
     
     private string $dbErrors;
     
@@ -43,8 +40,7 @@ class RegistrationService implements RegistrationInterface
         UserRepositoryServiceInterface $userService,
         PhoneRepositoryServiceInterface $phoneService,
         TransactionRepositoryServiceInterface $transactionService,
-        PhoneConfirmationRepositoryServiceInterface $phoneConfirmationService,
-        PhoneConfirmationAttemptRepositoryServiceInterface $phoneConfirmationAttemptService
+        PhoneConfirmationRepositoryServiceInterface $phoneConfirmationService
     ) {
         $this->validator = Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator();
         $this->formErrors = null;
@@ -52,7 +48,6 @@ class RegistrationService implements RegistrationInterface
         $this->phoneService = $phoneService;
         $this->transactionService = $transactionService;
         $this->phoneConfirmationService = $phoneConfirmationService;
-        $this->phoneConfirmationAttemptService = $phoneConfirmationAttemptService;
         $this->dbErrors = null;
     }
     
@@ -75,9 +70,7 @@ class RegistrationService implements RegistrationInterface
     
     public function isValidForm(): bool
     {
-        if (!isset($this->form)) {
-            throw new \Exception('Registration form not set yet. Use Registration::createForm() first.');
-        }
+        $this->notSetFormException();
         
         $errors = $this->validator->validate($this->form);
         $this->formErrors = $errors;
@@ -85,17 +78,20 @@ class RegistrationService implements RegistrationInterface
         return count($errors);
     }
     
-    public function getFormErrors(): ?ConstraintViolationList
+    public function getFormErrors(): string
     {
-        if (!isset($this->form)) {
-            throw new \Exception('Registration form not set yet. Use Registration::createForm() first.');
-        }
+        $this->notSetFormException();
         
-        return $this->formErrors;
+        return \json_encode($this->formErrors ?? '');
     }
     
-    public function registrate(): ?PhoneConfirmationAttempt
+    public function registrate(): ?PhoneConfirmation
     {
+        $this->notSetFormException();
+        if (!$this->isValidForm()) {
+            return null;
+        }
+        
         $user = $this->getOrCreateByEmail();
         if (is_null($user)) {
             return null;
@@ -115,6 +111,8 @@ class RegistrationService implements RegistrationInterface
         if (is_null($phoneConfirmation)) {
             return null;
         }
+        
+        return $phoneConfirmation;
     }
     
     /**
@@ -165,13 +163,20 @@ class RegistrationService implements RegistrationInterface
     
     private function createPhoneConfirmation(Transaction $transaction): ?PhoneConfirmation
     {
-        $transaction = $this->phoneConfirmationService->getOrCreateByTransactionAwaitingStatus($transaction);
+        $phoneConfirmation = $this->phoneConfirmationService->getOrCreateByTransactionAwaitingStatus($transaction);
         $exceptionPhoneConfirmation = $this->phoneConfirmationService->getDatabaseException();
-        if ($exceptionPhoneConfirmation !== '' || !isset($transaction->id) || $transaction->id < 1) {
+        if ($exceptionPhoneConfirmation !== '' || !isset($phoneConfirmation->id) || $phoneConfirmation->id < 1) {
             $this->dbErrors = $exceptionPhoneConfirmation;
             return null;
         }
     
-        return $transaction;
+        return $phoneConfirmation;
+    }
+    
+    private function notSetFormException(): void
+    {
+        if (!isset($this->form)) {
+            throw new \Exception('Registration form not set yet. Use Registration::createForm() first.');
+        }
     }
 }
