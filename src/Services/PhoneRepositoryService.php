@@ -15,7 +15,7 @@ final class PhoneRepositoryService implements PhoneRepositoryServiceInterface
     private CountryRepositoryInterface $countryRepository;
     private DateTimeManagerInterface $dtManager;
     
-    private string $anyErrors;
+    private string $anyError;
     
     public function __construct(
         PhoneRepositoryInterface $phoneRepository,
@@ -25,7 +25,7 @@ final class PhoneRepositoryService implements PhoneRepositoryServiceInterface
         $this->phoneRepository = $phoneRepository;
         $this->countryRepository = $countryRepository;
         $this->dtManager = $dtManager;
-        $this->anyErrors = '';
+        $this->anyError = '';
     }
     
     public function findOneById(int $id): ?Phone
@@ -63,7 +63,7 @@ final class PhoneRepositoryService implements PhoneRepositoryServiceInterface
     
     public function getAnyError(): string
     {
-        return $this->anyErrors;
+        return $this->anyError;
     }
     
     public function getOrCreateByAssembledPhoneNumber(string $assembledPhoneNumber): ?Phone
@@ -96,7 +96,7 @@ final class PhoneRepositoryService implements PhoneRepositoryServiceInterface
             }
         }
         
-        $this->anyErrors = 'Unknown phone code (country).';
+        $this->anyError = 'Unknown phone code (country).';
         
         return null;
     }
