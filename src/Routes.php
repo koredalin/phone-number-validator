@@ -10,7 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use App\Http\Controllers\GreetingsController;
 use App\Controllers\UserController;
-use App\Controllers\PhoneConfirmationController;
+use App\Controllers\ConfirmationController;
 use App\Controllers\RegistrationController;
 use League\Route\Strategy\JsonStrategy;
 

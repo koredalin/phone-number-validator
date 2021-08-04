@@ -2,17 +2,23 @@
 
 namespace App\Controllers;
 
-use App\Controllers\BaseControllerJson;
+use App\Controllers\BaseController;
+use Twig\Environment;
 use Psr\Http\Message\ResponseInterface;
-use App\Services\Interfaces\RegistrationServiceInterface;
+use App\Services\UserRepositoryService;
+use App\Services\PhoneRepositoryService;
+use App\Services\TransactionRepositoryService;
+use App\Services\PhoneConfirmationRepositoryService;
+use App\Services\PhoneConfirmationAttemptRepositoryService;
 use Psr\Http\Message\ServerRequestInterface;
+use Laminas\Diactoros\Response\RedirectResponse;
 
 /**
- * Description of RegistrationFormController
+ * Description of ConfirmationController
  *
  * @author Hristo
  */
-class RegistrationController extends BaseControllerJson
+class ConfirmationController extends BaseController
 {
     private RegistrationServiceInterface $registrationService;
     
