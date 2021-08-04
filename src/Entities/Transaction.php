@@ -29,6 +29,8 @@ class Transaction
     
     /**
      * @Column(name="user_id")
+     * @ManyToOne(targetEntity="Phone")
+     * @var User
      */
     private User $user;
     
@@ -37,6 +39,7 @@ class Transaction
      * 
      * @ManyToOne(targetEntity="Phone", inversedBy="users")
      * @JoinColumn(name="phone_id", nullable="false", referencedColumnName="id")
+     * @var Phone
      */
     private Phone $phone;
     
@@ -51,12 +54,12 @@ class Transaction
     private string $password;
     
     /**
-     * @Column(name="created_at")
+     * @Column(name="created_at", type="datetime")
      */
     private \DateTime $createdAt;
         
     /**
-     * @Column(name="updated_at")
+     * @Column(name="updated_at", type="datetime")
      */
     private \DateTime $updatedAt;
     

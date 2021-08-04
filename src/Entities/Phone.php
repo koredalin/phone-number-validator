@@ -41,12 +41,12 @@ class Phone
     private int $phoneNumber;
     
     /**
-     * @Column(name="created_at")
+     * @Column(name="created_at", type="datetime")
      */
     private DateTime $createdAt;
         
     /**
-     * @Column(name="updated_at")
+     * @Column(name="updated_at", type="datetime")
      */
     private DateTime $updatedAt;
     

@@ -30,6 +30,7 @@ class PhoneConfirmationAttempt
      * @Column(name="phone_confirmation_id", type="bigint")
      * 
      * @ManyToOne(targetEntity="PhoneConfirmation")
+     * @var PhoneConfirmation
      */
     private PhoneConfirmation $phoneConfirmation;
     
@@ -39,12 +40,12 @@ class PhoneConfirmationAttempt
     private string $status;
     
     /**
-     * @Column(name="created_at")
+     * @Column(name="created_at", type="datetime")
      */
     private \DateTime $createdAt;
         
     /**
-     * @Column(name="updated_at")
+     * @Column(name="updated_at", type="datetime")
      */
     private \DateTime $updatedAt;
     

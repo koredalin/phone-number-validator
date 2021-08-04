@@ -32,6 +32,7 @@ class PhoneConfirmation
      * @Column(name="transaction_id", type="bigint")
      * 
      * @ManyToOne(targetEntity="Transaction")
+     * @var Transaction
      */
     private Transaction $transaction;
     
@@ -46,17 +47,17 @@ class PhoneConfirmation
     private string $status;
     
     /**
-     * @Column(name="confirmed_at")
+     * @Column(name="confirmed_at", type="datetime")
      */
     private ?DateTime $confirmedAt;
     
     /**
-     * @Column(name="created_at")
+     * @Column(name="created_at", type="datetime")
      */
     private DateTime $createdAt;
         
     /**
-     * @Column(name="updated_at")
+     * @Column(name="updated_at", type="datetime")
      */
     private DateTime $updatedAt;
     
