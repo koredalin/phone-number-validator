@@ -38,10 +38,10 @@ final class PhoneRepositoryService implements PhoneRepositoryServiceInterface
     public function make(Country $country, int $phoneNumber): Phone
     {
         $phone = $this->phoneRepository->new();
-        $phone->country = $country;
-        $phone->phoneNumber = $phoneNumber;
-        $phone->createdAt = $this->dtManager->now();
-        $phone->updatedAt = $this->dtManager->now();
+        $phone->setCountry($country);
+        $phone->setPhoneNumber($phoneNumber);
+        $phone->setCreatedAt($this->dtManager->now());
+        $phone->setUpdatedAt($this->dtManager->now());
         
         return $this->save($phone);
     }
@@ -49,7 +49,9 @@ final class PhoneRepositoryService implements PhoneRepositoryServiceInterface
     private function save(Phone $phone): Phone
     {
         $this->phoneRepository->save($phone);
-        // Dispatch some event on every update
+        echo __LINE__; exit;
+        
+        return $phone;
     }
     
     public function getDatabaseException(): string
@@ -63,6 +65,10 @@ final class PhoneRepositoryService implements PhoneRepositoryServiceInterface
         $phoneNumber = $this->getPhoneNumberFromAssembledNumberCountry($assembledPhoneNumber, $countryObj);
         
         $phoneObj = $this->make($countryObj, $phoneNumber);
+        print_r($countryObj);
+        echo $assembledPhoneNumber. ' |||||| '.$phoneNumber. ' ||||||||||||| ';
+        print_r($phoneObj);
+        exit;
         
         return $phoneObj;
     }
@@ -75,7 +81,7 @@ final class PhoneRepositoryService implements PhoneRepositoryServiceInterface
         }
         
         foreach ($this->countryRepository->findAll() as $country) {
-            if (strpos($assembledPhoneNumber, $country->phoneCode) === 0) {
+            if (strpos($assembledPhoneNumber, trim($country->getPhoneCode())) === 0) {
                 return $country;
             }
         }
@@ -86,7 +92,7 @@ final class PhoneRepositoryService implements PhoneRepositoryServiceInterface
     private function getPhoneNumberFromAssembledNumberCountry(string $assembledPhoneNumber, Country $country): int
     {
         $assembledPhoneNumberTrimmed = trim($assembledPhoneNumber);
-        if ($country->phoneCode === Country::BG_PHONE_CODE) {
+        if ($country->getPhoneCode() === Country::BG_PHONE_CODE) {
             $phoneNumber = (int)substr($assembledPhoneNumberTrimmed, 1);
             if (strlen($phoneNumber) !== 9) {
                 throw new Exception('Validations not made yet.');
@@ -94,7 +100,7 @@ final class PhoneRepositoryService implements PhoneRepositoryServiceInterface
             return $phoneNumber;
         }
         
-        return $this->strReplaceFirst($country->phoneCode, '', $assembledPhoneNumberTrimmed);
+        return $this->strReplaceFirst($country->getPhoneCode(), '', $assembledPhoneNumberTrimmed);
     }
     
     // https://stackoverflow.com/a/1252705

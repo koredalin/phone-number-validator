@@ -41,12 +41,12 @@ class PhoneConfirmationAttempt
     /**
      * @Column(name="created_at")
      */
-    private DateTime $createdAt;
+    private \DateTime $createdAt;
         
     /**
      * @Column(name="updated_at")
      */
-    private DateTime $updatedAt;
+    private \DateTime $updatedAt;
     
     /**************************************************************************/
     /******************************* SETTERS **********************************/

@@ -15,9 +15,9 @@ interface UserRepositoryInterface
      */
     public function new(): User;
     
-    public function findOneById(int $id): User;
+    public function findOneById(int $id): ?User;
     
-    public function findOneByEmail(string $email): User;
+    public function findOneByEmail(string $email): ?User;
     
     public function save(User $email): User;
     

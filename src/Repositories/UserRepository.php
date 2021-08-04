@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repositories\Interfaces\UserRepositoryInterface;
+use Doctrine\Persistence\ObjectRepository;
 use App\Entities\User;
 
 /**
@@ -47,22 +48,22 @@ final class UserRepository implements UserRepositoryInterface
         return \unserialize($serializedNewObj);
     }
     
-    public function findOneById(int $id): User
+    public function findOneById(int $id): ?User
     {
         return $this->objectRepository->find($id);
     }
     
-    public function findOneByEmail(string $email): User
+    public function findOneByEmail(string $email): ?User
     {
-        return $this->objectRepository->findBy(['email' => $email]);
+        return $this->objectRepository->findOneBy(['email' => $email]);
     }
     
     public function save(User $user): User
     {
         try {
-            $this->objectRepository->persist($user);
-            $this->objectRepository->flush();
-        } catch (Exception $exception) {
+            $this->em->persist($user);
+            $this->em->flush();
+        } catch (\Exception $exception) {
             $this->dbException = $exception->getMessage();
         }
         

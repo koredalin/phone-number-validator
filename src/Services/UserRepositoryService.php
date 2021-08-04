@@ -30,29 +30,27 @@ final class UserRepositoryService implements UserRepositoryServiceInterface
     
     public function make(string $email): User
     {
-        $trimmedEmail = trim($email);
         $user = $this->userRepository->new();
-        $user->email = $trimmedEmail;
-        $user->createdAt = $this->dtManager->now();
-        $user->updatedAt = $this->dtManager->now();
+        $user->setEmail(trim($email));
+        $user->setCreatedAt($this->dtManager->now());
+        $user->setUpdatedAt($this->dtManager->now());
         
         return $this->save($user);
     }
     
     private function save(User $user): User
     {
-        $user->email = trim($user->email);
         $savedUser = $this->userRepository->save($user);
         
         return $savedUser;
     }
     
-    public function findOneById(int $id): User
+    public function findOneById(int $id): ?User
     {
         return $this->userRepository->findOneById($id);
     }
     
-    public function findOneByEmail(string $emailName): User
+    public function findOneByEmail(string $emailName): ?User
     {
         return $this->userRepository->findOneByEmail($emailName);
     }

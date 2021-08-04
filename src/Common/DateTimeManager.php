@@ -13,7 +13,7 @@ class DateTimeManager implements DateTimeManagerInterface
 {
     public function now(): \DateTime
     {
-        return new DateTime('NOW');
+        return new \DateTime('NOW');
     }
     
     public function nowStr(): string

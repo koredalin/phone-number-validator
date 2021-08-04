@@ -4,13 +4,19 @@ namespace App\Entities;
 
 use DateTime;
 use App\Entities\Country;
-use App\Entities\Transaction;
+use Doctrine\ORM\Mapping\UniqueConstraint;
 //use Doctrine\Common\Collections\ArrayCollection;
 //use Doctrine\Common\Collections\Collection;
 
 /**
  * @Entity
- * @Table(name="phones")
+ * @Table(name="phones",
+ *      uniqueConstraints={
+ *          @UniqueConstraint(name="unique_phone",
+ *              columns={"country_id", "phone_number"}
+ *          )
+ *      }
+ * )
  */
 class Phone
 {
@@ -22,14 +28,15 @@ class Phone
     private int $id;
     
     /**
-     * @Column(name="country_id", type="integer")
+     * @Column(name="country_id")
      * 
      * @ManyToOne(targetEntity="Country")
+     * @var Country
      */
     private Country $country;
     
     /**
-     * @Column(name="phone_number", type="bigint", unique="true")
+     * @Column(name="phone_number", type="bigint")
      */
     private int $phoneNumber;
     
@@ -63,7 +70,7 @@ class Phone
         $this->id = $id;
     }
     
-    public function setCountry(int $Country): void
+    public function setCountry(Country $Country): void
     {
         $this->country = $Country;
     }
@@ -102,7 +109,7 @@ class Phone
         return $this->id;
     }
     
-    public function getCountry(): int
+    public function getCountry(): Country
     {
         return $this->counrty;
     }

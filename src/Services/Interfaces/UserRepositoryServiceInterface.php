@@ -12,9 +12,9 @@ interface UserRepositoryServiceInterface
 {
     public function getOrCreateByEmail(string $email): User;
     
-    public function findOneById(int $id): User;
+    public function findOneById(int $id): ?User;
     
-    public function findOneByEmail(string $emailName): User;
+    public function findOneByEmail(string $emailName): ?User;
     
     public function getDatabaseException(): string;
 }

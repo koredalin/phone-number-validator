@@ -2,6 +2,8 @@
 
 namespace App\Entities;
 
+use DateTime;
+
 /**
  * @Entity
  * @Table(name="users")

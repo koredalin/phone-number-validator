@@ -59,8 +59,8 @@ final class PhoneRepository implements PhoneRepositoryInterface
     public function save(Phone $phone): Phone
     {
         try {
-            $this->objectRepository->persist($phone);
-            $this->objectRepository->flush();
+            $this->em->persist($phone);
+            $this->em->flush();
         } catch (\Exception $exception) {
             $this->dbException = $exception;
         }
