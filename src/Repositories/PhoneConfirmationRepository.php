@@ -55,7 +55,7 @@ final class PhoneConfirmationRepository implements PhoneConfirmationRepositoryIn
     public function findLastByTransactionAwaitingStatus(Transaction $transaction): ?PhoneConfirmation
     {
         $result = $this->objectRepository->findBy(
-            ['transaction_id' => $transaction->id, 'status' => PhoneConfirmation::STATUS_AWAITING_REQUEST],
+            ['transaction' => $transaction, 'status' => PhoneConfirmation::STATUS_AWAITING_REQUEST],
             ['id' => 'DESC'],
             1
         );
@@ -69,8 +69,8 @@ final class PhoneConfirmationRepository implements PhoneConfirmationRepositoryIn
     public function save(PhoneConfirmation $phoneConfirmation): PhoneConfirmation
     {
         try {
-            $this->objectRepository->persist($phoneConfirmation);
-            $this->objectRepository->flush();
+            $this->em->persist($phoneConfirmation);
+            $this->em->flush();
         } catch (Exception $exception) {
             $this->dbException = $exception->getMessage();
         }

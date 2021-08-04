@@ -83,7 +83,7 @@ class Transaction
     public function setStatus(string $status): void
     {
         if (!in_array($status, self::ALL_STATUSES, true)) {
-            throw new \InvalidArgumentException('Not supported phone confirmation status code: '.var_export($status, true));
+            throw new \InvalidArgumentException('Not supported transaction status code: '.var_export($status, true));
         }
         
         $this->status = $status;

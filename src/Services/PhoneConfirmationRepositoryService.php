@@ -38,11 +38,11 @@ final class PhoneConfirmationRepositoryService implements PhoneConfirmationRepos
     public function make(Transaction $transaction): PhoneConfirmation
     {
         $phoneConfirmationObj = $this->phoneConfirmationRepository->new();
-        $phoneConfirmationObj->transaction = $transaction;
-        $phoneConfirmationObj->confirmationCode = $this->confirmationCodeGenerator->generate();
-        $phoneConfirmationObj->status = PhoneConfirmation::STATUS_AWAITING_REQUEST;
-        $phoneConfirmationObj->createdAt = $this->dtManager->now();
-        $phoneConfirmationObj->updatedAt = $this->dtManager->now();
+        $phoneConfirmationObj->setTransaction($transaction);
+        $phoneConfirmationObj->setConfirmationCode($this->confirmationCodeGenerator->generate());
+        $phoneConfirmationObj->setStatus(PhoneConfirmation::STATUS_AWAITING_REQUEST);
+        $phoneConfirmationObj->setCreatedAt($this->dtManager->now());
+        $phoneConfirmationObj->setUpdatedAt($this->dtManager->now());
         
         return $this->save($phoneConfirmationObj);
     }

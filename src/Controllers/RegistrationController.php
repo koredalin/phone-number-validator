@@ -29,19 +29,20 @@ class RegistrationController extends BaseControllerJson
         $requestBody = $request->getBody()->getContents();
         $this->registrationService->createForm($requestBody);
         if (!$this->registrationService->isValidForm()) {
-//            echo __LINE__; exit;
             return $this->render($this->registrationService->getFormErrors(), ['formValidation' => 'failure']);
         }
-//        print_r($form); exit;
-//        return $this->render($form->getRegistrationFormJson(), ['formValidation' => 'success']);
         
         $phoneConfirmation = $this->registrationService->registrate();
         if (is_null($phoneConfirmation)) {
-//            echo __LINE__; exit;
-            return $this->render($this->registrationService->getDatabaseErrors(), ['databaseValidation' => 'failure']);
+            return $this->render($this->registrationService->getDatabaseErrors(), ['formValidation' => 'success', 'databaseValidation' => 'failure']);
         }
-//            echo __LINE__; exit;
         
-        return $this->render(\json_encode($phoneConfirmation), ['formValidation' => 'success', 'databaseValidation' => 'success',]);
+        $responceArguments = [
+            'formValidation' => 'success',
+            'databaseValidation' => 'success',
+            'nextWebPage' => $this->registrationService->getNextWebPage(),
+        ];
+        
+        return $this->render(\json_encode($phoneConfirmation), $responceArguments);
     }
 }

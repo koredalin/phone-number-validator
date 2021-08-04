@@ -25,6 +25,8 @@ use App\Services\Interfaces\PhoneConfirmationRepositoryServiceInterface;
  */
 class RegistrationService implements RegistrationServiceInterface
 {
+    const NEXT_WEB_PAGE_GROUP = '/confirmation';
+    
     private ValidatorInterface $validator;
     
     private RegistrationForm $form;
@@ -38,6 +40,11 @@ class RegistrationService implements RegistrationServiceInterface
     
     private string $dbErrors;
     
+    private bool $isFinishedRegistration;
+    
+    private string $nextWebPage;
+
+
     public function __construct(
         RegistrationForm $registrationForm,
         UserRepositoryServiceInterface $userService,
@@ -57,6 +64,8 @@ class RegistrationService implements RegistrationServiceInterface
         $this->transactionService = $transactionService;
         $this->phoneConfirmationService = $phoneConfirmationService;
         $this->dbErrors = '';
+        $this->isFinishedRegistration = false;
+        $this->nextWebPage = '';
     }
     
     
@@ -93,6 +102,10 @@ class RegistrationService implements RegistrationServiceInterface
     
     public function registrate(): ?PhoneConfirmation
     {
+        if ($this->isFinishedRegistration) {
+            throw new \Exception('The registration is already made.');
+        }
+        
         $this->notSetFormException();
         if (!$this->isValidForm()) {
             return null;
@@ -110,15 +123,16 @@ class RegistrationService implements RegistrationServiceInterface
         
         $transaction = $this->createTransaction($user, $phone);
         if (is_null($transaction)) {
-        echo $this->getDatabaseErrors(); exit;
             return null;
         }
-        echo __LINE__; exit;
         
-//        $phoneConfirmation = $this->createPhoneConfirmation($transaction);
-//        if (is_null($phoneConfirmation)) {
-//            return null;
-//        }
+        $phoneConfirmation = $this->createPhoneConfirmation($transaction);
+        if (is_null($phoneConfirmation) || $phoneConfirmation->getId() < 1) {
+            return null;
+        }
+        
+        $this->isFinishedRegistration = true;
+        $this->nextWebPage = self::NEXT_WEB_PAGE_GROUP.'/'.$phoneConfirmation->getId();
         
         return $phoneConfirmation;
     }
@@ -131,6 +145,15 @@ class RegistrationService implements RegistrationServiceInterface
     public function getDatabaseErrors(): string
     {
         return $this->dbErrors;
+    }
+    
+    public function getNextWebPage(): string
+    {
+        if (!$this->isFinishedRegistration) {
+            throw new \Exception('There is no finished registration.');
+        }
+        
+        return $this->nextWebPage;
     }
     
     private function getOrCreateByEmail(): ?User

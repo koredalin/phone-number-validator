@@ -20,4 +20,6 @@ interface RegistrationServiceInterface
     public function registrate(): ?PhoneConfirmation;
     
     public function getDatabaseErrors(): string;
+   
+    public function getNextWebPage(): string;
 }

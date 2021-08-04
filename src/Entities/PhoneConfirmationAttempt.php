@@ -27,9 +27,8 @@ class PhoneConfirmationAttempt
     private int $id;
     
     /**
-     * @Column(name="phone_confirmation_id", type="bigint")
-     * 
      * @ManyToOne(targetEntity="PhoneConfirmation")
+     * @JoinColumn(name="phone_confirmation_id", nullable="false", referencedColumnName="id")
      * @var PhoneConfirmation
      */
     private PhoneConfirmation $phoneConfirmation;
@@ -70,8 +69,8 @@ class PhoneConfirmationAttempt
     
     public function setStatus(string $status): void
     {
-        if (in_array($status, self::ALL_STATUSES, true)) {
-            throw new \InvalidArgumentException('Not supported phone confirmation status code: '.var_export($status, true));
+        if (!in_array($status, self::ALL_STATUSES, true)) {
+            throw new \InvalidArgumentException('Not supported phone confirmation attempt status code: '.var_export($status, true));
         }
         
         $this->status = $status;
