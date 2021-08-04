@@ -56,8 +56,8 @@ final class TransactionRepository implements TransactionRepositoryInterface
     public function save(Transaction $transaction): Transaction
     {
         try {
-            $this->objectRepository->persist($transaction);
-            $this->objectRepository->flush();
+            $this->em->persist($transaction);
+            $this->em->flush();
         } catch (\Exception $exception) {
             $this->dbException = $exception->getMessage();
         }

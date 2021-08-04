@@ -28,16 +28,14 @@ class Transaction
     private int $id;
     
     /**
-     * @Column(name="user_id")
-     * @ManyToOne(targetEntity="Phone")
+     * @ManyToOne(targetEntity="User")
+     * @JoinColumn(name="user_id", nullable="false", referencedColumnName="id")
      * @var User
      */
     private User $user;
     
     /**
-     * @Column(name="phone_id", type="bigint")
-     * 
-     * @ManyToOne(targetEntity="Phone", inversedBy="users")
+     * @ManyToOne(targetEntity="Phone")
      * @JoinColumn(name="phone_id", nullable="false", referencedColumnName="id")
      * @var Phone
      */
@@ -84,7 +82,7 @@ class Transaction
     
     public function setStatus(string $status): void
     {
-        if (in_array($status, self::ALL_STATUSES, true)) {
+        if (!in_array($status, self::ALL_STATUSES, true)) {
             throw new \InvalidArgumentException('Not supported phone confirmation status code: '.var_export($status, true));
         }
         

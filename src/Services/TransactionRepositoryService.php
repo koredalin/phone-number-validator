@@ -36,12 +36,12 @@ final class TransactionRepositoryService implements TransactionRepositoryService
     public function make(User $user, Phone $phone, string $rawPassword): Transaction
     {
         $transaction = $this->transactionRepository->new();
-        $transaction->user = $user;
-        $transaction->phone = $phone;
-        $transaction->status = Transaction::STATUS_AWAITING_REQUEST;
-        $transaction->password = $this->passwordGenerator->encode($rawPassword);
-        $transaction->createdAt = $this->dtManager->now();
-        $transaction->updatedAt = $this->dtManager->now();
+        $transaction->setUser($user);
+        $transaction->setPhone($phone);
+        $transaction->setStatus(Transaction::STATUS_AWAITING_REQUEST);
+        $transaction->setPassword($this->passwordGenerator->encode($rawPassword));
+        $transaction->setCreatedAt($this->dtManager->now());
+        $transaction->setUpdatedAt($this->dtManager->now());
         
         return $this->save($transaction);
     }

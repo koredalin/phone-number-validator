@@ -105,15 +105,16 @@ class RegistrationService implements RegistrationServiceInterface
         
         $phone = $this->getOrCreatePhone();
         if (is_null($phone)) {
+            return null;
+        }
+        
+        $transaction = $this->createTransaction($user, $phone);
+        if (is_null($transaction)) {
         echo $this->getDatabaseErrors(); exit;
             return null;
         }
         echo __LINE__; exit;
-//        $transaction = $this->createTransaction($user, $phone);
-//        if (is_null($transaction)) {
-//            return null;
-//        }
-//        
+        
 //        $phoneConfirmation = $this->createPhoneConfirmation($transaction);
 //        if (is_null($phoneConfirmation)) {
 //            return null;
