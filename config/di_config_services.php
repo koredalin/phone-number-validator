@@ -29,6 +29,8 @@ use App\Services\PhoneConfirmationRepositoryService;
 //use App\Services\PhoneConfirmationAttemptRepositoryService;
 use App\Services\RegistrationService;
 
+use App\Entities\Forms\RegistrationForm;
+
 
 return [
     CountryRepositoryServiceInterface::class => DI\create(CountryRepositoryService::class)
@@ -50,5 +52,11 @@ return [
 //        ->constructor(DI\get(PhoneConfirmationAttemptRepositoryInterface::class), DI\get(DateTimeManagerInterface::class)),
 
     RegistrationServiceInterface::class => DI\create(RegistrationService::class)
-        ->constructor(DI\get(UserRepositoryServiceInterface::class), DI\get(PhoneRepositoryServiceInterface::class), DI\get(TransactionRepositoryServiceInterface::class), DI\get(PhoneConfirmationRepositoryServiceInterface::class)),
+        ->constructor(
+            DI\get(RegistrationForm::class),
+            DI\get(UserRepositoryServiceInterface::class),
+            DI\get(PhoneRepositoryServiceInterface::class),
+            DI\get(TransactionRepositoryServiceInterface::class),
+            DI\get(PhoneConfirmationRepositoryServiceInterface::class)
+        ),
 ];

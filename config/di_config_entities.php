@@ -6,6 +6,7 @@ use App\Entities\Country;
 use App\Entities\Phone;
 use App\Entities\PhoneConfirmation;
 use App\Entities\PhoneConfirmationAttempt;
+use App\Entities\Forms\RegistrationForm;
 
 return [
     Transaction::class => DI\create(),
@@ -14,4 +15,5 @@ return [
     Phone::class => DI\create(),
     PhoneConfirmation::class => DI\create(),
     PhoneConfirmationAttempt::class => DI\create(),
+    RegistrationForm::class => DI\create(),
 ];

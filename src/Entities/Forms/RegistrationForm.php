@@ -3,6 +3,7 @@
 namespace App\Entities\Forms;
 
 use Symfony\Component\Validator\Constraints as Assert;
+
 //use Symfony\Component\Validator\Constraints\NotBlank;
 //use Symfony\Component\Validator\Constraints\Email;
 
@@ -72,6 +73,20 @@ class RegistrationForm
     public function getPassword()
     {
         return $this->password;
+    }
+    
+    public function getRegistrationFormArr() {
+        $result = [
+            'email' => $this->email,
+            'phoneNumber' => $this->phoneNumber,
+            'password' => $this->password,
+        ];
+        
+        return $result;
+    }
+    
+    public function getRegistrationFormJson() {
+        return \json_encode($this->getRegistrationFormArr());
     }
     
     /**************************************************************************/

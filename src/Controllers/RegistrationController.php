@@ -27,16 +27,19 @@ class RegistrationController extends BaseControllerJson
     public function index(ServerRequestInterface $request, array $arguments): ResponseInterface
     {
         $requestBody = $request->getBody()->getContents();
-        $this->registrationService->createForm($requestBody);
+        $form = $this->registrationService->createForm($requestBody);
         if (!$this->registrationService->isValidForm()) {
-            return $this->render($this->registrationService->getFormErrors(), []);
+//            echo __LINE__; exit;
+            return $this->render($this->registrationService->getFormErrors(), ['formValidation' => 'failure']);
         }
+//        print_r($form); exit;
+        return $this->render($form->getRegistrationFormJson(), ['formValidation' => 'success']);
         
-        $phoneConfirmation = $this->registrationService->registrate();
-        if (is_null($phoneConfirmation)) {
-            return $this->render($this->registrationService->getDatabaseErrors(), []);
-        }
+//        $phoneConfirmation = $this->registrationService->registrate();
+//        if (is_null($phoneConfirmation)) {
+//            return $this->render($this->registrationService->getDatabaseErrors(), []);
+//        }
         
-        return $this->render(\json_encode($phoneConfirmation), []);
+//        return $this->render(\json_encode($phoneConfirmation), []);
     }
 }

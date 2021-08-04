@@ -1,6 +1,17 @@
 <?php
 
-require_once __DIR__.'/../vendor/autoload.php';
+use Composer\Autoload\ClassLoader;
+use Doctrine\Common\Annotations\AnnotationRegistry;
+
+/**
+ * @var ClassLoader $loader
+ */
+$loader = require_once __DIR__.'/../vendor/autoload.php';
+
+/**
+ * Loads not loaded Symfony Validator annotation files.
+ */
+AnnotationRegistry::registerLoader([$loader, 'loadClass']);
 
 require_once __DIR__.'/../config/config.php';
 

@@ -23,6 +23,7 @@
         "symfony/yaml": "^5.3",
         "symfony/cache": "^5.3",
         "symfony/validator": "^5.3",
-        "doctrine/annotations": "^1.13"
+        "doctrine/annotations": "^1.13",
+        "symfony/form": "^5.3"
     }
 }

@@ -39,12 +39,18 @@ class RegistrationService implements RegistrationServiceInterface
     private string $dbErrors;
     
     public function __construct(
+        RegistrationForm $registrationForm,
         UserRepositoryServiceInterface $userService,
         PhoneRepositoryServiceInterface $phoneService,
         TransactionRepositoryServiceInterface $transactionService,
         PhoneConfirmationRepositoryServiceInterface $phoneConfirmationService
     ) {
-        $this->validator = Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator();
+        $this->form = $registrationForm;
+        
+        $this->validator = Validation::createValidatorBuilder()
+            ->enableAnnotationMapping()
+            ->addDefaultDoctrineAnnotationReader()
+            ->getValidator();
         $this->formErrors = null;
         $this->userService = $userService;
         $this->phoneService = $phoneService;
@@ -57,17 +63,15 @@ class RegistrationService implements RegistrationServiceInterface
     public function createForm(string $requestBody): RegistrationForm
     {
         $parsedRequestBody = \json_decode($requestBody, true);
-        $form = new RegistrationForm();
-        $form->setEmail($parsedRequestBody['email']);
+        $this->form->setEmail($parsedRequestBody['email']);
         $phoneNumberInput = (string)trim($parsedRequestBody['phoneNumber']);
         $phoneNumberInt = substr($phoneNumberInput, 0, 1) === '0'
             ? (int)Country::BG_PHONE_CODE.substr($phoneNumberInput, 1)
             : (int)$phoneNumberInput;
-        $form->setPhoneNumber($phoneNumberInt);
-        $form->setPassword($parsedRequestBody['password']);
-        $this->form = $form;
+        $this->form->setPhoneNumber($phoneNumberInt);
+        $this->form->setPassword($parsedRequestBody['password']);
         
-        return $form;
+        return $this->form;
     }
     
     public function isValidForm(): bool
@@ -77,14 +81,14 @@ class RegistrationService implements RegistrationServiceInterface
         $errors = $this->validator->validate($this->form);
         $this->formErrors = $errors;
         
-        return count($errors);
+        return count($errors) == 0;
     }
     
     public function getFormErrors(): string
     {
         $this->notSetFormException();
         
-        return \json_encode($this->formErrors ?? '');
+        return (string)$this->formErrors;
     }
     
     public function registrate(): ?PhoneConfirmation
