@@ -11,11 +11,13 @@ use App\Entities\Country;
  */
 interface PhoneRepositoryServiceInterface
 {
-    public function getOrCreateByAssembledPhoneNumber(string $assembledPhoneNumber): Phone;
+    public function getOrCreateByAssembledPhoneNumber(string $assembledPhoneNumber): ?Phone;
     
-    public function findOneById(int $id): Phone;
+    public function findOneById(int $id): ?Phone;
     
     public function findByOnePhoneCodeNumber(Country $country, int $phoneNumber): ?Phone;
     
     public function getDatabaseException(): string;
+    
+    public function getAnyError(): string;
 }

@@ -16,7 +16,7 @@ interface PhoneRepositoryInterface
      */
     public function new(): Phone;
     
-    public function findOneById(int $id): Phone;
+    public function findOneById(int $id): ?Phone;
     
     public function findByOnePhoneCodeNumber(Country $country, int $phoneNumber): ?Phone;
     

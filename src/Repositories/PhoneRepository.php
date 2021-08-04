@@ -47,7 +47,7 @@ final class PhoneRepository implements PhoneRepositoryInterface
         return \unserialize($serializedNewObj);
     }
     
-    public function findOneById(int $id): Phone
+    public function findOneById(int $id): ?Phone
     {
         return $this->objectRepository->find($id);
     }

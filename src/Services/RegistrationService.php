@@ -147,9 +147,10 @@ class RegistrationService implements RegistrationServiceInterface
     private function getOrCreatePhone(): ?Phone
     {
         $phone = $this->phoneService->getOrCreateByAssembledPhoneNumber($this->form->getPhoneNumber());
-        $exceptionPhone = $this->phoneService->getDatabaseException();
-        if ($exceptionPhone !== '' || $phone->getId() < 1) {
-            $this->dbErrors = $exceptionPhone;
+        $phoneDbException = $this->phoneService->getDatabaseException();
+        $phoneAnyError = $this->phoneService->getDatabaseException();
+        if (is_null($phone) || $phoneDbException !== '' || $phoneAnyError !== '' || $phone->getId() < 1) {
+            $this->dbErrors = $phoneDbException !== '' ? $phoneDbException : $phoneAnyError;
             return null;
         }
     

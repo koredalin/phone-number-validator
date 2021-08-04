@@ -15,6 +15,8 @@ final class PhoneRepositoryService implements PhoneRepositoryServiceInterface
     private CountryRepositoryInterface $countryRepository;
     private DateTimeManagerInterface $dtManager;
     
+    private string $anyErrors;
+    
     public function __construct(
         PhoneRepositoryInterface $phoneRepository,
         CountryRepositoryInterface $countryRepository,
@@ -23,9 +25,10 @@ final class PhoneRepositoryService implements PhoneRepositoryServiceInterface
         $this->phoneRepository = $phoneRepository;
         $this->countryRepository = $countryRepository;
         $this->dtManager = $dtManager;
+        $this->anyErrors = '';
     }
     
-    public function findOneById(int $id): Phone
+    public function findOneById(int $id): ?Phone
     {
         return $this->phoneRepository->findOneById($id);
     }
@@ -58,9 +61,17 @@ final class PhoneRepositoryService implements PhoneRepositoryServiceInterface
         return $this->phoneRepository->getDatabaseException();
     }
     
-    public function getOrCreateByAssembledPhoneNumber(string $assembledPhoneNumber): Phone
+    public function getAnyError(): string
+    {
+        return $this->anyErrors;
+    }
+    
+    public function getOrCreateByAssembledPhoneNumber(string $assembledPhoneNumber): ?Phone
     {
         $countryObj = $this->getCountryFromAssembledNumber($assembledPhoneNumber);
+        if (is_null($countryObj)) {
+            return null;
+        }
         $phoneNumber = $this->getPhoneNumberFromAssembledNumberCountry($assembledPhoneNumber, $countryObj);
         $dbPhone = $this->findByOnePhoneCodeNumber($countryObj, $phoneNumber);
         if ($dbPhone instanceof Phone && $dbPhone->getId() > 0) {
@@ -72,7 +83,7 @@ final class PhoneRepositoryService implements PhoneRepositoryServiceInterface
         return $phoneObj;
     }
     
-    private function getCountryFromAssembledNumber(string $assembledPhoneNumber): Country
+    private function getCountryFromAssembledNumber(string $assembledPhoneNumber): ?Country
     {
         $assembledPhoneNumberTrimmed = trim($assembledPhoneNumber);
         if (substr($assembledPhoneNumberTrimmed, 0, 1) === '0') {
@@ -85,7 +96,9 @@ final class PhoneRepositoryService implements PhoneRepositoryServiceInterface
             }
         }
         
-        throw new \Exception('Unknown phone code (country).');
+        $this->anyErrors = 'Unknown phone code (country).';
+        
+        return null;
     }
     
     private function getPhoneNumberFromAssembledNumberCountry(string $assembledPhoneNumber, Country $country): int
