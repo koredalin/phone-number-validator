@@ -30,9 +30,9 @@ final class PhoneRepositoryService implements PhoneRepositoryServiceInterface
         return $this->phoneRepository->findOneById($id);
     }
     
-    public function findByOnePhoneCodeNumber(int $phoneCode, int $phoneNumber): Phone
+    public function findByOnePhoneCodeNumber(Country $country, int $phoneNumber): ?Phone
     {
-        return $this->phoneRepository->findByOnePhoneCodeNumber($phoneCode, $phoneNumber);
+        return $this->phoneRepository->findByOnePhoneCodeNumber($country, $phoneNumber);
     }
     
     public function make(Country $country, int $phoneNumber): Phone
@@ -49,7 +49,6 @@ final class PhoneRepositoryService implements PhoneRepositoryServiceInterface
     private function save(Phone $phone): Phone
     {
         $this->phoneRepository->save($phone);
-        echo __LINE__; exit;
         
         return $phone;
     }
@@ -63,12 +62,12 @@ final class PhoneRepositoryService implements PhoneRepositoryServiceInterface
     {
         $countryObj = $this->getCountryFromAssembledNumber($assembledPhoneNumber);
         $phoneNumber = $this->getPhoneNumberFromAssembledNumberCountry($assembledPhoneNumber, $countryObj);
+        $dbPhone = $this->findByOnePhoneCodeNumber($countryObj, $phoneNumber);
+        if ($dbPhone instanceof Phone && $dbPhone->getId() > 0) {
+            return $dbPhone;
+        }
         
         $phoneObj = $this->make($countryObj, $phoneNumber);
-        print_r($countryObj);
-        echo $assembledPhoneNumber. ' |||||| '.$phoneNumber. ' ||||||||||||| ';
-        print_r($phoneObj);
-        exit;
         
         return $phoneObj;
     }
@@ -86,7 +85,7 @@ final class PhoneRepositoryService implements PhoneRepositoryServiceInterface
             }
         }
         
-        throw new \Exception('Unknown phone code - Country.');
+        throw new \Exception('Unknown phone code (country).');
     }
     
     private function getPhoneNumberFromAssembledNumberCountry(string $assembledPhoneNumber, Country $country): int
@@ -95,7 +94,7 @@ final class PhoneRepositoryService implements PhoneRepositoryServiceInterface
         if ($country->getPhoneCode() === Country::BG_PHONE_CODE) {
             $phoneNumber = (int)substr($assembledPhoneNumberTrimmed, 1);
             if (strlen($phoneNumber) !== 9) {
-                throw new Exception('Validations not made yet.');
+                throw new \Exception('Validations not made yet.');
             }
             return $phoneNumber;
         }

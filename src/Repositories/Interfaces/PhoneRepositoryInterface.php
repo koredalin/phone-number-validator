@@ -3,6 +3,7 @@
 namespace App\Repositories\Interfaces;
 
 use App\Entities\Phone;
+use App\Entities\Country;
 
 /**
  *
@@ -17,7 +18,7 @@ interface PhoneRepositoryInterface
     
     public function findOneById(int $id): Phone;
     
-    public function findByOnePhoneCodeNumber(int $phoneCode, int $phoneNumber): Phone;
+    public function findByOnePhoneCodeNumber(Country $country, int $phoneNumber): ?Phone;
     
     public function save(Phone $user): Phone;
     

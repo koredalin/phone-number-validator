@@ -5,6 +5,7 @@ namespace App\Repositories;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repositories\Interfaces\PhoneRepositoryInterface;
 use App\Entities\Phone;
+use App\Entities\Country;
 
 /**
  * Description of PhoneRepository
@@ -51,9 +52,9 @@ final class PhoneRepository implements PhoneRepositoryInterface
         return $this->objectRepository->find($id);
     }
     
-    public function findByOnePhoneCodeNumber(int $phoneCode, int $phoneNumber): Phone
+    public function findByOnePhoneCodeNumber(Country $country, int $phoneNumber): ?Phone
     {
-        return $this->objectRepository->findBy(['phone_code' => $phoneCode, 'phone_number' => $phoneNumber]);
+        return $this->objectRepository->findOneBy(['country' => $country, 'phoneNumber' => $phoneNumber]);
     }
     
     public function save(Phone $phone): Phone
@@ -70,6 +71,6 @@ final class PhoneRepository implements PhoneRepositoryInterface
     
     public function getDatabaseException(): string
     {
-        $this->dbException;
+        return $this->dbException;
     }
 }

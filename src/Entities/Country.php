@@ -14,21 +14,29 @@ class Country
      * @Id
      * @Column(type="integer")
      * @GeneratedValue
+     * 
+     * @var int
      */
     private int $id;
     
     /**
      * @Column(length=100, name="country_name", unique="true")
+     * 
+     * @var string
      */
     private string $countryName;
     
     /**
      * @Column(length=3)
+     * 
+     * @var string
      */
     private string $iso3;
     
     /**
      * @Column(name="phone_code")
+     * 
+     * @var int
      */
     private int $phoneCode;
     
@@ -89,6 +97,15 @@ class Country
     {
         return $this->phoneCode;
     }
+    
+    /**
+     * 
+     * @return string
+     */
+//    public function __toString()
+//    {
+//        return trim($this->id);
+//    }
     
     /**************************************************************************/
     /**************************************************************************/

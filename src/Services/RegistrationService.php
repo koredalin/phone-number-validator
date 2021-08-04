@@ -100,13 +100,12 @@ class RegistrationService implements RegistrationServiceInterface
         
         $user = $this->getOrCreateByEmail();
         if (is_null($user)) {
-        echo __LINE__; exit;
             return null;
         }
         
         $phone = $this->getOrCreatePhone();
         if (is_null($phone)) {
-        echo __LINE__; exit;
+        echo $this->getDatabaseErrors(); exit;
             return null;
         }
         echo __LINE__; exit;
@@ -148,7 +147,6 @@ class RegistrationService implements RegistrationServiceInterface
     private function getOrCreatePhone(): ?Phone
     {
         $phone = $this->phoneService->getOrCreateByAssembledPhoneNumber($this->form->getPhoneNumber());
-        echo __LINE__. '  ||||||||||||| '; exit;
         $exceptionPhone = $this->phoneService->getDatabaseException();
         if ($exceptionPhone !== '' || $phone->getId() < 1) {
             $this->dbErrors = $exceptionPhone;

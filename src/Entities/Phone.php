@@ -28,9 +28,8 @@ class Phone
     private int $id;
     
     /**
-     * @Column(name="country_id")
-     * 
      * @ManyToOne(targetEntity="Country")
+     * @JoinColumn(name="country_id", referencedColumnName="id")
      * @var Country
      */
     private Country $country;
