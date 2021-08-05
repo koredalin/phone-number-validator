@@ -13,6 +13,7 @@ $loader = require_once __DIR__.'/../vendor/autoload.php';
  */
 AnnotationRegistry::registerLoader([$loader, 'loadClass']);
 
+//require_once __DIR__.'/../config/db_cache_config.php';
 require_once __DIR__.'/../config/config.php';
 
 use DI\ContainerBuilder;

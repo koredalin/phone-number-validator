@@ -37,6 +37,15 @@ php bin/console cache:pool:clear cache.app_clearer
 #Clear all caches everywhere:
 php bin/console cache:pool:clear cache.global_clearer
 
+-- php no such file __CG__AppEntitiesUser.php
+php cli-config.php cache:warmup --env=prod --no-debug
+php cli-config.php cache:pool:clear
+php -d memory_limit=-1 cli-config.php cache:clear
+vendor/bin/doctrine orm:clear-cache:query --flush
+vendor/bin/doctrine orm:clear-cache:metadata --flush
+vendor/bin/doctrine orm:clear-cache:result --flush
+
+
 
 
 vendor/bin/doctrine orm:schema-tool:create

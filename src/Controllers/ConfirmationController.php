@@ -29,7 +29,7 @@ class ConfirmationController extends BaseControllerJson
         $requestBody = $request->getBody()->getContents();
         $transactionId = (int)$arguments['transactionId'] ?? 0;
         $phoneConfirmationAttempt = $this->confirmationService->confirmCode($transactionId, $requestBody);
-        print_r($phoneConfirmationAttempt); exit;
+        echo __LINE__; exit;
         if (!$this->confirmationService->isValidForm()) {
             return $this->render($this->confirmationService->getFormErrors(), ['formValidation' => 'failure']);
         }

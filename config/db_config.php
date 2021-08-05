@@ -10,4 +10,3 @@ define('DB_CONNECTION_CONFIGURATION', [
     'password' => 'validator',
     'auto_generate_proxy_classes' => true,
 ]);
-
