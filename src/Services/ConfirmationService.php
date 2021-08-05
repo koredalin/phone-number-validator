@@ -23,6 +23,7 @@ class ConfirmationService implements ConfirmationServiceInterface
     private PhoneConfirmationRepositoryServiceInterface $phoneConfirmationService;
     private PhoneConfirmationAttemptRepositoryServiceInterface $phoneConfirmationAttemptService;
     
+    private string $anyError;
     private string $dbError;
     
     private bool $isFinishedConfirmation;
@@ -38,6 +39,7 @@ class ConfirmationService implements ConfirmationServiceInterface
         $this->transactionService = $transactionService;
         $this->phoneConfirmationService = $phoneConfirmationService;
         $this->phoneConfirmationAttemptService = $phoneConfirmationAttemptService;
+        $this->anyError = '';
         $this->dbError = '';
         $this->isFinishedConfirmation = false;
         $this->nextWebPage = '';
@@ -46,12 +48,29 @@ class ConfirmationService implements ConfirmationServiceInterface
     public function confirmCode(int $transactionId, string $requestBody): ?PhoneConfirmationAttempt
     {
         $parsedRequestBody = \json_decode($requestBody, true);
-        $inputConfirmationCode = (int)$parsedRequestBody['confirmationCode'];
         $transaction = $this->transactionService->findOneById($transactionId);
+        if (is_null($transaction)) {
+            $this->anyError = 'Not found transaction.';
+            return null;
+        }
+        
         $phoneConfirmation = $this->phoneConfirmationService->findLastByTransactionAwaitingStatus($transaction);
+        if (is_null($phoneConfirmation)) {
+            $this->anyError = 'Not found phone code.';
+            return null;
+        }
+        
+        $inputConfirmationCode = (int)$parsedRequestBody['confirmationCode'];
         $caliberConfirmationCode = (int)$phoneConfirmation->getConfirmationCode();
         $isConfirmedCode = $inputConfirmationCode == $caliberConfirmationCode;
+        $phoneConfirmationAttempt = $this->phoneConfirmationAttemptService->createByPhoneConfirmationIsConfirmedCode($phoneConfirmation, $isConfirmedCode);
         
+        return $phoneConfirmationAttempt;
+    }
+    
+    public function getAnyError(): string
+    {
+        return $this->anyError;
     }
     
     /**

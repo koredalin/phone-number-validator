@@ -62,7 +62,7 @@ class PhoneConfirmationAttempt
         $this->userId = $userId;
     }
     
-    public function setPhoneConfirmation(int $phoneConfirmation): void
+    public function setPhoneConfirmation(PhoneConfirmation $phoneConfirmation): void
     {
         $this->phoneConfirmation = $phoneConfirmation;
     }

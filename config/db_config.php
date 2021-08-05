@@ -8,5 +8,6 @@ define('DB_CONNECTION_CONFIGURATION', [
     'dbname' => 'phone_validator',
     'user' => 'phone_validator',
     'password' => 'validator',
+    'auto_generate_proxy_classes' => true,
 ]);
 

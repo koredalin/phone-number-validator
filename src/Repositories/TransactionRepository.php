@@ -48,7 +48,7 @@ final class TransactionRepository implements TransactionRepositoryInterface
         return \unserialize($serializedNewObj);
     }
     
-    public function findOneById(int $id): Transaction
+    public function findOneById(int $id): ?Transaction
     {
         return $this->objectRepository->find($id);
     }

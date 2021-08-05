@@ -16,7 +16,7 @@ interface TransactionRepositoryInterface
      */
     public function new(): Transaction;
     
-    public function findOneById(int $id): Transaction;
+    public function findOneById(int $id): ?Transaction;
     
     public function save(Transaction $transaction): Transaction;
     
