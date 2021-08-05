@@ -32,6 +32,7 @@ final class TransactionRepository implements TransactionRepositoryInterface
     public function __construct(EntityManagerInterface $em, Transaction $newTransaction)
     {
         $this->em = $em;
+//        $em->getConnection()->getConfiguration()->setSQLLogger(null);
         $this->objectRepository = $this->em->getRepository(Transaction::class);
         $this->newTransaction = $newTransaction;
         $this->dbException = '';
@@ -50,9 +51,9 @@ final class TransactionRepository implements TransactionRepositoryInterface
     
     public function findOneById(int $id): ?Transaction
     {
-        $this->em->clear();
+//        $this->em->clear();
         $transaction = $this->objectRepository->find($id);
-        $this->em->clear();
+//        $this->em->clear();
         
         return $transaction;
     }

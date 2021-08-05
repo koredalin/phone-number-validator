@@ -11,5 +11,6 @@ $paths = [ENTITIES_DIRECTORY];
 $isDevMode = false;
 $proxyDir = DB_PROXY_DIR;
 $config = Setup::createAnnotationMetadataConfiguration($paths, $isDevMode, $proxyDir);
+$config->setAutoGenerateProxyClasses(true);
 $entityManager = EntityManager::create(DB_CONNECTION_CONFIGURATION, $config);
-//$entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
+$entityManager->getConnection()->getConfiguration()->setSQLLogger(null);

@@ -50,12 +50,14 @@ class ConfirmationService implements ConfirmationServiceInterface
 //        echo $transactionId.' ||||||||| '.$requestBody; exit;
         $parsedRequestBody = \json_decode($requestBody, true);
         $transaction = $this->transactionService->findOneById($transactionId);
+        print_r($transaction); exit;
         if (is_null($transaction)) {
             $this->anyError = 'Not found transaction.';
             return null;
         }
         
         $phoneConfirmation = $this->phoneConfirmationService->findLastByTransactionAwaitingStatus($transaction);
+        print_r($phoneConfirmation); exit;
         if (is_null($phoneConfirmation)) {
             $this->anyError = 'Not found phone code.';
             return null;
