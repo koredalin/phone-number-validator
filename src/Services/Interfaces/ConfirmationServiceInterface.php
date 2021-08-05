@@ -10,7 +10,7 @@ use App\Entities\PhoneConfirmationAttempt;
  */
 interface ConfirmationServiceInterface
 {
-    public function confirmCode(int $transactionId): ?PhoneConfirmationAttempt;
+    public function confirmCode(int $transactionId, string $requestBody): ?PhoneConfirmationAttempt;
     
     public function getDatabaseErrors(): string;
    

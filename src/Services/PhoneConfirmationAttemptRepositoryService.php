@@ -2,12 +2,13 @@
 
 namespace App\Services;
 
+use App\Services\Interfaces\PhoneConfirmationAttemptRepositoryServiceInterface;
 use App\Repositories\Interfaces\PhoneConfirmationAttemptRepositoryInterface;
 use App\Common\Interfaces\DateTimeManagerInterface;
 use App\Entities\PhoneConfirmation;
 use App\Entities\PhoneConfirmationAttempt;
 
-final class PhoneConfirmationAttemptRepositoryService
+final class PhoneConfirmationAttemptRepositoryService implements PhoneConfirmationAttemptRepositoryServiceInterface
 {
     private $phoneConfirmationAttemptRepository;
     private DateTimeManagerInterface $dtManager;
@@ -20,7 +21,7 @@ final class PhoneConfirmationAttemptRepositoryService
         $this->dtManager = $dtManager;
     }
     
-    public function findOneById(int $id): PhoneConfirmationAttempt
+    public function findOneById(int $id): ?PhoneConfirmationAttempt
     {
         return $this->phoneConfirmationAttemptRepository->findOneById($id);
     }

@@ -4,8 +4,6 @@ namespace App\Services;
 
 use App\Services\Interfaces\ConfirmationServiceInterface;
 // Entities
-use App\Entities\Transaction;
-use App\Entities\PhoneConfirmation;
 use App\Entities\PhoneConfirmationAttempt;
 // Repository Services
 use App\Services\Interfaces\TransactionRepositoryServiceInterface;

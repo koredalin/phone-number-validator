@@ -2,6 +2,7 @@
 
 namespace App\Services\Interfaces;
 
+use App\Entities\PhoneConfirmation;
 use App\Entities\PhoneConfirmationAttempt;
 
 /**

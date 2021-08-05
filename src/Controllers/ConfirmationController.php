@@ -27,8 +27,9 @@ class ConfirmationController extends BaseControllerJson
     public function index(ServerRequestInterface $request, array $arguments): ResponseInterface
     {
         $requestBody = $request->getBody()->getContents();
-        print_r($arguments); exit;
-        $this->confirmationService->createForm($requestBody);
+        $transactionId = (int)$arguments['transactionId'] ?? 0;
+        $phoneConfirmationAttempt = $this->confirmationService->confirmCode($transactionId, $requestBody);
+        print_r($phoneConfirmationAttempt); exit;
         if (!$this->confirmationService->isValidForm()) {
             return $this->render($this->confirmationService->getFormErrors(), ['formValidation' => 'failure']);
         }
