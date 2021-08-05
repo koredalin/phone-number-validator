@@ -18,16 +18,18 @@ use App\Services\Interfaces\UserRepositoryServiceInterface;
 use App\Services\Interfaces\PhoneRepositoryServiceInterface;
 use App\Services\Interfaces\TransactionRepositoryServiceInterface;
 use App\Services\Interfaces\PhoneConfirmationRepositoryServiceInterface;
-//use App\Services\Interfaces\PhoneConfirmationAtt;
+use App\Services\Interfaces\PhoneConfirmationAttemptRepositoryServiceInterface;
 use App\Services\Interfaces\RegistrationServiceInterface;
+use App\Services\Interfaces\ConfirmationServiceInterface;
 // Repository Services
 use App\Services\UserRepositoryService;
 use App\Services\CountryRepositoryService;
 use App\Services\PhoneRepositoryService;
 use App\Services\TransactionRepositoryService;
 use App\Services\PhoneConfirmationRepositoryService;
-//use App\Services\PhoneConfirmationAttemptRepositoryService;
+use App\Services\PhoneConfirmationAttemptRepositoryService;
 use App\Services\RegistrationService;
+use App\Services\ConfirmationService;
 
 use App\Entities\Forms\RegistrationForm;
 
@@ -48,8 +50,8 @@ return [
     PhoneConfirmationRepositoryServiceInterface::class => DI\create(PhoneConfirmationRepositoryService::class)
         ->constructor(DI\get(PhoneConfirmationRepositoryInterface::class), DI\get(ConfirmationCodeGeneratorInterface::class), DI\get(DateTimeManagerInterface::class)),
 
-//    PhoneConfirmationAttemptRepositoryService::class => DI\create(PhoneConfirmationAttemptRepositoryService::class)
-//        ->constructor(DI\get(PhoneConfirmationAttemptRepositoryInterface::class), DI\get(DateTimeManagerInterface::class)),
+    PhoneConfirmationAttemptRepositoryServiceInterface::class => DI\create(PhoneConfirmationAttemptRepositoryService::class)
+        ->constructor(DI\get(PhoneConfirmationAttemptRepositoryInterface::class), DI\get(DateTimeManagerInterface::class)),
 
     RegistrationServiceInterface::class => DI\create(RegistrationService::class)
         ->constructor(
@@ -58,5 +60,12 @@ return [
             DI\get(PhoneRepositoryServiceInterface::class),
             DI\get(TransactionRepositoryServiceInterface::class),
             DI\get(PhoneConfirmationRepositoryServiceInterface::class)
+        ),
+
+    ConfirmationServiceInterface::class => DI\create(ConfirmationService::class)
+        ->constructor(
+            DI\get(TransactionRepositoryServiceInterface::class),
+            DI\get(PhoneConfirmationRepositoryServiceInterface::class),
+            DI\get(PhoneConfirmationAttemptRepositoryServiceInterface::class)
         ),
 ];

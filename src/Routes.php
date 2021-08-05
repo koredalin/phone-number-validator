@@ -44,8 +44,8 @@ class Routes
         $router->map('GET', URL_SUBFOLDER.'/user', UserController::class.'::index');
 //        $router->map('GET', URL_SUBFOLDER.'/registration', PhoneConfirmationController::class.'::index');
 //        $router->addRoute('POST', URL_SUBFOLDER.'/registration', PhoneConfirmationController::class.'::index');
-//        $router->post(URL_SUBFOLDER.'/registration', PhoneConfirmationController::class.'::index'); // ->setStrategy(new ApplicationStrategy); //->name('post_registration');
-        $router->map('POST', URL_SUBFOLDER.'/registration', RegistrationController::class.'::index'); // ->setStrategy($container->get(JsonStrategy::class)); // ->setStrategy(new ApplicationStrategy); //->name('post_registration');
+        $router->map('POST', URL_SUBFOLDER.'/registration', RegistrationController::class.'::index');
+        $router->map('POST', URL_SUBFOLDER.'/confirmation/{transactionId}', ConfirmationController::class.'::index');
         
 //        $router
 //            ->group('/registration', function ($router) {

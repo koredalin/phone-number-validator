@@ -2,51 +2,46 @@
 
 namespace App\Controllers;
 
-use App\Controllers\BaseController;
-use Twig\Environment;
+use App\Controllers\BaseControllerJson;
 use Psr\Http\Message\ResponseInterface;
-use App\Services\UserRepositoryService;
-use App\Services\PhoneRepositoryService;
-use App\Services\TransactionRepositoryService;
-use App\Services\PhoneConfirmationRepositoryService;
-use App\Services\PhoneConfirmationAttemptRepositoryService;
 use Psr\Http\Message\ServerRequestInterface;
-use Laminas\Diactoros\Response\RedirectResponse;
+use App\Services\Interfaces\ConfirmationServiceInterface;
 
 /**
  * Description of ConfirmationController
  *
  * @author Hristo
  */
-class ConfirmationController extends BaseController
+class ConfirmationController extends BaseControllerJson
 {
-    private RegistrationServiceInterface $registrationService;
+    private ConfirmationServiceInterface $confirmationService;
     
     public function __construct(
         ResponseInterface $response,
-        RegistrationServiceInterface $registrationService
+        ConfirmationServiceInterface $confirmationService
     ) {
         parent::__construct($response);
-        $this->registrationService = $registrationService;
+        $this->confirmationService = $confirmationService;
     }
     
     public function index(ServerRequestInterface $request, array $arguments): ResponseInterface
     {
         $requestBody = $request->getBody()->getContents();
-        $this->registrationService->createForm($requestBody);
-        if (!$this->registrationService->isValidForm()) {
-            return $this->render($this->registrationService->getFormErrors(), ['formValidation' => 'failure']);
+        print_r($arguments); exit;
+        $this->confirmationService->createForm($requestBody);
+        if (!$this->confirmationService->isValidForm()) {
+            return $this->render($this->confirmationService->getFormErrors(), ['formValidation' => 'failure']);
         }
         
-        $phoneConfirmation = $this->registrationService->registrate();
+        $phoneConfirmation = $this->confirmationService->registrate();
         if (is_null($phoneConfirmation)) {
-            return $this->render($this->registrationService->getDatabaseErrors(), ['formValidation' => 'success', 'databaseValidation' => 'failure']);
+            return $this->render($this->confirmationService->getDatabaseErrors(), ['formValidation' => 'success', 'databaseValidation' => 'failure']);
         }
         
         $responseArguments = [
             'formValidation' => 'success',
             'databaseValidation' => 'success',
-            'nextWebPage' => $this->registrationService->getNextWebPage(),
+            'nextWebPage' => $this->confirmationService->getNextWebPage(),
         ];
         
         return $this->render(\json_encode($phoneConfirmation), $responseArguments);

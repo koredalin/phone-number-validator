@@ -25,7 +25,7 @@ use App\Services\Interfaces\PhoneConfirmationRepositoryServiceInterface;
  */
 class RegistrationService implements RegistrationServiceInterface
 {
-    const NEXT_WEB_PAGE_GROUP = '/confirmation';
+    private const NEXT_WEB_PAGE_GROUP = '/confirmation';
     
     private ValidatorInterface $validator;
     
@@ -132,7 +132,7 @@ class RegistrationService implements RegistrationServiceInterface
         }
         
         $this->isFinishedRegistration = true;
-        $this->nextWebPage = self::NEXT_WEB_PAGE_GROUP.'/'.$phoneConfirmation->getId();
+        $this->nextWebPage = self::NEXT_WEB_PAGE_GROUP.'/'.$transaction->getId();
         
         return $phoneConfirmation;
     }
@@ -150,7 +150,7 @@ class RegistrationService implements RegistrationServiceInterface
     public function getNextWebPage(): string
     {
         if (!$this->isFinishedRegistration) {
-            throw new \Exception('There is no finished registration.');
+            throw new \Exception('The registration is not finished.');
         }
         
         return $this->nextWebPage;

@@ -4,16 +4,18 @@ namespace App\Services;
 
 use App\Repositories\Interfaces\PhoneConfirmationAttemptRepositoryInterface;
 use App\Common\Interfaces\DateTimeManagerInterface;
+use App\Entities\PhoneConfirmation;
 use App\Entities\PhoneConfirmationAttempt;
-use App\Entities\User;
-use App\Entities\Phone;
 
 final class PhoneConfirmationAttemptRepositoryService
 {
     private $phoneConfirmationAttemptRepository;
     private DateTimeManagerInterface $dtManager;
     
-    public function __construct(PhoneConfirmationAttemptRepositoryInterface $phoneConfirmationAttemptRepository, DateTimeManagerInterface $dtManager){
+    public function __construct(
+        PhoneConfirmationAttemptRepositoryInterface $phoneConfirmationAttemptRepository,
+        DateTimeManagerInterface $dtManager
+    ){
         $this->phoneConfirmationAttemptRepository = $phoneConfirmationAttemptRepository;
         $this->dtManager = $dtManager;
     }
@@ -23,30 +25,26 @@ final class PhoneConfirmationAttemptRepositoryService
         return $this->phoneConfirmationAttemptRepository->findOneById($id);
     }
     
-    public function findOneByPhoneConfirmationAttemptName(string $phoneConfirmationAttemptName): PhoneConfirmationAttempt
-    {
-        return $this->phoneConfirmationAttemptRepository->findOneByPhoneConfirmationAttemptName($phoneConfirmationAttemptName);
-    }
-    
-    public function make(User $email, Phone $phone): PhoneConfirmationAttempt
+    public function createByPhoneConfirmationIsConfirmedCode(PhoneConfirmation $phoneConfirmation, bool $isConfirmedCode): PhoneConfirmationAttempt
     {
         $phoneConfirmationAttempt = $this->phoneConfirmationAttemptRepository->new();
-        $phoneConfirmationAttempt->email = $email;
-        $phoneConfirmationAttempt->phone = $phone;
-        $phoneConfirmationAttempt->createdAt = $this->dtManager->now();
-        $phoneConfirmationAttempt->updatedAt = $this->dtManager->now();
+        $phoneConfirmationAttempt->setPhoneConfirmation($phoneConfirmation);
+        $isConfirmedCode
+            ? $phoneConfirmationAttempt->setStatus(PhoneConfirmationAttempt::STATUS_CONFIRMED)
+            : $phoneConfirmationAttempt->setStatus(PhoneConfirmationAttempt::STATUS_DENIED);
+        $phoneConfirmationAttempt->setCreatedAt($this->dtManager->now());
+        $phoneConfirmationAttempt->setUpdatedAt($this->dtManager->now());
         
         return $this->save($phoneConfirmationAttempt);
     }
     
-    public function save(PhoneConfirmationAttempt $phoneConfirmationAttempt): void
+    private function save(PhoneConfirmationAttempt $phoneConfirmationAttempt): PhoneConfirmationAttempt
     {
         $this->phoneConfirmationAttemptRepository->save($phoneConfirmationAttempt);
-        // Dispatch some event on every update
     }
     
-    public function all(): array
+    public function getDatabaseException(): string
     {
-        return $this->phoneConfirmationAttemptRepository->all();
+        return $this->phoneConfirmationAttemptRepository->getDatabaseException();
     }
 }
