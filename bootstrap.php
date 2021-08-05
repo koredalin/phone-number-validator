@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManager;
 
 $paths = [ENTITIES_DIRECTORY];
 $isDevMode = false;
-
-$config = Setup::createAnnotationMetadataConfiguration($paths, $isDevMode);
+$proxyDir = DB_PROXY_DIR;
+$config = Setup::createAnnotationMetadataConfiguration($paths, $isDevMode, $proxyDir);
 $entityManager = EntityManager::create(DB_CONNECTION_CONFIGURATION, $config);
+//$entityManager->getConnection()->getConfiguration()->setSQLLogger(null);

@@ -44,6 +44,8 @@ php -d memory_limit=-1 cli-config.php cache:clear
 vendor/bin/doctrine orm:clear-cache:query --flush
 vendor/bin/doctrine orm:clear-cache:metadata --flush
 vendor/bin/doctrine orm:clear-cache:result --flush
+https://blog.plee.me/2015/06/memory-leaks-problems-with-long-running-symfony-doctrine-console-applications/
+https://stackoverflow.com/questions/9699185/memory-leaks-symfony2-doctrine2-exceed-memory-limit
 
 
 

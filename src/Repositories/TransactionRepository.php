@@ -50,7 +50,11 @@ final class TransactionRepository implements TransactionRepositoryInterface
     
     public function findOneById(int $id): ?Transaction
     {
-        return $this->objectRepository->find($id);
+        $this->em->clear();
+        $transaction = $this->objectRepository->find($id);
+        $this->em->clear();
+        
+        return $transaction;
     }
     
     public function save(Transaction $transaction): Transaction

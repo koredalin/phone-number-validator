@@ -15,7 +15,7 @@ interface PhoneConfirmationAttemptRepositoryInterface
      */
     public function new(): PhoneConfirmationAttempt;
     
-    public function findOneById(int $id): PhoneConfirmationAttempt;
+    public function findOneById(int $id): ?PhoneConfirmationAttempt;
     
     public function save(PhoneConfirmationAttempt $phoneConfirmationAttempt): PhoneConfirmationAttempt;
     

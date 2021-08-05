@@ -48,7 +48,7 @@ final class PhoneConfirmationAttemptRepository implements PhoneConfirmationAttem
         return \unserialize($serializedNewObj);
     }
     
-    public function findOneById(int $id): PhoneConfirmationAttempt
+    public function findOneById(int $id): ?PhoneConfirmationAttempt
     {
         return $this->objectRepository->find($id);
     }

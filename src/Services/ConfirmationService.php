@@ -47,6 +47,7 @@ class ConfirmationService implements ConfirmationServiceInterface
     
     public function confirmCode(int $transactionId, string $requestBody): ?PhoneConfirmationAttempt
     {
+//        echo $transactionId.' ||||||||| '.$requestBody; exit;
         $parsedRequestBody = \json_decode($requestBody, true);
         $transaction = $this->transactionService->findOneById($transactionId);
         if (is_null($transaction)) {
