@@ -15,7 +15,7 @@ use App\Services\Interfaces\PhoneConfirmationAttemptRepositoryServiceInterface;
 use App\Common\Interfaces\DateTimeManagerInterface;
 
 /**
- * Phone number cofirmation by confirmation code
+ * Phone number confirmation by confirmation code
  *
  * @author Hristo
  */
@@ -23,6 +23,8 @@ class ConfirmationService implements ConfirmationServiceInterface
 {
     const CURRENT_WEB_PAGE_GROUP = '/confirmation';
     const NEXT_WEB_PAGE_GROUP = '/success';
+    const COOL_DOWN_CONFIRMATION_ATTEMPTS_NUMBER = 3;
+    const COOL_DOWN_MINUTES = 1;
     
     private TransactionRepositoryInterface $transactionRepository;
     private PhoneConfirmationRepositoryInterface $phoneConfirmationRepository;
@@ -56,6 +58,7 @@ class ConfirmationService implements ConfirmationServiceInterface
     
     public function confirmCode(int $transactionId, string $requestBody): ?PhoneConfirmationAttempt
     {
+        $this->nextWebPage = self::CURRENT_WEB_PAGE_GROUP.'/'.$transactionId;
         if ($this->isFinishedConfirmation) {
             throw new \Exception('The registration is already made.');
         }
@@ -70,6 +73,17 @@ class ConfirmationService implements ConfirmationServiceInterface
         $phoneConfirmation = $this->phoneConfirmationRepository->findLastByTransactionAwaitingStatus($transaction);
         if (is_null($phoneConfirmation)) {
             $this->errors .= 'Not found phone code.';
+            return null;
+        }
+        
+        $phoneConfirmationAttempts = $this->phoneConfirmationAttemptService->findAllByPhoneConfirmation($phoneConfirmation);
+        $lastAttemptTime = isset($phoneConfirmationAttempts[0]) ? $phoneConfirmationAttempts[0]->getCreatedAt() : null;
+        if (
+            count($phoneConfirmationAttempts) > 1
+            && count($phoneConfirmationAttempts) % self::COOL_DOWN_CONFIRMATION_ATTEMPTS_NUMBER == 1
+            && $lastAttemptTime->add(new DateInterval('PT'.self::COOL_DOWN_MINUTES.'M')) > $this->dtManager->now()
+        ) {
+            $this->errors .= 'Cool down time before next possible attempt: '.self::COOL_DOWN_MINUTES.'.';
             return null;
         }
         
@@ -88,7 +102,6 @@ class ConfirmationService implements ConfirmationServiceInterface
         } else {
             $this->isSuccess = false;
             $this->errors .= 'Wrong confirmation code.';
-            $this->nextWebPage = self::CURRENT_WEB_PAGE_GROUP.'/'.$transactionId;
         }
         
         return $phoneConfirmationAttempt;

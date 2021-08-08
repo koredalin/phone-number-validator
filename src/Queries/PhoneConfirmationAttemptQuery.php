@@ -5,15 +5,15 @@ namespace App\Queries;
 // Doctrine libs
 use Doctrine\DBAL\Query\QueryBuilder;
 
-use App\Queries\Interfaces\TransactionQueryInterface;
+use App\Queries\Interfaces\PhoneConfirmationAttemptQueryInterface;
 //use App\Entities\User;
 
 /**
- * Description of UserQuery
+ * Description of PhoneConfirmationAttemptQuery
  *
  * @author Hristo
  */
-final class TransactionQuery implements TransactionQueryInterface
+final class PhoneConfirmationAttemptQuery implements PhoneConfirmationAttemptQueryInterface
 {
     /**
      * @var QueryBuilder

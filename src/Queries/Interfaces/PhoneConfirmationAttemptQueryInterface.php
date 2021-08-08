@@ -8,7 +8,7 @@ use App\Entities\Transaction;
  *
  * @author Hristo
  */
-interface TransactionQueryInterface
+interface PhoneConfirmationAttemptQueryInterface
 {
     public function all(): array;
 }

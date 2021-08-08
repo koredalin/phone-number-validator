@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repositories\Interfaces\PhoneConfirmationAttemptRepositoryInterface;
+use App\Entities\PhoneConfirmation;
 use App\Entities\PhoneConfirmationAttempt;
 
 /**
@@ -60,5 +61,10 @@ final class PhoneConfirmationAttemptRepository implements PhoneConfirmationAttem
         }
         
         return $phoneConfirmationAttempt;
+    }
+    
+    public function findAllByPhoneConfirmation(PhoneConfirmation $phoneConfirmation): array
+    {
+        return $this->objectRepository->findBy(['phoneConfirmation' => $phoneConfirmation], ['createdAt' => 'DESC']) ?? [];
     }
 }

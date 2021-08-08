@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Interfaces;
 
+use App\Entities\PhoneConfirmation;
 use App\Entities\PhoneConfirmationAttempt;
 
 /**
@@ -18,4 +19,6 @@ interface PhoneConfirmationAttemptRepositoryInterface
     public function findOneById(int $id): ?PhoneConfirmationAttempt;
     
     public function save(PhoneConfirmationAttempt $phoneConfirmationAttempt): PhoneConfirmationAttempt;
+    
+    public function findAllByPhoneConfirmation(PhoneConfirmation $phoneConfirmation): array;
 }

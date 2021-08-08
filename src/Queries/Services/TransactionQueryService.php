@@ -2,14 +2,14 @@
 
 namespace App\Queries\Services;
 
-use App\Queries\Interfaces\TransactionQueryInterface;
+use App\Queries\Interfaces\PhoneConfirmationAttemptQueryInterface;
 use App\Entities\Transaction;
 
 final class TransactionQueryService
 {
     private $transactionQuery;
     
-    public function __construct(TransactionQueryInterface $transactionQuery){
+    public function __construct(PhoneConfirmationAttemptQueryInterface $transactionQuery){
         $this->transactionQuery = $transactionQuery;
     }
     

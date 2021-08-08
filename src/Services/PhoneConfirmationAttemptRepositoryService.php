@@ -43,6 +43,11 @@ final class PhoneConfirmationAttemptRepositoryService implements PhoneConfirmati
         return $this->save($phoneConfirmationAttempt);
     }
     
+    public function findAllByPhoneConfirmation(PhoneConfirmation $phoneConfirmation): array
+    {
+        return $this->phoneConfirmationAttemptRepository->findAllByPhoneConfirmation($phoneConfirmation);
+    }
+    
     private function save(PhoneConfirmationAttempt $phoneConfirmationAttempt): PhoneConfirmationAttempt
     {
         return $this->phoneConfirmationAttemptRepository->save($phoneConfirmationAttempt);
