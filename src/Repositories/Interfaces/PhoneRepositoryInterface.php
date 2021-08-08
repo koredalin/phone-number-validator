@@ -21,6 +21,4 @@ interface PhoneRepositoryInterface
     public function findByOnePhoneCodeNumber(Country $country, int $phoneNumber): ?Phone;
     
     public function save(Phone $user): Phone;
-    
-    public function getDatabaseException(): string;
 }

@@ -56,11 +56,6 @@ final class PhoneRepositoryService implements PhoneRepositoryServiceInterface
         return $phone;
     }
     
-    public function getDatabaseException(): string
-    {
-        return $this->phoneRepository->getDatabaseException();
-    }
-    
     public function getAnyError(): string
     {
         return $this->anyError;

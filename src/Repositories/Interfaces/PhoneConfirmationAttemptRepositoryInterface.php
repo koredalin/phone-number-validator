@@ -18,6 +18,4 @@ interface PhoneConfirmationAttemptRepositoryInterface
     public function findOneById(int $id): ?PhoneConfirmationAttempt;
     
     public function save(PhoneConfirmationAttempt $phoneConfirmationAttempt): PhoneConfirmationAttempt;
-    
-    public function getDatabaseException(): string;
 }

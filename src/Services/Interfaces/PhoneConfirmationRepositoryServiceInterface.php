@@ -17,6 +17,4 @@ interface PhoneConfirmationRepositoryServiceInterface
     
     public function getOrCreateByTransactionAwaitingStatus(Transaction $transaction): PhoneConfirmation;
     
-    public function getDatabaseException(): string;
-    
 }

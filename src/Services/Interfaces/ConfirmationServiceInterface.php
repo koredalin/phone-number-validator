@@ -12,9 +12,7 @@ interface ConfirmationServiceInterface
 {
     public function confirmCode(int $transactionId, string $requestBody): ?PhoneConfirmationAttempt;
     
-    public function getAnyError(): string;
-    
-    public function getDatabaseErrors(): string;
+    public function getErrors(): string;
     
     public function getNextWebPage(): string;
     

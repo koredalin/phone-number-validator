@@ -54,9 +54,4 @@ final class UserRepositoryService implements UserRepositoryServiceInterface
     {
         return $this->userRepository->findOneByEmail($emailName);
     }
-    
-    public function getDatabaseException(): string
-    {
-        return $this->userRepository->getDatabaseException();
-    }
 }

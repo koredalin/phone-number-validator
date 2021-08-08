@@ -26,14 +26,11 @@ final class PhoneRepository implements PhoneRepositoryInterface
     
     private Phone $newPhone;
     
-    private string $dbException;
-    
     public function __construct(EntityManagerInterface $em, Phone $newPhone)
     {
         $this->em = $em;
         $this->objectRepository = $this->em->getRepository(Phone::class);
         $this->newPhone = $newPhone;
-        $this->dbException = '';
     }
     
     
@@ -63,14 +60,9 @@ final class PhoneRepository implements PhoneRepositoryInterface
             $this->em->persist($phone);
             $this->em->flush();
         } catch (\Exception $exception) {
-            $this->dbException = $exception;
+            throw new \Exception($exception->getMessage());
         }
         
         return $phone;
-    }
-    
-    public function getDatabaseException(): string
-    {
-        return $this->dbException;
     }
 }

@@ -31,11 +31,12 @@ class ConfirmationController extends BaseControllerJson
         $phoneConfirmationAttempt = $this->confirmationService->confirmCode($transactionId, $requestBody);
         
         if (is_null($phoneConfirmationAttempt)) {
-            $error = strlen($this->confirmationService->getDatabaseErrors()) ? $this->confirmationService->getDatabaseErrors() : $this->confirmationService->getAnyError();
+            $error = $this->confirmationService->getErrors();
             return $this->render($error, ['formValidation' => 'failure']);
         }
         
         $responseArguments = [
+            'error' => $this->confirmationService->getErrors(),
             'isSuccess' => $this->confirmationService->isSuccess(),
             'nextWebPage' => $this->confirmationService->getNextWebPage(),
         ];

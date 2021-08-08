@@ -15,7 +15,6 @@ final class TransactionRepositoryService implements TransactionRepositoryService
     private TransactionRepositoryInterface $transactionRepository;
     private PasswordGeneratorInterface $passwordGenerator;
     private DateTimeManagerInterface $dtManager;
-    private string $dbException;
     
     public function __construct(
         TransactionRepositoryInterface $transactionRepository,
@@ -25,7 +24,6 @@ final class TransactionRepositoryService implements TransactionRepositoryService
         $this->transactionRepository = $transactionRepository;
         $this->passwordGenerator = $passwordGenerator;
         $this->dtManager = $dtManager;
-        $this->dbException = '';
     }
     
     public function findOneById(int $id): ?Transaction
@@ -53,14 +51,4 @@ final class TransactionRepositoryService implements TransactionRepositoryService
         
         return $savedTransaction;
     }
-    
-    public function getDatabaseException(): string
-    {
-        return $this->transactionRepository->getDatabaseException();
-    }
-    
-//    public function all(): array
-//    {
-//        return $this->transactionRepository->all();
-//    }
 }

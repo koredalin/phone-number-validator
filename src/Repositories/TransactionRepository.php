@@ -5,8 +5,6 @@ namespace App\Repositories;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repositories\Interfaces\TransactionRepositoryInterface;
 use App\Entities\Transaction;
-use App\Entities\User;
-use App\Entities\Phone;
 
 /**
  * Description of UserRepository
@@ -27,15 +25,11 @@ final class TransactionRepository implements TransactionRepositoryInterface
     
     private Transaction $newTransaction;
     
-    private string $dbException;
-    
     public function __construct(EntityManagerInterface $em, Transaction $newTransaction)
     {
         $this->em = $em;
-//        $em->getConnection()->getConfiguration()->setSQLLogger(null);
         $this->objectRepository = $this->em->getRepository(Transaction::class);
         $this->newTransaction = $newTransaction;
-        $this->dbException = '';
     }
     
     
@@ -51,14 +45,7 @@ final class TransactionRepository implements TransactionRepositoryInterface
     
     public function findOneById(int $id): ?Transaction
     {
-        $test = 'xdebug test variable';
-//        $this->em->clear();
-        try {
         $transaction = $this->objectRepository->find($id);
-        } catch (\Exception $exception) {
-            throw new \Exception($exception->getMessage());
-        }
-//        $this->em->clear();
         
         return $transaction;
     }
@@ -69,7 +56,7 @@ final class TransactionRepository implements TransactionRepositoryInterface
             $this->em->persist($transaction);
             $this->em->flush();
         } catch (\Exception $exception) {
-            $this->dbException = $exception->getMessage();
+            throw new \Exception($exception->getMessage());
         }
         
         return $transaction;

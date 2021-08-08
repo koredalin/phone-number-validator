@@ -66,7 +66,11 @@ final class CountryRepository implements CountryRepositoryInterface
     
     public function save(Country $country): void
     {
-        $this->objectRepository->persist($country);
-        $this->objectRepository->flush();
+        try {
+            $this->objectRepository->persist($country);
+            $this->objectRepository->flush();
+        } catch (\Exception $exception) {
+            throw new \Exception($exception->getMessage());
+        }
     }
 }

@@ -26,14 +26,11 @@ final class PhoneConfirmationRepository implements PhoneConfirmationRepositoryIn
     
     private PhoneConfirmation $newPhoneConfirmation;
     
-    private string $dbException;
-    
     public function __construct(EntityManagerInterface $em, PhoneConfirmation $newPhoneConfirmation)
     {
         $this->em = $em;
         $this->objectRepository = $this->em->getRepository(PhoneConfirmation::class);
         $this->newPhoneConfirmation = $newPhoneConfirmation;
-        $this->dbException = '';
     }
     
     
@@ -76,10 +73,5 @@ final class PhoneConfirmationRepository implements PhoneConfirmationRepositoryIn
         }
         
         return $phoneConfirmation;
-    }
-    
-    public function getDatabaseException(): string
-    {
-        return $this->dbException;
     }
 }

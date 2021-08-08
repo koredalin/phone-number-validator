@@ -20,6 +20,4 @@ interface UserRepositoryInterface
     public function findOneByEmail(string $email): ?User;
     
     public function save(User $email): User;
-    
-    public function getDatabaseException(): string;
 }

@@ -63,9 +63,4 @@ final class PhoneConfirmationRepositoryService implements PhoneConfirmationRepos
         
         return $savedPhoneConfirmation;
     }
-    
-    public function getDatabaseException(): string
-    {
-        return $this->phoneConfirmationRepository->getDatabaseException();
-    }
 }

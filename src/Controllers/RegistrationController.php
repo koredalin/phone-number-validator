@@ -34,10 +34,11 @@ class RegistrationController extends BaseControllerJson
         
         $phoneConfirmation = $this->registrationService->registrate();
         if (is_null($phoneConfirmation)) {
-            return $this->render($this->registrationService->getDatabaseErrors(), ['formValidation' => 'success', 'databaseValidation' => 'failure']);
+            return $this->render($this->registrationService->getErrors(), ['formValidation' => 'success', 'databaseValidation' => 'failure']);
         }
         
         $responseArguments = [
+            'errors' => $this->registrationService->getErrors(),
             'isSuccess' => $this->registrationService->isSuccess(),
             'nextWebPage' => $this->registrationService->getNextWebPage(),
         ];

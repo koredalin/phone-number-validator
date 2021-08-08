@@ -21,6 +21,4 @@ interface PhoneConfirmationRepositoryInterface
     public function findLastByTransactionAwaitingStatus(Transaction $transaction): ?PhoneConfirmation;
     
     public function save(PhoneConfirmation $phoneConfirmation): PhoneConfirmation;
-    
-    public function getDatabaseException(): string;
 }

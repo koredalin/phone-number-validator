@@ -25,8 +25,6 @@ final class PhoneConfirmationAttemptRepository implements PhoneConfirmationAttem
     
     private PhoneConfirmationAttempt $newPhoneConfirmationAttempt;
     
-    private string $dbException;
-    
     public function __construct(
         EntityManagerInterface $em,
         PhoneConfirmationAttempt $newPhoneConfirmationAttempt
@@ -34,7 +32,6 @@ final class PhoneConfirmationAttemptRepository implements PhoneConfirmationAttem
         $this->em = $em;
         $this->objectRepository = $this->em->getRepository(PhoneConfirmationAttempt::class);
         $this->newPhoneConfirmationAttempt = $newPhoneConfirmationAttempt;
-        $this->dbException = '';
     }
     
     
@@ -58,15 +55,10 @@ final class PhoneConfirmationAttemptRepository implements PhoneConfirmationAttem
         try {
             $this->em->persist($phoneConfirmationAttempt);
             $this->em->flush();
-        } catch (Exception $exception) {
-            $this->dbException = $exception->getMessage();
+        } catch (\Exception $exception) {
+            throw new \Exception($exception->getMessage());
         }
         
         return $phoneConfirmationAttempt;
-    }
-    
-    public function getDatabaseException(): string
-    {
-        return $this->dbException;
     }
 }

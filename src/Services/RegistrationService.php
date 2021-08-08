@@ -39,7 +39,7 @@ class RegistrationService implements RegistrationServiceInterface
     private TransactionRepositoryServiceInterface $transactionService;
     private PhoneConfirmationRepositoryServiceInterface $phoneConfirmationService;
     
-    private string $dbErrors;
+    private string $errors;
     
     private bool $isFinishedRegistration;
     
@@ -66,7 +66,7 @@ class RegistrationService implements RegistrationServiceInterface
         $this->phoneService = $phoneService;
         $this->transactionService = $transactionService;
         $this->phoneConfirmationService = $phoneConfirmationService;
-        $this->dbErrors = '';
+        $this->errors = '';
         $this->isFinishedRegistration = false;
         $this->nextWebPage = '';
         $this->isSuccess = false;
@@ -148,9 +148,9 @@ class RegistrationService implements RegistrationServiceInterface
      * 
      * @return type
      */
-    public function getDatabaseErrors(): string
+    public function getErrors(): string
     {
-        return $this->dbErrors;
+        return $this->errors;
     }
     
     public function isSuccess(): string
@@ -170,9 +170,7 @@ class RegistrationService implements RegistrationServiceInterface
     private function getOrCreateByEmail(): ?User
     {
         $user = $this->userService->getOrCreateByEmail($this->form->getEmail());
-        $exceptionEmail = $this->userService->getDatabaseException();
-        if ($exceptionEmail !== '' || $user->getId() < 1) {
-            $this->dbErrors = $exceptionEmail;
+        if ((int)$user->getId() < 1) {
             return null;
         }
         
@@ -182,10 +180,9 @@ class RegistrationService implements RegistrationServiceInterface
     private function getOrCreatePhone(): ?Phone
     {
         $phone = $this->phoneService->getOrCreateByAssembledPhoneNumber($this->form->getPhoneNumber());
-        $phoneDbException = $this->phoneService->getDatabaseException();
-        $phoneAnyError = $this->phoneService->getDatabaseException();
-        if (is_null($phone) || $phoneDbException !== '' || $phoneAnyError !== '' || $phone->getId() < 1) {
-            $this->dbErrors = $phoneDbException !== '' ? $phoneDbException : $phoneAnyError;
+        $phoneAnyError = $this->phoneService->getAnyError();
+        if (is_null($phone) || $phoneAnyError !== '' || (int)$phone->getId() < 1) {
+            $this->errors .= $phoneAnyError;
             return null;
         }
     
@@ -195,9 +192,7 @@ class RegistrationService implements RegistrationServiceInterface
     private function createTransaction(User $user, Phone $phone): ?Transaction
     {
         $transaction = $this->transactionService->make($user, $phone, $this->form->getPassword());
-        $exceptionTransaction = $this->transactionService->getDatabaseException();
-        if ($exceptionTransaction !== '' || $transaction->getId() < 1) {
-            $this->dbErrors = $exceptionTransaction;
+        if ((int)$transaction->getId() < 1) {
             return null;
         }
     
@@ -207,9 +202,7 @@ class RegistrationService implements RegistrationServiceInterface
     private function createPhoneConfirmation(Transaction $transaction): ?PhoneConfirmation
     {
         $phoneConfirmation = $this->phoneConfirmationService->getOrCreateByTransactionAwaitingStatus($transaction);
-        $exceptionPhoneConfirmation = $this->phoneConfirmationService->getDatabaseException();
-        if ($exceptionPhoneConfirmation !== '' || $phoneConfirmation->getId() < 1) {
-            $this->dbErrors = $exceptionPhoneConfirmation;
+        if ((int)$phoneConfirmation->getId() < 1) {
             return null;
         }
     

@@ -29,8 +29,7 @@ class ConfirmationService implements ConfirmationServiceInterface
     private PhoneConfirmationAttemptRepositoryServiceInterface $phoneConfirmationAttemptService;
     private DateTimeManagerInterface $dtManager;
     
-    private string $anyError;
-    private string $dbError;
+    private string $errors;
     
     private bool $isFinishedConfirmation;
     
@@ -49,8 +48,7 @@ class ConfirmationService implements ConfirmationServiceInterface
         $this->phoneConfirmationRepository = $phoneConfirmationService;
         $this->phoneConfirmationAttemptService = $phoneConfirmationAttemptService;
         $this->dtManager = $dtManager;
-        $this->anyError = '';
-        $this->dbError = '';
+        $this->errors = '';
         $this->isFinishedConfirmation = false;
         $this->nextWebPage = '';
         $this->isSuccess = false;
@@ -65,13 +63,13 @@ class ConfirmationService implements ConfirmationServiceInterface
         $parsedRequestBody = \json_decode($requestBody, true);
         $transaction = $this->transactionRepository->findOneById($transactionId);
         if (is_null($transaction)) {
-            $this->anyError = 'Not found transaction.';
+            $this->errors .= 'Not found transaction.';
             return null;
         }
         
         $phoneConfirmation = $this->phoneConfirmationRepository->findLastByTransactionAwaitingStatus($transaction);
         if (is_null($phoneConfirmation)) {
-            $this->anyError = 'Not found phone code.';
+            $this->errors .= 'Not found phone code.';
             return null;
         }
         
@@ -84,31 +82,21 @@ class ConfirmationService implements ConfirmationServiceInterface
             && $phoneConfirmationAttempt->getStatus() === PhoneConfirmationAttempt::STATUS_CONFIRMED
         ) {
             $this->isSuccess = true;
-            $this->anyError = 'Wrong confirmation code.';
             $this->nextWebPage = self::NEXT_WEB_PAGE_GROUP.'/'.$transactionId;
             $this->setPhoneConfirmationSuccess($phoneConfirmation);
             $this->setTransactionSuccess($transaction);
         } else {
             $this->isSuccess = false;
+            $this->errors .= 'Wrong confirmation code.';
             $this->nextWebPage = self::CURRENT_WEB_PAGE_GROUP.'/'.$transactionId;
         }
         
         return $phoneConfirmationAttempt;
     }
     
-    public function getAnyError(): string
+    public function getErrors(): string
     {
-        return $this->anyError;
-    }
-    
-    /**
-     * Returns the errors when a new registration is not recorded into the database.
-     * 
-     * @return type
-     */
-    public function getDatabaseErrors(): string
-    {
-        return $this->dbError;
+        return $this->errors;
     }
     
     public function isSuccess(): string
