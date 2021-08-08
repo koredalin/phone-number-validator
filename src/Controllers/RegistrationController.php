@@ -38,8 +38,7 @@ class RegistrationController extends BaseControllerJson
         }
         
         $responseArguments = [
-            'formValidation' => 'success',
-            'databaseValidation' => 'success',
+            'isSuccess' => $this->registrationService->isSuccess(),
             'nextWebPage' => $this->registrationService->getNextWebPage(),
         ];
         

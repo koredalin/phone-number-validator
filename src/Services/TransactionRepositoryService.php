@@ -40,6 +40,7 @@ final class TransactionRepositoryService implements TransactionRepositoryService
         $transaction->setPhone($phone);
         $transaction->setStatus(Transaction::STATUS_AWAITING_REQUEST);
         $transaction->setPassword($this->passwordGenerator->encode($rawPassword));
+        $transaction->setConfirmedAt(null);
         $transaction->setCreatedAt($this->dtManager->now());
         $transaction->setUpdatedAt($this->dtManager->now());
         

@@ -22,4 +22,6 @@ interface RegistrationServiceInterface
     public function getDatabaseErrors(): string;
    
     public function getNextWebPage(): string;
+    
+    public function isSuccess(): string;
 }

@@ -25,6 +25,7 @@ use App\Services\Interfaces\PhoneConfirmationRepositoryServiceInterface;
  */
 class RegistrationService implements RegistrationServiceInterface
 {
+    const CURRENT_WEB_PAGE = '/registration';
     private const NEXT_WEB_PAGE_GROUP = '/confirmation';
     
     private ValidatorInterface $validator;
@@ -43,6 +44,8 @@ class RegistrationService implements RegistrationServiceInterface
     private bool $isFinishedRegistration;
     
     private string $nextWebPage;
+    
+    private bool $isSuccess;
 
 
     public function __construct(
@@ -66,6 +69,7 @@ class RegistrationService implements RegistrationServiceInterface
         $this->dbErrors = '';
         $this->isFinishedRegistration = false;
         $this->nextWebPage = '';
+        $this->isSuccess = false;
     }
     
     
@@ -102,6 +106,7 @@ class RegistrationService implements RegistrationServiceInterface
     
     public function registrate(): ?PhoneConfirmation
     {
+        $this->nextWebPage = self::CURRENT_WEB_PAGE;
         if ($this->isFinishedRegistration) {
             throw new \Exception('The registration is already made.');
         }
@@ -132,6 +137,7 @@ class RegistrationService implements RegistrationServiceInterface
         }
         
         $this->isFinishedRegistration = true;
+        $this->isSuccess = true;
         $this->nextWebPage = self::NEXT_WEB_PAGE_GROUP.'/'.$transaction->getId();
         
         return $phoneConfirmation;
@@ -145,6 +151,11 @@ class RegistrationService implements RegistrationServiceInterface
     public function getDatabaseErrors(): string
     {
         return $this->dbErrors;
+    }
+    
+    public function isSuccess(): string
+    {
+        return $this->isSuccess;
     }
     
     public function getNextWebPage(): string

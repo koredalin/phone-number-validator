@@ -36,8 +36,7 @@ class ConfirmationController extends BaseControllerJson
         }
         
         $responseArguments = [
-            'formValidation' => 'success',
-            'databaseValidation' => 'success',
+            'isSuccess' => $this->confirmationService->isSuccess(),
             'nextWebPage' => $this->confirmationService->getNextWebPage(),
         ];
         

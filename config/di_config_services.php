@@ -64,8 +64,9 @@ return [
 
     ConfirmationServiceInterface::class => DI\create(ConfirmationService::class)
         ->constructor(
-            DI\get(TransactionRepositoryServiceInterface::class),
-            DI\get(PhoneConfirmationRepositoryServiceInterface::class),
-            DI\get(PhoneConfirmationAttemptRepositoryServiceInterface::class)
+            DI\get(TransactionRepositoryInterface::class),
+            DI\get(PhoneConfirmationRepositoryInterface::class),
+            DI\get(PhoneConfirmationAttemptRepositoryServiceInterface::class),
+            DI\get(DateTimeManagerInterface::class)
         ),
 ];

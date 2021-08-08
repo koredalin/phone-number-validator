@@ -52,6 +52,11 @@ class Transaction
     private string $password;
     
     /**
+     * @Column(name="confirmed_at", type="datetime", nullable="true")
+     */
+    private ?DateTime $confirmedAt;
+    
+    /**
      * @Column(name="created_at", type="datetime")
      */
     private \DateTime $createdAt;
@@ -94,6 +99,11 @@ class Transaction
         $this->password = $password;
     }
     
+    public function setConfirmedAt(?DateTime $confirmedAt): void
+    {
+        $this->confirmedAt = $confirmedAt;
+    }
+    
     public function setCreatedAt(DateTime $createdAt): void
     {
         $this->createdAt = $createdAt;
@@ -131,6 +141,11 @@ class Transaction
     public function getPassword(): string
     {
         return $this->password;
+    }
+    
+    public function getConfirmedAt(): ?DateTime
+    {
+        return $this->confirmedAt;
     }
     
     public function getCreatedAt(): DateTime
