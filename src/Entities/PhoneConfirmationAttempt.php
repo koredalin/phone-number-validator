@@ -12,10 +12,12 @@ use App\Entities\PhoneConfirmation;
 class PhoneConfirmationAttempt
 {
     const STATUS_CONFIRMED = 'confirmed';
+    const STATUS_DENIED_COOL_DOWN = 'denied_cool_down';
     const STATUS_DENIED = 'denied';
     
     const ALL_STATUSES = [
         self::STATUS_CONFIRMED,
+        self::STATUS_DENIED_COOL_DOWN,
         self::STATUS_DENIED,
     ];
     

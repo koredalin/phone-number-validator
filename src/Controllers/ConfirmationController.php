@@ -30,11 +30,6 @@ class ConfirmationController extends BaseControllerJson
         $transactionId = (int)$arguments['transactionId'] ?? 0;
         $phoneConfirmationAttempt = $this->confirmationService->confirmCode($transactionId, $requestBody);
         
-        if (is_null($phoneConfirmationAttempt)) {
-            $error = $this->confirmationService->getErrors();
-            return $this->render($error, ['formValidation' => 'failure']);
-        }
-        
         $responseArguments = [
             'error' => $this->confirmationService->getErrors(),
             'isSuccess' => $this->confirmationService->isSuccess(),

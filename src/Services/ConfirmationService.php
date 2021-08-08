@@ -58,15 +58,23 @@ class ConfirmationService implements ConfirmationServiceInterface
     
     public function confirmCode(int $transactionId, string $requestBody): ?PhoneConfirmationAttempt
     {
-        $this->nextWebPage = self::CURRENT_WEB_PAGE_GROUP.'/'.$transactionId;
         if ($this->isFinishedConfirmation) {
             throw new \Exception('The registration is already made.');
         }
+        $this->nextWebPage = self::CURRENT_WEB_PAGE_GROUP.'/'.$transactionId;
+        $this->isFinishedConfirmation = true;
         
         $parsedRequestBody = \json_decode($requestBody, true);
         $transaction = $this->transactionRepository->findOneById($transactionId);
         if (is_null($transaction)) {
             $this->errors .= 'Not found transaction.';
+            return null;
+        }
+        
+        if ($transaction->getStatus() === Transaction::STATUS_CONFIRMED) {
+            $this->errors .= 'Already confirmed transaction.';
+            $this->nextWebPage = self::NEXT_WEB_PAGE_GROUP.'/'.$transactionId;
+            $this->isSuccess = true;
             return null;
         }
         
@@ -76,21 +84,24 @@ class ConfirmationService implements ConfirmationServiceInterface
             return null;
         }
         
-        $phoneConfirmationAttempts = $this->phoneConfirmationAttemptService->findAllByPhoneConfirmation($phoneConfirmation);
-        $lastAttemptTime = isset($phoneConfirmationAttempts[0]) ? $phoneConfirmationAttempts[0]->getCreatedAt() : null;
+        if ($phoneConfirmation->getStatus() === PhoneConfirmation::STATUS_ABANDONED) {
+            throw new \Exception('PhoneConfirmation status abandoned is not possible in such cases. transactionId: '.$transactionId.'. phoneConfirmationId: '.$phoneConfirmation->getId().'.');
+        }
+        
+        $inputConfirmationCode = (int)$parsedRequestBody['confirmationCode'];
+        $phoneConfirmationAttempts = $this->phoneConfirmationAttemptService->findAllByPhoneConfirmationNoCoolDownDesc($phoneConfirmation);
+        $lastAttemptTime = count($phoneConfirmationAttempts) > 0 ? $phoneConfirmationAttempts->first()->getCreatedAt() : null;
         if (
             count($phoneConfirmationAttempts) > 1
             && count($phoneConfirmationAttempts) % self::COOL_DOWN_CONFIRMATION_ATTEMPTS_NUMBER == 0
             && $lastAttemptTime->add(new \DateInterval('PT'.self::COOL_DOWN_MINUTES.'M')) > $this->dtManager->now()
         ) {
+            $this->phoneConfirmationAttemptService->createByPhoneConfirmationInputConfirmationCode($phoneConfirmation, $inputConfirmationCode, true);
             $this->errors .= 'Cool down time before next possible attempt: '.self::COOL_DOWN_MINUTES.'.';
             return null;
         }
         
-        $inputConfirmationCode = (int)$parsedRequestBody['confirmationCode'];
         $phoneConfirmationAttempt = $this->phoneConfirmationAttemptService->createByPhoneConfirmationInputConfirmationCode($phoneConfirmation, $inputConfirmationCode);
-        
-        $this->isFinishedConfirmation = true;
         if (
             $phoneConfirmationAttempt instanceof PhoneConfirmationAttempt
             && $phoneConfirmationAttempt->getStatus() === PhoneConfirmationAttempt::STATUS_CONFIRMED

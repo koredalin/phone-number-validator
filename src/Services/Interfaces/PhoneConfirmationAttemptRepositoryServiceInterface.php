@@ -2,6 +2,7 @@
 
 namespace App\Services\Interfaces;
 
+use Doctrine\Common\Collections\Collection;
 use App\Entities\PhoneConfirmation;
 use App\Entities\PhoneConfirmationAttempt;
 
@@ -13,7 +14,7 @@ interface PhoneConfirmationAttemptRepositoryServiceInterface
 {
     public function findOneById(int $id): ?PhoneConfirmationAttempt;
     
-    public function createByPhoneConfirmationInputConfirmationCode(PhoneConfirmation $phoneConfirmation, int $inputConfirmationCode): PhoneConfirmationAttempt;
+    public function createByPhoneConfirmationInputConfirmationCode(PhoneConfirmation $phoneConfirmation, int $inputConfirmationCode, bool $isCoolDown = false): PhoneConfirmationAttempt;
     
-    public function findAllByPhoneConfirmation(PhoneConfirmation $phoneConfirmation): array;
+    public function findAllByPhoneConfirmationNoCoolDownDesc(PhoneConfirmation $phoneConfirmation): Collection;
 }

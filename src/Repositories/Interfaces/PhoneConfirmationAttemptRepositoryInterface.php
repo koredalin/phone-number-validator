@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Interfaces;
 
+use Doctrine\Common\Collections\Collection;
 use App\Entities\PhoneConfirmation;
 use App\Entities\PhoneConfirmationAttempt;
 
@@ -20,5 +21,5 @@ interface PhoneConfirmationAttemptRepositoryInterface
     
     public function save(PhoneConfirmationAttempt $phoneConfirmationAttempt): PhoneConfirmationAttempt;
     
-    public function findAllByPhoneConfirmation(PhoneConfirmation $phoneConfirmation): array;
+    public function findAllByPhoneConfirmationNoCoolDownDesc(PhoneConfirmation $phoneConfirmation): Collection;
 }

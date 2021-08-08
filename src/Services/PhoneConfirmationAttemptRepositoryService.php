@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Doctrine\Common\Collections\Collection;
 use App\Services\Interfaces\PhoneConfirmationAttemptRepositoryServiceInterface;
 use App\Repositories\Interfaces\PhoneConfirmationAttemptRepositoryInterface;
 use App\Common\Interfaces\DateTimeManagerInterface;
@@ -26,26 +27,30 @@ final class PhoneConfirmationAttemptRepositoryService implements PhoneConfirmati
         return $this->phoneConfirmationAttemptRepository->findOneById($id);
     }
     
-    public function createByPhoneConfirmationInputConfirmationCode(PhoneConfirmation $phoneConfirmation, int $inputConfirmationCode): PhoneConfirmationAttempt
+    public function createByPhoneConfirmationInputConfirmationCode(PhoneConfirmation $phoneConfirmation, int $inputConfirmationCode, bool $isCoolDown = false): PhoneConfirmationAttempt
     {
-        $caliberConfirmationCode = (int)$phoneConfirmation->getConfirmationCode();
-        $isConfirmedCode = $inputConfirmationCode == $caliberConfirmationCode;
         
         $phoneConfirmationAttempt = $this->phoneConfirmationAttemptRepository->new();
         $phoneConfirmationAttempt->setPhoneConfirmation($phoneConfirmation);
+        $caliberConfirmationCode = (int)$phoneConfirmation->getConfirmationCode();
         $phoneConfirmationAttempt->setInputConfirmationCode($inputConfirmationCode);
-        $isConfirmedCode
-            ? $phoneConfirmationAttempt->setStatus(PhoneConfirmationAttempt::STATUS_CONFIRMED)
-            : $phoneConfirmationAttempt->setStatus(PhoneConfirmationAttempt::STATUS_DENIED);
+        if ($isCoolDown) {
+            $phoneConfirmationAttempt->setStatus(PhoneConfirmationAttempt::STATUS_DENIED_COOL_DOWN);
+        } else {
+            $isConfirmedCode = $inputConfirmationCode == $caliberConfirmationCode;
+            $isConfirmedCode
+                ? $phoneConfirmationAttempt->setStatus(PhoneConfirmationAttempt::STATUS_CONFIRMED)
+                : $phoneConfirmationAttempt->setStatus(PhoneConfirmationAttempt::STATUS_DENIED);
+        }
         $phoneConfirmationAttempt->setCreatedAt($this->dtManager->now());
         $phoneConfirmationAttempt->setUpdatedAt($this->dtManager->now());
         
         return $this->save($phoneConfirmationAttempt);
     }
     
-    public function findAllByPhoneConfirmation(PhoneConfirmation $phoneConfirmation): array
+    public function findAllByPhoneConfirmationNoCoolDownDesc(PhoneConfirmation $phoneConfirmation): Collection
     {
-        return $this->phoneConfirmationAttemptRepository->findAllByPhoneConfirmation($phoneConfirmation);
+        return $this->phoneConfirmationAttemptRepository->findAllByPhoneConfirmationNoCoolDownDesc($phoneConfirmation);
     }
     
     private function save(PhoneConfirmationAttempt $phoneConfirmationAttempt): PhoneConfirmationAttempt

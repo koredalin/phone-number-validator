@@ -3,7 +3,11 @@
 namespace App\Repositories;
 
 use Doctrine\ORM\EntityManagerInterface;
+//use Doctrine\Persistence\ObjectRepository;
+use Doctrine\Common\Collections\Collection as Collection;
+use Doctrine\ORM\EntityRepository;
 use App\Repositories\Interfaces\PhoneConfirmationAttemptRepositoryInterface;
+use Doctrine\Common\Collections\Criteria;
 use App\Entities\PhoneConfirmation;
 use App\Entities\PhoneConfirmationAttempt;
 
@@ -14,15 +18,9 @@ use App\Entities\PhoneConfirmationAttempt;
  */
 final class PhoneConfirmationAttemptRepository implements PhoneConfirmationAttemptRepositoryInterface
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $em;
+    private EntityManagerInterface $em;
     
-    /**
-     * @var ObjectRepository
-     */
-    private $objectRepository;
+    private EntityRepository $objectRepository;
     
     private PhoneConfirmationAttempt $newPhoneConfirmationAttempt;
     
@@ -63,8 +61,14 @@ final class PhoneConfirmationAttemptRepository implements PhoneConfirmationAttem
         return $phoneConfirmationAttempt;
     }
     
-    public function findAllByPhoneConfirmation(PhoneConfirmation $phoneConfirmation): array
+    public function findAllByPhoneConfirmationNoCoolDownDesc(PhoneConfirmation $phoneConfirmation): Collection
     {
-        return $this->objectRepository->findBy(['phoneConfirmation' => $phoneConfirmation], ['createdAt' => 'DESC']) ?? [];
+        $criteria = new Criteria();
+        $criteria->andWhere(Criteria::expr()->eq('phoneConfirmation', $phoneConfirmation))
+            ->andWhere(Criteria::expr()->neq('status', PhoneConfirmationAttempt::STATUS_DENIED_COOL_DOWN))
+            ->orderBy(['createdAt' => 'DESC']);
+        $result = $this->objectRepository->matching($criteria);
+        
+        return $result;
     }
 }
