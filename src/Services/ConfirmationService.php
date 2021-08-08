@@ -80,8 +80,8 @@ class ConfirmationService implements ConfirmationServiceInterface
         $lastAttemptTime = isset($phoneConfirmationAttempts[0]) ? $phoneConfirmationAttempts[0]->getCreatedAt() : null;
         if (
             count($phoneConfirmationAttempts) > 1
-            && count($phoneConfirmationAttempts) % self::COOL_DOWN_CONFIRMATION_ATTEMPTS_NUMBER == 1
-            && $lastAttemptTime->add(new DateInterval('PT'.self::COOL_DOWN_MINUTES.'M')) > $this->dtManager->now()
+            && count($phoneConfirmationAttempts) % self::COOL_DOWN_CONFIRMATION_ATTEMPTS_NUMBER == 0
+            && $lastAttemptTime->add(new \DateInterval('PT'.self::COOL_DOWN_MINUTES.'M')) > $this->dtManager->now()
         ) {
             $this->errors .= 'Cool down time before next possible attempt: '.self::COOL_DOWN_MINUTES.'.';
             return null;
