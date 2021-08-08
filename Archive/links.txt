@@ -1,0 +1,4 @@
+
+# SEPTEMBER 5, 2018
+# Debug PHP With XDebug On NetBeans
+https://www.codewall.co.uk/debug-php-with-xdebug-on-netbeans/

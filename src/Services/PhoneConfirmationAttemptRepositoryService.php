@@ -26,10 +26,14 @@ final class PhoneConfirmationAttemptRepositoryService implements PhoneConfirmati
         return $this->phoneConfirmationAttemptRepository->findOneById($id);
     }
     
-    public function createByPhoneConfirmationIsConfirmedCode(PhoneConfirmation $phoneConfirmation, bool $isConfirmedCode): PhoneConfirmationAttempt
+    public function createByPhoneConfirmationInputConfirmationCode(PhoneConfirmation $phoneConfirmation, int $inputConfirmationCode): PhoneConfirmationAttempt
     {
+        $caliberConfirmationCode = (int)$phoneConfirmation->getConfirmationCode();
+        $isConfirmedCode = $inputConfirmationCode == $caliberConfirmationCode;
+        
         $phoneConfirmationAttempt = $this->phoneConfirmationAttemptRepository->new();
         $phoneConfirmationAttempt->setPhoneConfirmation($phoneConfirmation);
+        $phoneConfirmationAttempt->setInputConfirmationCode($inputConfirmationCode);
         $isConfirmedCode
             ? $phoneConfirmationAttempt->setStatus(PhoneConfirmationAttempt::STATUS_CONFIRMED)
             : $phoneConfirmationAttempt->setStatus(PhoneConfirmationAttempt::STATUS_DENIED);
@@ -41,7 +45,7 @@ final class PhoneConfirmationAttemptRepositoryService implements PhoneConfirmati
     
     private function save(PhoneConfirmationAttempt $phoneConfirmationAttempt): PhoneConfirmationAttempt
     {
-        $this->phoneConfirmationAttemptRepository->save($phoneConfirmationAttempt);
+        return $this->phoneConfirmationAttemptRepository->save($phoneConfirmationAttempt);
     }
     
     public function getDatabaseException(): string

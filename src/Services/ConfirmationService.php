@@ -17,6 +17,7 @@ use App\Services\Interfaces\PhoneConfirmationAttemptRepositoryServiceInterface;
  */
 class ConfirmationService implements ConfirmationServiceInterface
 {
+    const CURRENT_WEB_PAGE_GROUP = '/confirmation';
     const NEXT_WEB_PAGE_GROUP = '/success';
     
     private TransactionRepositoryServiceInterface $transactionService;
@@ -47,26 +48,31 @@ class ConfirmationService implements ConfirmationServiceInterface
     
     public function confirmCode(int $transactionId, string $requestBody): ?PhoneConfirmationAttempt
     {
-//        echo $transactionId.' ||||||||| '.$requestBody; exit;
+        if ($this->isFinishedConfirmation) {
+            throw new \Exception('The registration is already made.');
+        }
+        
         $parsedRequestBody = \json_decode($requestBody, true);
         $transaction = $this->transactionService->findOneById($transactionId);
-        print_r($transaction); exit;
         if (is_null($transaction)) {
             $this->anyError = 'Not found transaction.';
             return null;
         }
         
         $phoneConfirmation = $this->phoneConfirmationService->findLastByTransactionAwaitingStatus($transaction);
-        print_r($phoneConfirmation); exit;
         if (is_null($phoneConfirmation)) {
             $this->anyError = 'Not found phone code.';
             return null;
         }
         
         $inputConfirmationCode = (int)$parsedRequestBody['confirmationCode'];
-        $caliberConfirmationCode = (int)$phoneConfirmation->getConfirmationCode();
-        $isConfirmedCode = $inputConfirmationCode == $caliberConfirmationCode;
-        $phoneConfirmationAttempt = $this->phoneConfirmationAttemptService->createByPhoneConfirmationIsConfirmedCode($phoneConfirmation, $isConfirmedCode);
+        $phoneConfirmationAttempt = $this->phoneConfirmationAttemptService->createByPhoneConfirmationInputConfirmationCode($phoneConfirmation, $inputConfirmationCode);
+        $this->anyError = 'Wrong confirmation code.';
+        
+        $this->isFinishedConfirmation = true;
+        $this->nextWebPage = $phoneConfirmationAttempt instanceof PhoneConfirmationAttempt
+            ? self::NEXT_WEB_PAGE_GROUP.'/'.$transactionId
+            : self::CURRENT_WEB_PAGE_GROUP.'/'.$transactionId;
         
         return $phoneConfirmationAttempt;
     }

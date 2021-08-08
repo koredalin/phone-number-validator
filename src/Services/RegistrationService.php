@@ -106,9 +106,6 @@ class RegistrationService implements RegistrationServiceInterface
             throw new \Exception('The registration is already made.');
         }
         
-        print_r($this->transactionService->findOneById(2));
-        exit;
-        
         $this->notSetFormException();
         if (!$this->isValidForm()) {
             return null;

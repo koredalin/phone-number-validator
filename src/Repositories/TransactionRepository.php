@@ -51,8 +51,13 @@ final class TransactionRepository implements TransactionRepositoryInterface
     
     public function findOneById(int $id): ?Transaction
     {
+        $test = 'xdebug test variable';
 //        $this->em->clear();
+        try {
         $transaction = $this->objectRepository->find($id);
+        } catch (\Exception $exception) {
+            throw new \Exception($exception->getMessage());
+        }
 //        $this->em->clear();
         
         return $transaction;

@@ -34,6 +34,13 @@ class PhoneConfirmationAttempt
     private PhoneConfirmation $phoneConfirmation;
     
     /**
+     * The user's confirmation code.
+     * 
+     * @Column(name="input_confirmation_code")
+     */
+    private int $inputConfirmationCode;
+    
+    /**
      * @Column(length=30, name="status")
      */
     private string $status;
@@ -67,6 +74,11 @@ class PhoneConfirmationAttempt
         $this->phoneConfirmation = $phoneConfirmation;
     }
     
+    public function setInputConfirmationCode(int $inputConfirmationCode): void
+    {
+        $this->inputConfirmationCode = $inputConfirmationCode;
+    }
+    
     public function setStatus(string $status): void
     {
         if (!in_array($status, self::ALL_STATUSES, true)) {
@@ -98,6 +110,11 @@ class PhoneConfirmationAttempt
     public function getPhoneConfirmation(): int
     {
         return $this->phoneConfirmation;
+    }
+    
+    public function getInputConfirmationCode(): string
+    {
+        return $this- $this->inputConfirmationCode;
     }
     
     public function getStatus(): string

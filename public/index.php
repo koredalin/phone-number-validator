@@ -1,5 +1,7 @@
 <?php
 
+//ini_set('memory_limit', '1024M');
+
 use Composer\Autoload\ClassLoader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 

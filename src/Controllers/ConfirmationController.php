@@ -29,14 +29,10 @@ class ConfirmationController extends BaseControllerJson
         $requestBody = $request->getBody()->getContents();
         $transactionId = (int)$arguments['transactionId'] ?? 0;
         $phoneConfirmationAttempt = $this->confirmationService->confirmCode($transactionId, $requestBody);
-        echo __LINE__; exit;
-        if (!$this->confirmationService->isValidForm()) {
-            return $this->render($this->confirmationService->getFormErrors(), ['formValidation' => 'failure']);
-        }
         
-        $phoneConfirmation = $this->confirmationService->registrate();
-        if (is_null($phoneConfirmation)) {
-            return $this->render($this->confirmationService->getDatabaseErrors(), ['formValidation' => 'success', 'databaseValidation' => 'failure']);
+        if (is_null($phoneConfirmationAttempt)) {
+            $error = strlen($this->confirmationService->getDatabaseErrors()) ? $this->confirmationService->getDatabaseErrors() : $this->confirmationService->getAnyError();
+            return $this->render($error, ['formValidation' => 'failure']);
         }
         
         $responseArguments = [
@@ -45,6 +41,6 @@ class ConfirmationController extends BaseControllerJson
             'nextWebPage' => $this->confirmationService->getNextWebPage(),
         ];
         
-        return $this->render(\json_encode($phoneConfirmation), $responseArguments);
+        return $this->render(\json_encode($phoneConfirmationAttempt), $responseArguments);
     }
 }

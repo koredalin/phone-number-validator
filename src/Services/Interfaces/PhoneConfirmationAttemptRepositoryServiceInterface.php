@@ -13,7 +13,7 @@ interface PhoneConfirmationAttemptRepositoryServiceInterface
 {
     public function findOneById(int $id): ?PhoneConfirmationAttempt;
     
-    public function createByPhoneConfirmationIsConfirmedCode(PhoneConfirmation $phoneConfirmation, bool $isConfirmedCode): PhoneConfirmationAttempt;
+    public function createByPhoneConfirmationInputConfirmationCode(PhoneConfirmation $phoneConfirmation, int $inputConfirmationCode): PhoneConfirmationAttempt;
     
     public function getDatabaseException(): string;
 }
