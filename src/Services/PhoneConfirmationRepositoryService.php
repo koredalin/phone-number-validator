@@ -3,14 +3,17 @@
 namespace App\Services;
 
 use App\Services\Interfaces\PhoneConfirmationRepositoryServiceInterface;
+use App\Services\Interfaces\ConfirmationCodeSmsInterface;
 use App\Repositories\Interfaces\PhoneConfirmationRepositoryInterface;
 use App\Common\Interfaces\ConfirmationCodeGeneratorInterface;
 use App\Common\Interfaces\DateTimeManagerInterface;
 use App\Entities\PhoneConfirmation;
 use App\Entities\Transaction;
 
-final class PhoneConfirmationRepositoryService implements PhoneConfirmationRepositoryServiceInterface
+final class PhoneConfirmationRepositoryService implements PhoneConfirmationRepositoryServiceInterface, ConfirmationCodeSmsInterface
 {
+    const CONFIRMATION_CODE_SMS_MESSAGE = 'Confirmation code sent.';
+    
     private PhoneConfirmationRepositoryInterface $phoneConfirmationRepository;
     private DateTimeManagerInterface $dtManager;
     private ConfirmationCodeGeneratorInterface $confirmationCodeGenerator;
@@ -50,8 +53,9 @@ final class PhoneConfirmationRepositoryService implements PhoneConfirmationRepos
         $phoneConfirmationObj = $this->phoneConfirmationRepository->new();
         $phoneConfirmationObj->setTransaction($transaction);
         $phoneConfirmationObj->setConfirmationCode($this->confirmationCodeGenerator->generate());
-        $phoneConfirmationObj->setConfirmedAt(null);
         $phoneConfirmationObj->setStatus(PhoneConfirmation::STATUS_AWAITING_REQUEST);
+        $phoneConfirmationObj->setConfirmedAt(null);
+        $phoneConfirmationObj->setConfirmationCodeMessage('');
         $phoneConfirmationObj->setCreatedAt($this->dtManager->now());
         $phoneConfirmationObj->setUpdatedAt($this->dtManager->now());
         
@@ -63,5 +67,18 @@ final class PhoneConfirmationRepositoryService implements PhoneConfirmationRepos
         $savedPhoneConfirmation = $this->phoneConfirmationRepository->save($phoneConfirmation);
         
         return $savedPhoneConfirmation;
+    }
+    
+    public function sendConfirmationCodeMessage(int $phoneConfirmationId): PhoneConfirmation
+    {
+        $phoneConfirmation = $this->findOneById($phoneConfirmationId);
+        if (is_null($phoneConfirmation)) {
+            throw new \Exception('sendConfirmationCodeMessage() is for PhoneConfirmation objects already recorded into the database.');
+        }
+        
+        $phoneConfirmation->setConfirmationCodeMessage(self::CONFIRMATION_CODE_SMS_MESSAGE);
+        $phoneConfirmation->setUpdatedAt($this->dtManager->now());
+        
+        return $this->save($phoneConfirmation);
     }
 }

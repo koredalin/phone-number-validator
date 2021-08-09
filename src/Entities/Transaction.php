@@ -57,6 +57,11 @@ class Transaction
     private ?DateTime $confirmedAt;
     
     /**
+     * @Column(name="success_message", length=255)
+     */
+    private string $successMessage;
+    
+    /**
      * @Column(name="created_at", type="datetime")
      */
     private \DateTime $createdAt;
@@ -104,6 +109,11 @@ class Transaction
         $this->confirmedAt = $confirmedAt;
     }
     
+    public function setSuccessMessage(string $successMessage): void
+    {
+        $this->successMessage = $successMessage;
+    }
+    
     public function setCreatedAt(DateTime $createdAt): void
     {
         $this->createdAt = $createdAt;
@@ -146,6 +156,11 @@ class Transaction
     public function getConfirmedAt(): ?DateTime
     {
         return $this->confirmedAt;
+    }
+    
+    public function getSuccessMessage(): string
+    {
+        return $this->successMessage;
     }
     
     public function getCreatedAt(): DateTime

@@ -51,6 +51,11 @@ class PhoneConfirmation
     private ?DateTime $confirmedAt;
     
     /**
+     * @Column(name="confirmation_code_message", length=255)
+     */
+    private string $confirmationCodeMessage;
+    
+    /**
      * @Column(name="created_at", type="datetime")
      */
     private DateTime $createdAt;
@@ -93,6 +98,11 @@ class PhoneConfirmation
         $this->confirmedAt = $confirmedAt;
     }
     
+    public function setConfirmationCodeMessage(string $confirmationCodeMessage): void
+    {
+        $this->confirmationCodeMessage = $confirmationCodeMessage;
+    }
+    
     public function setCreatedAt(DateTime $createdAt): void
     {
         $this->createdAt = $createdAt;
@@ -130,6 +140,11 @@ class PhoneConfirmation
     public function getConfirmedAt(): ?DateTime
     {
         return $this->confirmedAt;
+    }
+    
+    public function getConfirmationCodeMessage(): string
+    {
+        return $this->confirmationCodeMessage;
     }
     
     public function getCreatedAt(): DateTime

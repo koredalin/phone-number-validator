@@ -4,6 +4,8 @@
 use App\Common\Interfaces\DateTimeManagerInterface;
 use App\Common\Interfaces\PasswordGeneratorInterface;
 use App\Common\Interfaces\ConfirmationCodeGeneratorInterface;
+// Forms
+use App\Entities\Forms\RegistrationForm;
 // Repository Interfaces
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Repositories\Interfaces\CountryRepositoryInterface;
@@ -11,7 +13,6 @@ use App\Repositories\Interfaces\PhoneRepositoryInterface;
 use App\Repositories\Interfaces\TransactionRepositoryInterface;
 use App\Repositories\Interfaces\PhoneConfirmationRepositoryInterface;
 use App\Repositories\Interfaces\PhoneConfirmationAttemptRepositoryInterface;
-
 // Repository service interfaces
 use App\Services\Interfaces\CountryRepositoryServiceInterface;
 use App\Services\Interfaces\UserRepositoryServiceInterface;
@@ -32,8 +33,9 @@ use App\Services\PhoneConfirmationAttemptRepositoryService;
 use App\Services\RegistrationService;
 use App\Services\ConfirmationService;
 use App\Services\ResetService;
-
-use App\Entities\Forms\RegistrationForm;
+// SMS
+use App\Services\Interfaces\ConfirmationCodeSmsInterface;
+use App\Services\Interfaces\SuccessSmsInterface;
 
 
 return [
@@ -55,13 +57,22 @@ return [
     PhoneConfirmationAttemptRepositoryServiceInterface::class => DI\create(PhoneConfirmationAttemptRepositoryService::class)
         ->constructor(DI\get(PhoneConfirmationAttemptRepositoryInterface::class), DI\get(DateTimeManagerInterface::class)),
 
+    // SMS Services
+    ConfirmationCodeSmsInterface::class => DI\create(PhoneConfirmationRepositoryService::class)
+        ->constructor(DI\get(PhoneConfirmationRepositoryInterface::class), DI\get(ConfirmationCodeGeneratorInterface::class), DI\get(DateTimeManagerInterface::class)),
+
+    SuccessSmsInterface::class => DI\create(TransactionRepositoryService::class)
+        ->constructor(DI\get(TransactionRepositoryInterface::class), DI\get(PasswordGeneratorInterface::class), DI\get(DateTimeManagerInterface::class)),
+
+    // General Services
     RegistrationServiceInterface::class => DI\create(RegistrationService::class)
         ->constructor(
             DI\get(RegistrationForm::class),
             DI\get(UserRepositoryServiceInterface::class),
             DI\get(PhoneRepositoryServiceInterface::class),
             DI\get(TransactionRepositoryServiceInterface::class),
-            DI\get(PhoneConfirmationRepositoryServiceInterface::class)
+            DI\get(PhoneConfirmationRepositoryServiceInterface::class),
+            DI\get(ConfirmationCodeSmsInterface::class)
         ),
 
     ConfirmationServiceInterface::class => DI\create(ConfirmationService::class)
@@ -69,7 +80,8 @@ return [
             DI\get(TransactionRepositoryInterface::class),
             DI\get(PhoneConfirmationRepositoryInterface::class),
             DI\get(PhoneConfirmationAttemptRepositoryServiceInterface::class),
-            DI\get(DateTimeManagerInterface::class)
+            DI\get(DateTimeManagerInterface::class),
+            DI\get(SuccessSmsInterface::class)
         ),
 
      ResetServiceInterface::class => DI\create(ResetService::class)

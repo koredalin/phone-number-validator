@@ -17,6 +17,8 @@ use App\Services\Interfaces\UserRepositoryServiceInterface;
 use App\Services\Interfaces\PhoneRepositoryServiceInterface;
 use App\Services\Interfaces\TransactionRepositoryServiceInterface;
 use App\Services\Interfaces\PhoneConfirmationRepositoryServiceInterface;
+// SMS
+use App\Services\Interfaces\ConfirmationCodeSmsInterface;
 
 /**
  * Description of Registration
@@ -38,6 +40,7 @@ class RegistrationService implements RegistrationServiceInterface
     private PhoneRepositoryServiceInterface $phoneService;
     private TransactionRepositoryServiceInterface $transactionService;
     private PhoneConfirmationRepositoryServiceInterface $phoneConfirmationService;
+    private ConfirmationCodeSmsInterface $confirmationCodeSms;
     
     private string $errors;
     
@@ -53,7 +56,8 @@ class RegistrationService implements RegistrationServiceInterface
         UserRepositoryServiceInterface $userService,
         PhoneRepositoryServiceInterface $phoneService,
         TransactionRepositoryServiceInterface $transactionService,
-        PhoneConfirmationRepositoryServiceInterface $phoneConfirmationService
+        PhoneConfirmationRepositoryServiceInterface $phoneConfirmationService,
+        ConfirmationCodeSmsInterface $confirmationCodeSms
     ) {
         $this->form = $registrationForm;
         
@@ -66,6 +70,7 @@ class RegistrationService implements RegistrationServiceInterface
         $this->phoneService = $phoneService;
         $this->transactionService = $transactionService;
         $this->phoneConfirmationService = $phoneConfirmationService;
+        $this->confirmationCodeSms = $confirmationCodeSms;
         $this->errors = '';
         $this->isFinishedRegistration = false;
         $this->nextWebPage = '';
@@ -133,6 +138,12 @@ class RegistrationService implements RegistrationServiceInterface
         
         $phoneConfirmation = $this->createPhoneConfirmation($transaction);
         if (is_null($phoneConfirmation) || $phoneConfirmation->getId() < 1) {
+            return null;
+        }
+        
+        $phoneConfirmationSms = $this->confirmationCodeSms->sendConfirmationCodeMessage($phoneConfirmation->getId());
+        if (is_null($phoneConfirmationSms) || $phoneConfirmationSms->getId() < 1) {
+            $this->errors .= 'Confirmation code SMS is not sent.';
             return null;
         }
         

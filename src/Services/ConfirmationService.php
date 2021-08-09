@@ -13,6 +13,8 @@ use App\Repositories\Interfaces\PhoneConfirmationRepositoryInterface;
 // Repository Services
 use App\Services\Interfaces\PhoneConfirmationAttemptRepositoryServiceInterface;
 use App\Common\Interfaces\DateTimeManagerInterface;
+// SMS
+use App\Services\Interfaces\SuccessSmsInterface;
 
 /**
  * Phone number confirmation by confirmation code
@@ -30,6 +32,7 @@ class ConfirmationService implements ConfirmationServiceInterface
     private PhoneConfirmationRepositoryInterface $phoneConfirmationRepository;
     private PhoneConfirmationAttemptRepositoryServiceInterface $phoneConfirmationAttemptService;
     private DateTimeManagerInterface $dtManager;
+    private SuccessSmsInterface $successSms;
     
     private string $errors;
     
@@ -44,12 +47,14 @@ class ConfirmationService implements ConfirmationServiceInterface
         TransactionRepositoryInterface $transactionService,
         PhoneConfirmationRepositoryInterface $phoneConfirmationService,
         PhoneConfirmationAttemptRepositoryServiceInterface $phoneConfirmationAttemptService,
-        DateTimeManagerInterface $dtManager
+        DateTimeManagerInterface $dtManager,
+        SuccessSmsInterface $successSms
     ) {
         $this->transactionRepository = $transactionService;
         $this->phoneConfirmationRepository = $phoneConfirmationService;
         $this->phoneConfirmationAttemptService = $phoneConfirmationAttemptService;
         $this->dtManager = $dtManager;
+        $this->successSms = $successSms;
         $this->errors = '';
         $this->isFinishedConfirmation = false;
         $this->nextWebPage = '';
@@ -106,6 +111,12 @@ class ConfirmationService implements ConfirmationServiceInterface
             $phoneConfirmationAttempt instanceof PhoneConfirmationAttempt
             && $phoneConfirmationAttempt->getStatus() === PhoneConfirmationAttempt::STATUS_CONFIRMED
         ) {
+            $transactionSuccessSms = $this->successSms->sendSuccessMessage($transaction->getId());
+            if (is_null($transactionSuccessSms) || $transactionSuccessSms->getId() < 1) {
+                $this->errors .= 'Transaction success SMS is not sent.';
+                return null;
+            }
+        
             $this->isSuccess = true;
             $this->nextWebPage = self::NEXT_WEB_PAGE_GROUP.'/'.$transactionId;
             $this->setPhoneConfirmationSuccess($phoneConfirmation);

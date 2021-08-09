@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Services\Interfaces\TransactionRepositoryServiceInterface;
+use App\Services\Interfaces\SuccessSmsInterface;
 use App\Repositories\Interfaces\TransactionRepositoryInterface;
 use App\Common\Interfaces\DateTimeManagerInterface;
 use App\Common\Interfaces\PasswordGeneratorInterface;
@@ -10,8 +11,10 @@ use App\Entities\User;
 use App\Entities\Phone;
 use App\Entities\Transaction;
 
-final class TransactionRepositoryService implements TransactionRepositoryServiceInterface
+final class TransactionRepositoryService implements TransactionRepositoryServiceInterface, SuccessSmsInterface
 {
+    const SUCCESS_SMS_MESSAGE = 'Successful transaction.';
+    
     private TransactionRepositoryInterface $transactionRepository;
     private PasswordGeneratorInterface $passwordGenerator;
     private DateTimeManagerInterface $dtManager;
@@ -39,6 +42,7 @@ final class TransactionRepositoryService implements TransactionRepositoryService
         $transaction->setStatus(Transaction::STATUS_AWAITING_REQUEST);
         $transaction->setPassword($this->passwordGenerator->encode($rawPassword));
         $transaction->setConfirmedAt(null);
+        $transaction->setSuccessMessage('');
         $transaction->setCreatedAt($this->dtManager->now());
         $transaction->setUpdatedAt($this->dtManager->now());
         
@@ -50,5 +54,18 @@ final class TransactionRepositoryService implements TransactionRepositoryService
         $savedTransaction = $this->transactionRepository->save($transaction);
         
         return $savedTransaction;
+    }
+    
+    public function sendSuccessMessage(int $transactionId): Transaction
+    {
+        $transaction = $this->findOneById($transactionId);
+        if (is_null($transaction)) {
+            throw new \Exception('sendSuccessMessage() is for Transaction objects already recorded into the database.');
+        }
+        
+        $transaction->setSuccessMessage(self::SUCCESS_SMS_MESSAGE);
+        $transaction->setUpdatedAt($this->dtManager->now());
+        
+        return $this->save($transaction);
     }
 }
