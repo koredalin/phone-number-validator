@@ -17,4 +17,12 @@ interface PhoneConfirmationRepositoryServiceInterface
     
     public function getOrCreateByTransactionAwaitingStatus(Transaction $transaction): PhoneConfirmation;
     
+    /**
+     * Makes new PhoneConfirmation entity with status AWAITING_REQUEST and saves it into the database.
+     * @param Transaction $transaction
+     * @return PhoneConfirmation
+     */
+    public function make(Transaction $transaction): PhoneConfirmation;
+    
+    public function save(PhoneConfirmation $phoneConfirmation): PhoneConfirmation;
 }

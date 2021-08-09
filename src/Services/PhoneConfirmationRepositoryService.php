@@ -35,18 +35,6 @@ final class PhoneConfirmationRepositoryService implements PhoneConfirmationRepos
         return $this->phoneConfirmationRepository->findLastByTransactionAwaitingStatus($transaction);
     }
     
-    public function make(Transaction $transaction): PhoneConfirmation
-    {
-        $phoneConfirmationObj = $this->phoneConfirmationRepository->new();
-        $phoneConfirmationObj->setTransaction($transaction);
-        $phoneConfirmationObj->setConfirmationCode($this->confirmationCodeGenerator->generate());
-        $phoneConfirmationObj->setStatus(PhoneConfirmation::STATUS_AWAITING_REQUEST);
-        $phoneConfirmationObj->setCreatedAt($this->dtManager->now());
-        $phoneConfirmationObj->setUpdatedAt($this->dtManager->now());
-        
-        return $this->save($phoneConfirmationObj);
-    }
-    
     public function getOrCreateByTransactionAwaitingStatus(Transaction $transaction): PhoneConfirmation
     {
         $dbObj = $this->findLastByTransactionAwaitingStatus($transaction);
@@ -55,6 +43,19 @@ final class PhoneConfirmationRepositoryService implements PhoneConfirmationRepos
         }
         
         return $dbObj;
+    }
+    
+    public function make(Transaction $transaction): PhoneConfirmation
+    {
+        $phoneConfirmationObj = $this->phoneConfirmationRepository->new();
+        $phoneConfirmationObj->setTransaction($transaction);
+        $phoneConfirmationObj->setConfirmationCode($this->confirmationCodeGenerator->generate());
+        $phoneConfirmationObj->setConfirmedAt(null);
+        $phoneConfirmationObj->setStatus(PhoneConfirmation::STATUS_AWAITING_REQUEST);
+        $phoneConfirmationObj->setCreatedAt($this->dtManager->now());
+        $phoneConfirmationObj->setUpdatedAt($this->dtManager->now());
+        
+        return $this->save($phoneConfirmationObj);
     }
     
     public function save(PhoneConfirmation $phoneConfirmation): PhoneConfirmation

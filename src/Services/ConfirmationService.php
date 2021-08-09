@@ -97,7 +97,7 @@ class ConfirmationService implements ConfirmationServiceInterface
             && $lastAttemptTime->add(new \DateInterval('PT'.self::COOL_DOWN_MINUTES.'M')) > $this->dtManager->now()
         ) {
             $this->phoneConfirmationAttemptService->createByPhoneConfirmationInputConfirmationCode($phoneConfirmation, $inputConfirmationCode, true);
-            $this->errors .= 'Cool down time before next possible attempt: '.self::COOL_DOWN_MINUTES.'.';
+            $this->errors .= 'Minimum interval before next confirmation code attempt: '.self::COOL_DOWN_MINUTES.' minutes.';
             return null;
         }
         
