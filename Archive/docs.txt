@@ -56,11 +56,3 @@ vendor/bin/doctrine orm:schema-tool:drop --force
 
 
 https://deliciousbrains.com/php-encryption-methods/
-
-
-
-
-
-I found the issue.
-print_r() allocates too much memory because it makes recursive operations. var_export() works fine.
-My repository return the expected object. My repository service does not. I have missed the return statement there.
