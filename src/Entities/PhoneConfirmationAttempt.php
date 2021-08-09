@@ -30,7 +30,7 @@ class PhoneConfirmationAttempt
     
     /**
      * @ManyToOne(targetEntity="PhoneConfirmation")
-     * @JoinColumn(name="phone_confirmation_id", nullable="false", referencedColumnName="id")
+     * @JoinColumn(name="phone_confirmation_id", nullable="false", referencedColumnName="id", onDelete="CASCADE")
      * @var PhoneConfirmation
      */
     private PhoneConfirmation $phoneConfirmation;

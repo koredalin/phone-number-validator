@@ -22,6 +22,7 @@ class ResetService implements ResetServiceInterface
 {
     const CURRENT_WEB_PAGE_GROUP = RC::RESET_CODE;
     const NEXT_WEB_PAGE_GROUP = RC::CONFIRMATION;
+    const MINUTES_BEFORE_RESET_START = 1;
     
     private TransactionRepositoryInterface $transactionRepository;
     private PhoneConfirmationRepositoryServiceInterface $phoneConfirmationService;
@@ -78,13 +79,13 @@ class ResetService implements ResetServiceInterface
             return null;
         }
         
-        $this->setPhoneConfirmationAbandoned($phoneConfirmation);
-        $newPhoneConfirmation = $this->phoneConfirmationService->make($transaction);
-        if ($transaction->getCreatedAt()->add(new \DateInterval('PT'.self::COOL_DOWN_MINUTES.'M')) > $this->dtManager->now()) {
-            $this->errors .= 'Minimum interval before confirmation code reset - '.self::COOL_DOWN_MINUTES.' minutes.';
+        if ($transaction->getCreatedAt()->add(new \DateInterval('PT'.self::MINUTES_BEFORE_RESET_START.'M')) > $this->dtManager->now()) {
+            $this->errors .= 'Minimum interval before confirmation code reset - '.self::MINUTES_BEFORE_RESET_START.' minutes.';
             return null;
         }
         
+        $this->setPhoneConfirmationAbandoned($phoneConfirmation);
+        $newPhoneConfirmation = $this->phoneConfirmationService->make($transaction);
         $this->nextWebPage = self::NEXT_WEB_PAGE_GROUP.'/'.$transactionId;
         $this->isSuccess = true;
         

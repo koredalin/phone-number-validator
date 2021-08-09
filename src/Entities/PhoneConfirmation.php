@@ -30,7 +30,7 @@ class PhoneConfirmation
     
     /**
      * @ManyToOne(targetEntity="Transaction")
-     * @JoinColumn(name="transaction_id", nullable="false", referencedColumnName="id")
+     * @JoinColumn(name="transaction_id", nullable="false", referencedColumnName="id", onDelete="CASCADE")
      * @var Transaction
      */
     private Transaction $transaction;

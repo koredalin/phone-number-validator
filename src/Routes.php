@@ -12,6 +12,7 @@ use App\Http\Controllers\GreetingsController;
 use App\Controllers\UserController;
 use App\Controllers\ConfirmationController;
 use App\Controllers\RegistrationController;
+use App\Controllers\ResetController;
 use League\Route\Strategy\JsonStrategy;
 
 /**
@@ -42,10 +43,10 @@ class Routes
         $router->map('GET', URL_SUBFOLDER.'/hello/{name}', GreetingsController::class.'::index');
         $router->map('GET', URL_SUBFOLDER.'/add/{name}', GreetingsController::class.'::store');
         $router->map('GET', URL_SUBFOLDER.'/user', UserController::class.'::index');
-//        $router->map('GET', URL_SUBFOLDER.'/registration', PhoneConfirmationController::class.'::index');
 //        $router->addRoute('POST', URL_SUBFOLDER.'/registration', PhoneConfirmationController::class.'::index');
         $router->map('POST', URL_SUBFOLDER.'/registration', RegistrationController::class.'::index');
         $router->map('POST', URL_SUBFOLDER.'/confirmation/{transactionId}', ConfirmationController::class.'::index');
+        $router->map('GET', URL_SUBFOLDER.'/reset-code/{transactionId}', ResetController::class.'::resetCode');
         
 //        $router
 //            ->group('/registration', function ($router) {
