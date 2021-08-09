@@ -5,13 +5,15 @@ use App\Users\UserRepository;
 // Controllers
 use App\Controllers\GreetingsController;
 use App\Controllers\UserController;
-use App\Controllers\ConfirmationController;
 use App\Controllers\RegistrationController;
+use App\Controllers\ConfirmationController;
+use App\Controllers\ResetController;
 // Query Services
 use App\Queries\Services\TransactionQueryService;
 // General Services
 use App\Services\Interfaces\RegistrationServiceInterface;
 use App\Services\Interfaces\ConfirmationServiceInterface;
+use App\Services\Interfaces\ResetServiceInterface;
 
 return [
     GreetingsController::class => DI\create(GreetingsController::class)
@@ -25,4 +27,7 @@ return [
     
     ConfirmationController::class => DI\create(ConfirmationController::class)
         ->constructor(DI\get(CONTAINER_RESPONSE), DI\get(ConfirmationServiceInterface::class)),
+    
+    ResetController::class => DI\create(ResetController::class)
+        ->constructor(DI\get(CONTAINER_RESPONSE), DI\get(ResetServiceInterface::class)),
 ];
