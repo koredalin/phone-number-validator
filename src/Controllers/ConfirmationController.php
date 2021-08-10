@@ -28,14 +28,14 @@ class ConfirmationController extends BaseControllerJson
     {
         $requestBody = $request->getBody()->getContents();
         $transactionId = (int)$arguments['transactionId'] ?? 0;
-        $phoneConfirmationAttempt = $this->confirmationService->confirmCode($transactionId, $requestBody);
+        $this->confirmationService->confirmCode($transactionId, $requestBody);
         
+        $response = ['isSuccess' => $this->confirmationService->isSuccess()];
         $responseArguments = [
             'error' => $this->confirmationService->getErrors(),
-            'isSuccess' => $this->confirmationService->isSuccess(),
             'nextWebPage' => $this->confirmationService->getNextWebPage(),
         ];
         
-        return $this->render(\json_encode($phoneConfirmationAttempt), $responseArguments);
+        return $this->render($response, $responseArguments);
     }
 }

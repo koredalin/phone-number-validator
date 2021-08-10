@@ -71,9 +71,9 @@ class RegistrationService implements RegistrationServiceInterface
         $this->transactionService = $transactionService;
         $this->phoneConfirmationService = $phoneConfirmationService;
         $this->confirmationCodeSms = $confirmationCodeSms;
+        $this->nextWebPage = self::CURRENT_WEB_PAGE;
         $this->errors = '';
         $this->isFinishedRegistration = false;
-        $this->nextWebPage = '';
         $this->isSuccess = false;
     }
     
@@ -111,7 +111,6 @@ class RegistrationService implements RegistrationServiceInterface
     
     public function registrate(): ?PhoneConfirmation
     {
-        $this->nextWebPage = self::CURRENT_WEB_PAGE;
         if ($this->isFinishedRegistration) {
             throw new \Exception('The registration is already made.');
         }

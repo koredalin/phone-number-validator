@@ -1,0 +1,8 @@
+actor: FunctionalTester
+modules:
+    enabled:
+        - PhpBrowser:
+            url: http://localhost:6886
+        - Db:
+            dsn: "mysql:host=localhost:3306;dbname=phone_validator_tests;user=phone_validator_tests;password=pv_tests"
+        - Filesystem

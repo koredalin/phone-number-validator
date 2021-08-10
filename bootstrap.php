@@ -2,7 +2,8 @@
 
 require_once './vendor/autoload.php';
 
-require_once __DIR__.'/config/db_config.php';
+//require_once __DIR__.'/config/db_config.php';
+require_once __DIR__.'/config/db_config_tests.php';
 
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;

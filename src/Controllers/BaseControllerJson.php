@@ -20,7 +20,7 @@ class BaseControllerJson
         $this->response = $response;
     }
     
-    public function render(string $responseResult, array $arguments): ResponseInterface
+    public function render(array $responseResult, array $arguments): ResponseInterface
     {
         $result = [
             'response' => $responseResult,

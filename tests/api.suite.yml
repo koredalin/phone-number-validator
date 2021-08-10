@@ -1,0 +1,11 @@
+actor: ApiTester
+modules:
+    enabled:
+        - REST:
+            url: http://localhost:6886
+            depends: PhpBrowser
+            part: Json
+        - Db:
+            dsn: "mysql:host=localhost:3306;dbname=phone_validator_tests;"
+            user: "phone_validator_tests"
+            password: "pv_tests"

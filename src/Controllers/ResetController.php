@@ -27,14 +27,14 @@ class ResetController extends BaseControllerJson
     public function resetCode(ServerRequestInterface $request, array $arguments): ResponseInterface
     {
         $transactionId = (int)$arguments['transactionId'] ?? 0;
-        $phoneConfirmationAttempt = $this->confirmationService->resetConfirmationCode($transactionId);
+        $this->confirmationService->resetConfirmationCode($transactionId);
         
+        $response = ['isSuccess' => $this->confirmationService->isSuccess()];
         $responseArguments = [
             'error' => $this->confirmationService->getErrors(),
-            'isSuccess' => $this->confirmationService->isSuccess(),
             'nextWebPage' => $this->confirmationService->getNextWebPage(),
         ];
         
-        return $this->render(\json_encode($phoneConfirmationAttempt), $responseArguments);
+        return $this->render($response, $responseArguments);
     }
 }
