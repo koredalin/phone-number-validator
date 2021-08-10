@@ -5,4 +5,8 @@ https://www.codewall.co.uk/debug-php-with-xdebug-on-netbeans/
 
 
 -- Wrong interpretation of missing "return" statement.
-https://github.com/symfony/symfony/discussions/42402
+https://github.com/symfony/symfony/discussions/
+
+
+-- Doctrine Migrations source documents
+https://www.doctrine-project.org/projects/doctrine-migrations/en/1.7/reference/installation.html#installation
