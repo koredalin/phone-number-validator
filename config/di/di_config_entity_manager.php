@@ -1,7 +1,7 @@
 <?php
 
-//require_once __DIR__.'/db_config.php';
-require_once __DIR__.'/db_config_tests.php';
+require_once __DIR__.'/../db/db_config.php';
+//require_once __DIR__.'/../db/db_config_tests.php';
 
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManagerInterface;
