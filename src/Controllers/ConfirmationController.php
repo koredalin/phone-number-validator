@@ -32,7 +32,7 @@ class ConfirmationController extends BaseControllerJson
         
         $response = ['isSuccess' => $this->confirmationService->isSuccess()];
         $responseArguments = [
-            'error' => $this->confirmationService->getErrors(),
+            'errors' => $this->confirmationService->getErrors(),
             'nextWebPage' => $this->confirmationService->getNextWebPage(),
         ];
         

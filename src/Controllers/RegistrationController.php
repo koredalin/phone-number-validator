@@ -39,6 +39,13 @@ class RegistrationController extends BaseControllerJson
         }
         
         $response['isSuccess'] = $this->registrationService->isSuccess();
+        $parsedRequestBody = \json_decode($requestBody, true);
+        if (
+            RETURN_GENERATED_CONFIRMATION_CODE
+            && RETURN_GENERATED_CONFIRMATION_CODE_STR === $parsedRequestBody[RETURN_GENERATED_CONFIRMATION_CODE_KEY] ?? ''
+        ) {
+            $response[GENERATED_CONFIRMATION_CODE_KEY] = $phoneConfirmation->getConfirmationCode();
+        }
         $responseArguments = [
             'errors' => $this->registrationService->getErrors(),
             'nextWebPage' => $this->registrationService->getNextWebPage(),
