@@ -30,7 +30,7 @@ class RegistrationCest
         $I->sendPost($nextWebPage, [
             "confirmationCode" => "333"
         ]);
-        $I->seeResponseCodeIs(\Codeception\Util\HttpCode::UNPROCESSABLE_ENTITY); // 200
+        $I->seeResponseCodeIs(\Codeception\Util\HttpCode::UNPROCESSABLE_ENTITY); // 422
         $I->seeResponseIsJson();
         $I->seeResponseContains('"isSuccess":""');
         $I->seeResponseContains('"errors":"Wrong confirmation code."');
