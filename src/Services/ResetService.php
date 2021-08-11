@@ -88,25 +88,6 @@ class ResetService extends WebPageService implements ResetServiceInterface
         return $newPhoneConfirmation;
     }
     
-    public function getErrors(): string
-    {
-        return $this->errors;
-    }
-    
-    public function isSuccess(): string
-    {
-        return $this->isSuccess;
-    }
-    
-    public function getNextWebPage(): string
-    {
-        if (!$this->isFinishedServiceAction) {
-            throw new \Exception('The confirmation is not finished.');
-        }
-        
-        return $this->nextWebPage;
-    }
-    
     private function setPhoneConfirmationAbandoned(PhoneConfirmation $phoneConfirmation): void
     {
         $phoneConfirmation->setConfirmedAt(null);

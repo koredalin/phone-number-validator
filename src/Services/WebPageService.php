@@ -50,7 +50,7 @@ abstract class WebPageService implements WebPageServiceInterface
     public function getNextWebPage(): string
     {
         if (!$this->isFinishedServiceAction) {
-            throw new \Exception('The registration is not finished.');
+            throw new \Exception('The service action is not finished.');
         }
         
         return $this->nextWebPage;
