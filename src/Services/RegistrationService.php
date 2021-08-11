@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Services\WebPageService;
 use App\Services\Interfaces\RegistrationServiceInterface;
 use App\Entities\Forms\RegistrationForm;
 use Symfony\Component\Validator\Validation;
@@ -19,13 +20,15 @@ use App\Services\Interfaces\TransactionRepositoryServiceInterface;
 use App\Services\Interfaces\PhoneConfirmationRepositoryServiceInterface;
 // SMS
 use App\Services\Interfaces\ConfirmationCodeSmsInterface;
+// Response
+use App\Controllers\ResponseStatuses as ResStatus;
 
 /**
  * Description of Registration
  *
  * @author Hristo
  */
-class RegistrationService implements RegistrationServiceInterface
+class RegistrationService extends WebPageService implements RegistrationServiceInterface
 {
     const CURRENT_WEB_PAGE = '/registration';
     private const NEXT_WEB_PAGE_GROUP = '/confirmation';
@@ -41,15 +44,6 @@ class RegistrationService implements RegistrationServiceInterface
     private TransactionRepositoryServiceInterface $transactionService;
     private PhoneConfirmationRepositoryServiceInterface $phoneConfirmationService;
     private ConfirmationCodeSmsInterface $confirmationCodeSms;
-    
-    private string $errors;
-    
-    private bool $isFinishedRegistration;
-    
-    private string $nextWebPage;
-    
-    private bool $isSuccess;
-
 
     public function __construct(
         RegistrationForm $registrationForm,
@@ -71,10 +65,8 @@ class RegistrationService implements RegistrationServiceInterface
         $this->transactionService = $transactionService;
         $this->phoneConfirmationService = $phoneConfirmationService;
         $this->confirmationCodeSms = $confirmationCodeSms;
+        $this->setDefaultWebPageProperties();
         $this->nextWebPage = self::CURRENT_WEB_PAGE;
-        $this->errors = '';
-        $this->isFinishedRegistration = false;
-        $this->isSuccess = false;
     }
     
     
@@ -111,70 +103,52 @@ class RegistrationService implements RegistrationServiceInterface
     
     public function registrate(): ?PhoneConfirmation
     {
-        if ($this->isFinishedRegistration) {
+        if ($this->isFinishedServiceAction) {
             throw new \Exception('The registration is already made.');
         }
         
         $this->notSetFormException();
         if (!$this->isValidForm()) {
+            $this->responseStatus = ResStatus::UNPROCESSABLE_ENTITY;
             return null;
         }
         
         $user = $this->getOrCreateByEmail();
         if (is_null($user)) {
+            $this->responseStatus = ResStatus::SERVICE_UNAVAILABLE;
             return null;
         }
         
         $phone = $this->getOrCreatePhone();
         if (is_null($phone)) {
+            $this->responseStatus = ResStatus::SERVICE_UNAVAILABLE;
             return null;
         }
         
         $transaction = $this->createTransaction($user, $phone);
         if (is_null($transaction)) {
+            $this->responseStatus = ResStatus::SERVICE_UNAVAILABLE;
             return null;
         }
         
         $phoneConfirmation = $this->createPhoneConfirmation($transaction);
         if (is_null($phoneConfirmation) || $phoneConfirmation->getId() < 1) {
+            $this->responseStatus = ResStatus::SERVICE_UNAVAILABLE;
             return null;
         }
         
         $phoneConfirmationSms = $this->confirmationCodeSms->sendConfirmationCodeMessage($phoneConfirmation->getId());
         if (is_null($phoneConfirmationSms) || $phoneConfirmationSms->getId() < 1) {
+            $this->responseStatus = ResStatus::SERVICE_UNAVAILABLE;
             $this->errors .= 'Confirmation code SMS is not sent.';
             return null;
         }
         
-        $this->isFinishedRegistration = true;
+        $this->isFinishedServiceAction = true;
         $this->isSuccess = true;
         $this->nextWebPage = self::NEXT_WEB_PAGE_GROUP.'/'.$transaction->getId();
         
         return $phoneConfirmation;
-    }
-    
-    /**
-     * Returns the errors when a new registration is not recorded into the database.
-     * 
-     * @return type
-     */
-    public function getErrors(): string
-    {
-        return $this->errors;
-    }
-    
-    public function isSuccess(): string
-    {
-        return $this->isSuccess;
-    }
-    
-    public function getNextWebPage(): string
-    {
-        if (!$this->isFinishedRegistration) {
-            throw new \Exception('The registration is not finished.');
-        }
-        
-        return $this->nextWebPage;
     }
     
     private function getOrCreateByEmail(): ?User

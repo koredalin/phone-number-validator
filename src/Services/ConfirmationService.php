@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Services\WebPageService;
 use App\Services\Interfaces\ConfirmationServiceInterface;
 // Entities
 use App\Entities\Transaction;
@@ -15,13 +16,15 @@ use App\Services\Interfaces\PhoneConfirmationAttemptRepositoryServiceInterface;
 use App\Common\Interfaces\DateTimeManagerInterface;
 // SMS
 use App\Services\Interfaces\SuccessSmsInterface;
+// Response
+use App\Controllers\ResponseStatuses as ResStatus;
 
 /**
  * Phone number confirmation by confirmation code
  *
  * @author Hristo
  */
-class ConfirmationService implements ConfirmationServiceInterface
+class ConfirmationService extends WebPageService implements ConfirmationServiceInterface
 {
     const CURRENT_WEB_PAGE_GROUP = '/confirmation';
     const NEXT_WEB_PAGE_GROUP = '/success';
@@ -33,15 +36,6 @@ class ConfirmationService implements ConfirmationServiceInterface
     private PhoneConfirmationAttemptRepositoryServiceInterface $phoneConfirmationAttemptService;
     private DateTimeManagerInterface $dtManager;
     private SuccessSmsInterface $successSms;
-    
-    private string $errors;
-    
-    private bool $isFinishedConfirmation;
-    
-    private string $nextWebPage;
-    
-    private bool $isSuccess;
-
 
     public function __construct(
         TransactionRepositoryInterface $transactionService,
@@ -55,28 +49,27 @@ class ConfirmationService implements ConfirmationServiceInterface
         $this->phoneConfirmationAttemptService = $phoneConfirmationAttemptService;
         $this->dtManager = $dtManager;
         $this->successSms = $successSms;
-        $this->errors = '';
-        $this->isFinishedConfirmation = false;
-        $this->nextWebPage = '';
-        $this->isSuccess = false;
+        $this->setDefaultWebPageProperties();
     }
     
     public function confirmCode(int $transactionId, string $requestBody): ?PhoneConfirmationAttempt
     {
-        if ($this->isFinishedConfirmation) {
+        if ($this->isFinishedServiceAction) {
             throw new \Exception('The registration is already made.');
         }
         $this->nextWebPage = self::CURRENT_WEB_PAGE_GROUP.'/'.$transactionId;
-        $this->isFinishedConfirmation = true;
+        $this->isFinishedServiceAction = true;
         
         $parsedRequestBody = \json_decode($requestBody, true);
         $transaction = $this->transactionRepository->findOneById($transactionId);
         if (is_null($transaction)) {
+            $this->responseStatus = ResStatus::NOT_FOUND;
             $this->errors .= 'Not found transaction.';
             return null;
         }
         
         if ($transaction->getStatus() === Transaction::STATUS_CONFIRMED) {
+            $this->responseStatus = ResStatus::ALREADY_REPORTED;
             $this->errors .= 'Already confirmed transaction.';
             $this->nextWebPage = self::NEXT_WEB_PAGE_GROUP.'/'.$transactionId;
             $this->isSuccess = true;
@@ -85,6 +78,7 @@ class ConfirmationService implements ConfirmationServiceInterface
         
         $phoneConfirmation = $this->phoneConfirmationRepository->findLastByTransactionAwaitingStatus($transaction);
         if (is_null($phoneConfirmation)) {
+            $this->responseStatus = ResStatus::SERVICE_UNAVAILABLE;
             $this->errors .= 'Not found phone code.';
             return null;
         }
@@ -101,6 +95,7 @@ class ConfirmationService implements ConfirmationServiceInterface
             && count($phoneConfirmationAttempts) % self::COOL_DOWN_CONFIRMATION_ATTEMPTS_NUMBER == 0
             && $lastAttemptTime->add(new \DateInterval('PT'.self::COOL_DOWN_MINUTES.'M')) > $this->dtManager->now()
         ) {
+            $this->responseStatus = ResStatus::FORBIDDEN;
             $this->phoneConfirmationAttemptService->createByPhoneConfirmationInputConfirmationCode($phoneConfirmation, $inputConfirmationCode, true);
             $this->errors .= 'Minimum interval before next confirmation code attempt: '.self::COOL_DOWN_MINUTES.' minutes.';
             return null;
@@ -113,6 +108,7 @@ class ConfirmationService implements ConfirmationServiceInterface
         ) {
             $transactionSuccessSms = $this->successSms->sendSuccessMessage($transaction->getId());
             if (is_null($transactionSuccessSms) || $transactionSuccessSms->getId() < 1) {
+                $this->responseStatus = ResStatus::SERVICE_UNAVAILABLE;
                 $this->errors .= 'Transaction success SMS is not sent.';
                 return null;
             }
@@ -122,8 +118,9 @@ class ConfirmationService implements ConfirmationServiceInterface
             $this->setPhoneConfirmationSuccess($phoneConfirmation);
             $this->setTransactionSuccess($transaction);
         } else {
-            $this->isSuccess = false;
+            $this->responseStatus = ResStatus::UNPROCESSABLE_ENTITY;
             $this->errors .= 'Wrong confirmation code.';
+            $this->isSuccess = false;
         }
         
         return $phoneConfirmationAttempt;
@@ -141,7 +138,7 @@ class ConfirmationService implements ConfirmationServiceInterface
     
     public function getNextWebPage(): string
     {
-        if (!$this->isFinishedConfirmation) {
+        if (!$this->isFinishedServiceAction) {
             throw new \Exception('The confirmation is not finished.');
         }
         

@@ -36,6 +36,6 @@ class ConfirmationController extends BaseControllerJson
             'nextWebPage' => $this->confirmationService->getNextWebPage(),
         ];
         
-        return $this->render($response, $responseArguments);
+        return $this->render($response, $responseArguments, $this->confirmationService->getResponseStatus());
     }
 }

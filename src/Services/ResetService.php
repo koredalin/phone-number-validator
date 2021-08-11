@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Services\WebPageService;
 use App\Services\Interfaces\ResetServiceInterface;
 use App\Controllers\RouteConstants as RC;
 // Entities
@@ -12,13 +13,15 @@ use App\Repositories\Interfaces\TransactionRepositoryInterface;
 use App\Services\Interfaces\PhoneConfirmationRepositoryServiceInterface;
 // Repository Services
 use App\Common\Interfaces\DateTimeManagerInterface;
+// Response
+use App\Controllers\ResponseStatuses as ResStatus;
 
 /**
  * Reset confirmation code (eventually password) service.
  *
  * @author Hristo
  */
-class ResetService implements ResetServiceInterface
+class ResetService extends WebPageService implements ResetServiceInterface
 {
     const CURRENT_WEB_PAGE_GROUP = RC::RESET_CODE;
     const NEXT_WEB_PAGE_GROUP = RC::CONFIRMATION;
@@ -27,14 +30,6 @@ class ResetService implements ResetServiceInterface
     private TransactionRepositoryInterface $transactionRepository;
     private PhoneConfirmationRepositoryServiceInterface $phoneConfirmationService;
     private DateTimeManagerInterface $dtManager;
-    
-    private string $errors;
-    
-    private bool $isFinishedReset;
-    
-    private string $nextWebPage;
-    
-    private bool $isSuccess;
 
     public function __construct(
         TransactionRepositoryInterface $transactionService,
@@ -44,29 +39,28 @@ class ResetService implements ResetServiceInterface
         $this->transactionRepository = $transactionService;
         $this->phoneConfirmationService = $phoneConfirmationService;
         $this->dtManager = $dtManager;
-        $this->errors = '';
-        $this->isFinishedReset = false;
-        $this->nextWebPage = '';
-        $this->isSuccess = false;
+        $this->setDefaultWebPageProperties();
     }
     
     
     public function resetConfirmationCode(int $transactionId): ?PhoneConfirmation
     {
-        if ($this->isFinishedReset) {
+        if ($this->isFinishedServiceAction) {
             throw new \Exception('The registration is already made.');
         }
         $this->nextWebPage = self::CURRENT_WEB_PAGE_GROUP.'/'.$transactionId;
-        $this->isFinishedReset = true;
+        $this->isFinishedServiceAction = true;
         $this->isSuccess = false;
         
         $transaction = $this->transactionRepository->findOneById($transactionId);
         if (is_null($transaction)) {
+            $this->responseStatus = ResStatus::NOT_FOUND;
             $this->errors .= 'Not found transaction.';
             return null;
         }
         
         if ($transaction->getStatus() === Transaction::STATUS_CONFIRMED) {
+            $this->responseStatus = ResStatus::ALREADY_REPORTED;
             $this->errors .= 'Already confirmed transaction.';
             $this->nextWebPage = RC::SUCCESS.'/'.$transactionId;
             $this->isSuccess = true;
@@ -75,11 +69,13 @@ class ResetService implements ResetServiceInterface
         
         $phoneConfirmation = $this->phoneConfirmationService->findLastByTransactionAwaitingStatus($transaction);
         if (is_null($phoneConfirmation)) {
-            $this->errors .= 'Not found phone code.';
+            $this->responseStatus = ResStatus::SERVICE_UNAVAILABLE;
+            $this->errors .= 'Not found phone code, number.';
             return null;
         }
         
         if ($transaction->getCreatedAt()->add(new \DateInterval('PT'.self::MINUTES_BEFORE_RESET_START.'M')) > $this->dtManager->now()) {
+            $this->responseStatus = ResStatus::FORBIDDEN;
             $this->errors .= 'Minimum interval before confirmation code reset - '.self::MINUTES_BEFORE_RESET_START.' minutes.';
             return null;
         }
@@ -104,7 +100,7 @@ class ResetService implements ResetServiceInterface
     
     public function getNextWebPage(): string
     {
-        if (!$this->isFinishedReset) {
+        if (!$this->isFinishedServiceAction) {
             throw new \Exception('The confirmation is not finished.');
         }
         

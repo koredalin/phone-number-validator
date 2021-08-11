@@ -2,6 +2,7 @@
 
 namespace App\Services\Interfaces;
 
+use App\Services\Interfaces\WebPageServiceInterface;
 use App\Entities\Forms\RegistrationForm;
 use App\Entities\PhoneConfirmation;
 
@@ -9,7 +10,7 @@ use App\Entities\PhoneConfirmation;
  *
  * @author Hristo
  */
-interface RegistrationServiceInterface
+interface RegistrationServiceInterface extends WebPageServiceInterface
 {
     public function createForm(string $requestBody): RegistrationForm;
     
@@ -18,10 +19,4 @@ interface RegistrationServiceInterface
     public function getFormErrors(): string;
     
     public function registrate(): ?PhoneConfirmation;
-    
-    public function getErrors(): string;
-   
-    public function getNextWebPage(): string;
-    
-    public function isSuccess(): string;
 }

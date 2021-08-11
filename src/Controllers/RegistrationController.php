@@ -6,6 +6,7 @@ use App\Controllers\BaseControllerJson;
 use Psr\Http\Message\ResponseInterface;
 use App\Services\Interfaces\RegistrationServiceInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use App\Controllers\ResponseStatuses as ResStatus;
 
 /**
  * Description of RegistrationFormController
@@ -30,27 +31,32 @@ class RegistrationController extends BaseControllerJson
         $this->registrationService->createForm($requestBody);
         $response = ['isSuccess' => false];
         if (!$this->registrationService->isValidForm()) {
-            return $this->render($response, ['errors' => $this->registrationService->getErrors(), 'nextWebPage' => $this->registrationService->getNextWebPage()]);
+            return $this->render($response, $this->getServiceErrorsNextWebPage(), $this->registrationService->getResponseStatus());
         }
         
         $phoneConfirmation = $this->registrationService->registrate();
         if (is_null($phoneConfirmation)) {
-            return $this->render($response, ['errors' => $this->registrationService->getErrors(), 'nextWebPage' => $this->registrationService->getNextWebPage()]);
+            return $this->render($response, $this->getServiceErrorsNextWebPage(), $this->registrationService->getResponseStatus());
         }
         
         $response['isSuccess'] = $this->registrationService->isSuccess();
         $parsedRequestBody = \json_decode($requestBody, true);
         if (
             RETURN_GENERATED_CONFIRMATION_CODE
+            && isset($parsedRequestBody[RETURN_GENERATED_CONFIRMATION_CODE_KEY])
             && RETURN_GENERATED_CONFIRMATION_CODE_STR === $parsedRequestBody[RETURN_GENERATED_CONFIRMATION_CODE_KEY] ?? ''
         ) {
             $response[GENERATED_CONFIRMATION_CODE_KEY] = $phoneConfirmation->getConfirmationCode();
         }
-        $responseArguments = [
+        
+        return $this->render($response, $this->getServiceErrorsNextWebPage(), $this->registrationService->getResponseStatus());
+    }
+    
+    private function getServiceErrorsNextWebPage(): array
+    {
+        return [
             'errors' => $this->registrationService->getErrors(),
             'nextWebPage' => $this->registrationService->getNextWebPage(),
         ];
-        
-        return $this->render($response, $responseArguments);
     }
 }

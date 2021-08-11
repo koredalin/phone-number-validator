@@ -2,9 +2,8 @@
 
 namespace App\Controllers;
 
-use Twig\Environment;
 use Psr\Http\Message\ResponseInterface;
-use Twig\Extension\DebugExtension;
+use App\Controllers\ResponseStatuses as ResStatus;
 
 /**
  * Description of BaseControllerJson
@@ -20,7 +19,7 @@ class BaseControllerJson
         $this->response = $response;
     }
     
-    public function render(array $responseResult, array $arguments): ResponseInterface
+    public function render(array $responseResult, array $arguments, int $status = ResStatus::SUCCESS): ResponseInterface
     {
         $result = [
             'response' => $responseResult,
@@ -30,6 +29,6 @@ class BaseControllerJson
             \json_encode($result)
         );
         
-        return $this->response->withHeader('Content-Type', 'application/json')->withStatus(200);
+        return $this->response->withHeader('Content-Type', 'application/json')->withStatus($status);
     }
 }

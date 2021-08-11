@@ -10,3 +10,10 @@ https://github.com/symfony/symfony/discussions/
 
 -- Doctrine Migrations source documents
 https://www.doctrine-project.org/projects/doctrine-migrations/en/1.7/reference/installation.html#installation
+
+
+-- HTTP response status codes
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+
+-- Right HTTP status code to wrong input
+https://stackoverflow.com/questions/7939137/right-http-status-code-to-wrong-input

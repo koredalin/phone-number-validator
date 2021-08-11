@@ -2,19 +2,14 @@
 
 namespace App\Services\Interfaces;
 
+use App\Services\Interfaces\WebPageServiceInterface;
 use App\Entities\PhoneConfirmation;
 
 /**
  *
  * @author Hristo
  */
-interface ResetServiceInterface
+interface ResetServiceInterface extends WebPageServiceInterface
 {
     public function resetConfirmationCode(int $transactionId): ?PhoneConfirmation;
-    
-    public function getErrors(): string;
-    
-    public function isSuccess(): string;
-    
-    public function getNextWebPage(): string;
 }
