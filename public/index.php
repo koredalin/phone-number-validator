@@ -2,6 +2,10 @@
 
 //ini_set('memory_limit', '1024M');
 
+header('Access-Control-Allow-Headers: Access-Control-Allow-Origin, Content-Type');
+header('Access-Control-Allow-Origin: http://localhost:4200', false);
+header('Content-Type: application/json, charset=utf-8');
+
 use Composer\Autoload\ClassLoader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 

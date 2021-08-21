@@ -109,7 +109,7 @@ class PhoneConfirmationAttempt
         return $this->id;
     }
     
-    public function getPhoneConfirmation(): int
+    public function getPhoneConfirmation(): PhoneConfirmation
     {
         return $this->phoneConfirmation;
     }

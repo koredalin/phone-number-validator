@@ -6,6 +6,7 @@ use App\Controllers\BaseControllerJson;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use App\Services\Interfaces\ResetServiceInterface;
+use App\Entities\PhoneConfirmation;
 
 /**
  * Description of ResetController
@@ -27,9 +28,13 @@ class ResetController extends BaseControllerJson
     public function resetCode(ServerRequestInterface $request, array $arguments): ResponseInterface
     {
         $transactionId = (int)$arguments['transactionId'] ?? 0;
-        $this->confirmationService->resetConfirmationCode($transactionId);
+        $phoneConfirmation = $this->confirmationService->resetConfirmationCode($transactionId);
         
         $response = ['isSuccess' => $this->confirmationService->isSuccess()];
+        if ($phoneConfirmation instanceof PhoneConfirmation) {
+            $response = array_merge($response, $this->getRestrictedEmailAndPhoneNumber($phoneConfirmation->getTransaction()));
+        }
+        
         $responseArguments = [
             'error' => $this->confirmationService->getErrors(),
             'nextWebPage' => $this->confirmationService->getNextWebPage(),

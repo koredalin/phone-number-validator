@@ -60,7 +60,6 @@ class ConfirmationService extends WebPageService implements ConfirmationServiceI
         $this->nextWebPage = self::CURRENT_WEB_PAGE_GROUP.'/'.$transactionId;
         $this->isFinishedServiceAction = true;
         
-        $parsedRequestBody = \json_decode($requestBody, true);
         $transaction = $this->transactionRepository->findOneById($transactionId);
         if (is_null($transaction)) {
             $this->responseStatus = ResStatus::NOT_FOUND;
@@ -87,6 +86,7 @@ class ConfirmationService extends WebPageService implements ConfirmationServiceI
             throw new \Exception('PhoneConfirmation status abandoned is not possible in such cases. transactionId: '.$transactionId.'. phoneConfirmationId: '.$phoneConfirmation->getId().'.');
         }
         
+        $parsedRequestBody = \json_decode($requestBody, true);
         $inputConfirmationCode = (int)$parsedRequestBody['confirmationCode'];
         $phoneConfirmationAttempts = $this->phoneConfirmationAttemptService->findAllByPhoneConfirmationNoCoolDownDesc($phoneConfirmation);
         $lastAttemptTime = count($phoneConfirmationAttempts) > 0 ? $phoneConfirmationAttempts->first()->getCreatedAt() : null;

@@ -13,7 +13,6 @@ use App\Controllers\UserController;
 use App\Controllers\ConfirmationController;
 use App\Controllers\RegistrationController;
 use App\Controllers\ResetController;
-use League\Route\Strategy\JsonStrategy;
 
 /**
  * Description of Routes
@@ -32,28 +31,18 @@ class Routes
             return $response;
         });
         
-//        $router->map('GET', URL_SUBFOLDER.'/hello', function (ServerRequestInterface $request) use ($container): ResponseInterface {
-//            $response = $container->get('response');
-//            $response->getBody()->write('<h2>Maskaaaaa22222222222222</h2>');
-//            
-//            return $response;
-//        });
-        
         
         $router->map('GET', URL_SUBFOLDER.'/hello/{name}', GreetingsController::class.'::index');
         $router->map('GET', URL_SUBFOLDER.'/add/{name}', GreetingsController::class.'::store');
         $router->map('GET', URL_SUBFOLDER.'/user', UserController::class.'::index');
 //        $router->addRoute('POST', URL_SUBFOLDER.'/registration', PhoneConfirmationController::class.'::index');
-        $router->map('POST', URL_SUBFOLDER.'/registration', RegistrationController::class.'::index');
-        $router->map('POST', URL_SUBFOLDER.'/confirmation/{transactionId}', ConfirmationController::class.'::index');
-        $router->map('GET', URL_SUBFOLDER.'/reset-code/{transactionId}', ResetController::class.'::resetCode');
         
-//        $router
-//            ->group('/registration', function ($router) {
-//                $router->map('GET', URL_SUBFOLDER.'/registration', PhoneConfirmationController::class.'::index');
-//                $router->post(URL_SUBFOLDER.'/registration', PhoneConfirmationController::class.'::index');
-//            })
-//            ->setStrategy(new ApplicationStrategy);
+        
+//        $router->group('/api/v1', function ($router) {
+            $router->map('POST', URL_SUBFOLDER.'/registration', RegistrationController::class.'::index');
+            $router->map('POST', URL_SUBFOLDER.'/confirmation/{transactionId}', ConfirmationController::class.'::index');
+            $router->map('GET', URL_SUBFOLDER.'/reset-code/{transactionId}', ResetController::class.'::resetCode');
+//        })->middleware(new CorsRequest($router));
         
 //        print_r($route); exit;
         

@@ -1,6 +1,8 @@
 <?php
 
+// Enable official database
 require_once __DIR__.'/../db/db_config.php';
+// Enable test database
 //require_once __DIR__.'/../db/db_config_tests.php';
 
 use Doctrine\ORM\Tools\Setup;

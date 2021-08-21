@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 use App\Services\Interfaces\RegistrationServiceInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use App\Controllers\ResponseStatuses as ResStatus;
+use App\Entities\PhoneConfirmation;
 
 /**
  * Description of RegistrationFormController
@@ -40,6 +41,10 @@ class RegistrationController extends BaseControllerJson
         }
         
         $response['isSuccess'] = $this->registrationService->isSuccess();
+        if ($phoneConfirmation instanceof PhoneConfirmation) {
+            $response = array_merge($response, $this->getRestrictedEmailAndPhoneNumber($phoneConfirmation->getTransaction()));
+        }
+        
         $parsedRequestBody = \json_decode($requestBody, true);
         if (
             RETURN_GENERATED_CONFIRMATION_CODE

@@ -6,6 +6,7 @@ use App\Controllers\BaseControllerJson;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use App\Services\Interfaces\ConfirmationServiceInterface;
+use App\Entities\PhoneConfirmationAttempt;
 
 /**
  * Description of ConfirmationController
@@ -28,9 +29,12 @@ class ConfirmationController extends BaseControllerJson
     {
         $requestBody = $request->getBody()->getContents();
         $transactionId = (int)$arguments['transactionId'] ?? 0;
-        $this->confirmationService->confirmCode($transactionId, $requestBody);
-        
+        $phoneConfirmationAttempt = $this->confirmationService->confirmCode($transactionId, $requestBody);
         $response = ['isSuccess' => $this->confirmationService->isSuccess()];
+        if ($phoneConfirmationAttempt instanceof PhoneConfirmationAttempt) {
+            $response = array_merge($response, $this->getRestrictedEmailAndPhoneNumber($phoneConfirmationAttempt->getPhoneConfirmation()->getTransaction()));
+        }
+        
         $responseArguments = [
             'errors' => $this->confirmationService->getErrors(),
             'nextWebPage' => $this->confirmationService->getNextWebPage(),

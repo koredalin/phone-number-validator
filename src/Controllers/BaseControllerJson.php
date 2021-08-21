@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use Psr\Http\Message\ResponseInterface;
 use App\Controllers\ResponseStatuses as ResStatus;
+use App\Entities\Transaction;
 
 /**
  * Description of BaseControllerJson
@@ -30,5 +31,15 @@ class BaseControllerJson
         );
         
         return $this->response->withHeader('Content-Type', 'application/json')->withStatus($status);
+    }
+    
+    protected function getRestrictedEmailAndPhoneNumber(Transaction $transaction): array
+    {
+        $email = $transaction->getUser()->getEmail();
+        $result['email'] = '***'.substr($email, -(int)(strlen($email) / 2));
+        $phoneNumber = $transaction->getPhone()->getPhoneNumber();
+        $result['phoneNumber'] = '***'.substr($phoneNumber, -(int)(strlen($phoneNumber) / 2));
+            
+        return $result;
     }
 }
