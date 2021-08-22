@@ -88,6 +88,7 @@ return [
         ->constructor(
             DI\get(TransactionRepositoryInterface::class),
             DI\get(PhoneConfirmationRepositoryServiceInterface::class),
-            DI\get(DateTimeManagerInterface::class)
+            DI\get(DateTimeManagerInterface::class),
+            DI\get(ConfirmationCodeSmsInterface::class)
         ),
 ];

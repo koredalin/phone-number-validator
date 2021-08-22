@@ -13,6 +13,8 @@ use App\Repositories\Interfaces\TransactionRepositoryInterface;
 use App\Services\Interfaces\PhoneConfirmationRepositoryServiceInterface;
 // Repository Services
 use App\Common\Interfaces\DateTimeManagerInterface;
+// SMS
+use App\Services\Interfaces\ConfirmationCodeSmsInterface;
 // Response
 use App\Controllers\ResponseStatuses as ResStatus;
 
@@ -30,15 +32,18 @@ class ResetService extends WebPageService implements ResetServiceInterface
     private TransactionRepositoryInterface $transactionRepository;
     private PhoneConfirmationRepositoryServiceInterface $phoneConfirmationService;
     private DateTimeManagerInterface $dtManager;
+    private ConfirmationCodeSmsInterface $confirmationCodeSms;
 
     public function __construct(
         TransactionRepositoryInterface $transactionService,
         PhoneConfirmationRepositoryServiceInterface $phoneConfirmationService,
-        DateTimeManagerInterface $dtManager
+        DateTimeManagerInterface $dtManager,
+        ConfirmationCodeSmsInterface $confirmationCodeSms
     ) {
         $this->transactionRepository = $transactionService;
         $this->phoneConfirmationService = $phoneConfirmationService;
         $this->dtManager = $dtManager;
+        $this->confirmationCodeSms = $confirmationCodeSms;
         $this->setDefaultWebPageProperties();
     }
     
@@ -82,6 +87,13 @@ class ResetService extends WebPageService implements ResetServiceInterface
         
         $this->setPhoneConfirmationAbandoned($phoneConfirmation);
         $newPhoneConfirmation = $this->phoneConfirmationService->make($transaction);
+        $newPhoneConfirmation = $this->confirmationCodeSms->sendConfirmationCodeMessage($newPhoneConfirmation->getId());
+        if (is_null($newPhoneConfirmation) || $newPhoneConfirmation->getId() < 1) {
+            $this->responseStatus = ResStatus::SERVICE_UNAVAILABLE;
+            $this->errors .= 'Confirmation code SMS is not sent.';
+            return null;
+        }
+        
         $this->nextWebPage = self::NEXT_WEB_PAGE_GROUP.'/'.$transactionId;
         $this->isSuccess = true;
         
