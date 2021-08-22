@@ -12,7 +12,7 @@ use App\Entities\Transaction;
 
 final class PhoneConfirmationRepositoryService implements PhoneConfirmationRepositoryServiceInterface, ConfirmationCodeSmsInterface
 {
-    const CONFIRMATION_CODE_SMS_MESSAGE = 'Confirmation code sent.';
+    const CONFIRMATION_CODE_SMS_MESSAGE = 'Your OTP confirmation code: [code].';
     
     private PhoneConfirmationRepositoryInterface $phoneConfirmationRepository;
     private DateTimeManagerInterface $dtManager;
@@ -76,7 +76,8 @@ final class PhoneConfirmationRepositoryService implements PhoneConfirmationRepos
             throw new \Exception('sendConfirmationCodeMessage() is for PhoneConfirmation objects already recorded into the database.');
         }
         
-        $phoneConfirmation->setConfirmationCodeMessage(self::CONFIRMATION_CODE_SMS_MESSAGE);
+        $smsStr = str_replace('[code]', $phoneConfirmation->getConfirmationCode(), self::CONFIRMATION_CODE_SMS_MESSAGE);
+        $phoneConfirmation->setConfirmationCodeMessage($smsStr);
         $phoneConfirmation->setUpdatedAt($this->dtManager->now());
         
         return $this->save($phoneConfirmation);
