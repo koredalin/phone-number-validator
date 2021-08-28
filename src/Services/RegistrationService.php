@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 // Entities
+use App\Entities\Country;
 use App\Entities\User;
 use App\Entities\Phone;
 use App\Entities\Transaction;
@@ -74,6 +75,7 @@ class RegistrationService extends WebPageService implements RegistrationServiceI
     {
         $parsedRequestBody = \json_decode($requestBody, true);
         $this->form->setEmail($parsedRequestBody['email']);
+//        $this->form->setPhoneCode($parsedRequestBody['phoneCode']);
         $phoneNumberInput = (string)trim($parsedRequestBody['phoneNumber']);
         $phoneNumberInt = substr($phoneNumberInput, 0, 1) === '0'
             ? (int)Country::BG_PHONE_CODE.substr($phoneNumberInput, 1)

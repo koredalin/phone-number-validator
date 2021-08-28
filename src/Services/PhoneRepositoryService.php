@@ -85,7 +85,7 @@ final class PhoneRepositoryService implements PhoneRepositoryServiceInterface
             return $this->countryRepository->findOneByPhoneCode(Country::BG_PHONE_CODE);
         }
         
-        foreach ($this->countryRepository->findAll() as $country) {
+        foreach ($this->countryRepository->findAllOrderByPhoneCodeDesc() as $country) {
             if (strpos($assembledPhoneNumber, trim($country->getPhoneCode())) === 0) {
                 return $country;
             }

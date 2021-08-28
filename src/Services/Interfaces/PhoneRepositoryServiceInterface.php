@@ -11,6 +11,8 @@ use App\Entities\Country;
  */
 interface PhoneRepositoryServiceInterface
 {
+//    public function getOrCreateByPhoneCodeNumber(string $phoneCode, string $phoneNumber): ?Phone;
+    
     public function getOrCreateByAssembledPhoneNumber(string $assembledPhoneNumber): ?Phone;
     
     public function findOneById(int $id): ?Phone;

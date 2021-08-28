@@ -24,6 +24,13 @@ class RegistrationForm
     
     /**
      * @Assert\NotBlank
+     * @Assert\Length(max=6)
+     * @Assert\Type(type="integer")
+     */
+//    private $phoneCode;
+    
+    /**
+     * @Assert\NotBlank
      * @Assert\Length(min=5)
      * @Assert\Length(max=20)
      * @Assert\Type(type="integer")
@@ -46,6 +53,11 @@ class RegistrationForm
         $this->email = $email;
     }
     
+//    public function setPhoneCode($phoneCode): void
+//    {
+//        $this->phoneCode = $phoneCode;
+//    }
+    
     public function setPhoneNumber($phoneNumber): void
     {
         $this->phoneNumber = $phoneNumber;
@@ -65,6 +77,11 @@ class RegistrationForm
         return $this->email;
     }
     
+//    public function getPhoneCode()
+//    {
+//        return $this->phoneCode;
+//    }
+    
     public function getPhoneNumber()
     {
         return $this->phoneNumber;
@@ -78,6 +95,7 @@ class RegistrationForm
     public function getRegistrationFormArr() {
         $result = [
             'email' => $this->email,
+//            'phoneNumber' => $this->phoneCode,
             'phoneNumber' => $this->phoneNumber,
             'password' => $this->password,
         ];

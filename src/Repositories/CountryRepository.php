@@ -64,6 +64,11 @@ final class CountryRepository implements CountryRepositoryInterface
         return $this->objectRepository->findAll();
     }
     
+    public function findAllOrderByPhoneCodeDesc(): array
+    {
+        return $this->objectRepository->findBy([], ['phoneCode' => 'DESC']);
+    }
+    
     public function save(Country $country): void
     {
         try {

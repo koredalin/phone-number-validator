@@ -24,5 +24,7 @@ interface CountryRepositoryInterface
     
     public function findAll(): array;
     
+    public function findAllOrderByPhoneCodeDesc(): array;
+    
     public function save(Country $email): void;
 }
