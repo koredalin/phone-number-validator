@@ -26,7 +26,7 @@ class RegistrationController extends BaseControllerJson
         $this->registrationService = $registrationService;
     }
     
-    public function index(ServerRequestInterface $request, array $arguments): ResponseInterface
+    public function registrateFormWithAssembledPhoneNumber(ServerRequestInterface $request, array $arguments): ResponseInterface
     {
         $requestBody = $request->getBody()->getContents();
         $this->registrationService->createForm($requestBody);

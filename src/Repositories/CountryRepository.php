@@ -5,6 +5,8 @@ namespace App\Repositories;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repositories\Interfaces\CountryRepositoryInterface;
 use App\Entities\Country;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @author Hristo
@@ -59,14 +61,18 @@ final class CountryRepository implements CountryRepositoryInterface
         return $this->objectRepository->findBy(['phone_code' => $phoneCode]);
     }
     
-    public function findAll(): array
+    public function findAll(): Collection
     {
-        return $this->objectRepository->findAll();
+        $resultArr = $this->objectRepository->findAll();
+        
+        return new ArrayCollection($resultArr);
     }
     
-    public function findAllOrderByPhoneCodeDesc(): array
+    public function findAllOrderByPhoneCodeDesc(): Collection
     {
-        return $this->objectRepository->findBy([], ['phoneCode' => 'DESC']);
+        $resultArr = $this->objectRepository->findBy([], ['phoneCode' => 'DESC']);
+        
+        return new ArrayCollection($resultArr);
     }
     
     public function save(Country $country): void

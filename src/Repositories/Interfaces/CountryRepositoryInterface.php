@@ -3,7 +3,7 @@
 namespace App\Repositories\Interfaces;
 
 use App\Entities\Country;
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  *
@@ -22,9 +22,9 @@ interface CountryRepositoryInterface
     
     public function findOneByPhoneCode(int $phoneCode): Country;
     
-    public function findAll(): array;
+    public function findAll(): Collection;
     
-    public function findAllOrderByPhoneCodeDesc(): array;
+    public function findAllOrderByPhoneCodeDesc(): Collection;
     
     public function save(Country $email): void;
 }

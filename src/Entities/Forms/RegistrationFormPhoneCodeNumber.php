@@ -8,11 +8,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 //use Symfony\Component\Validator\Constraints\Email;
 
 /**
- * Description of Registration
+ * Registration Form with phone code and phone number
  *
  * @author Hristo
  */
-class RegistrationForm
+class RegistrationFormPhoneCodeNumber
 {
     /**
      * @Assert\NotBlank

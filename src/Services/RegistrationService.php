@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Services\WebPageService;
 use App\Services\Interfaces\RegistrationServiceInterface;
-use App\Entities\Forms\RegistrationForm;
+use App\Entities\Forms\RegistrationFormAssembledPhoneNumber;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -36,7 +36,7 @@ class RegistrationService extends WebPageService implements RegistrationServiceI
     
     private ValidatorInterface $validator;
     
-    private RegistrationForm $form;
+    private RegistrationFormAssembledPhoneNumber $form;
     
     private ?ConstraintViolationList $formErrors;
     
@@ -47,7 +47,7 @@ class RegistrationService extends WebPageService implements RegistrationServiceI
     private ConfirmationCodeSmsInterface $confirmationCodeSms;
 
     public function __construct(
-        RegistrationForm $registrationForm,
+        RegistrationFormAssembledPhoneNumber $registrationForm,
         UserRepositoryServiceInterface $userService,
         PhoneRepositoryServiceInterface $phoneService,
         TransactionRepositoryServiceInterface $transactionService,
@@ -71,16 +71,16 @@ class RegistrationService extends WebPageService implements RegistrationServiceI
     }
     
     
-    public function createForm(string $requestBody): RegistrationForm
+    public function createForm(string $requestBody): RegistrationFormAssembledPhoneNumber
     {
         $parsedRequestBody = \json_decode($requestBody, true);
         $this->form->setEmail($parsedRequestBody['email']);
 //        $this->form->setPhoneCode($parsedRequestBody['phoneCode']);
-        $phoneNumberInput = (string)trim($parsedRequestBody['phoneNumber']);
+        $phoneNumberInput = (string)trim($parsedRequestBody['assembledPhoneNumber']);
         $phoneNumberInt = substr($phoneNumberInput, 0, 1) === '0'
             ? (int)Country::BG_PHONE_CODE.substr($phoneNumberInput, 1)
             : (int)$phoneNumberInput;
-        $this->form->setPhoneNumber($phoneNumberInt);
+        $this->form->setAssembledPhoneNumber($phoneNumberInt);
         $this->form->setPassword($parsedRequestBody['password']);
         
         return $this->form;
@@ -165,7 +165,7 @@ class RegistrationService extends WebPageService implements RegistrationServiceI
     
     private function getOrCreatePhone(): ?Phone
     {
-        $phone = $this->phoneService->getOrCreateByAssembledPhoneNumber($this->form->getPhoneNumber());
+        $phone = $this->phoneService->getOrCreateByAssembledPhoneNumber($this->form->getAssembledPhoneNumber());
         $phoneAnyError = $this->phoneService->getAnyError();
         if (is_null($phone) || $phoneAnyError !== '' || (int)$phone->getId() < 1) {
             $this->errors .= $phoneAnyError;

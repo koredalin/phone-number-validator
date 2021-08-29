@@ -39,7 +39,7 @@ class Routes
         
         
 //        $router->group('/api/v1', function ($router) {
-            $router->map('POST', URL_SUBFOLDER.'/registration', RegistrationController::class.'::index');
+            $router->map('POST', URL_SUBFOLDER.'/registration/assembled-phone-number', RegistrationController::class.'::registrateFormWithAssembledPhoneNumber');
             $router->map('POST', URL_SUBFOLDER.'/confirmation/{transactionId}', ConfirmationController::class.'::index');
             $router->map('GET', URL_SUBFOLDER.'/reset-code/{transactionId}', ResetController::class.'::resetCode');
 //        })->middleware(new CorsRequest($router));
