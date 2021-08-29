@@ -6,7 +6,6 @@ use App\Controllers\BaseControllerJson;
 use Psr\Http\Message\ResponseInterface;
 use App\Services\Interfaces\RegistrationServiceInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use App\Controllers\ResponseStatuses as ResStatus;
 use App\Entities\PhoneConfirmation;
 
 /**
