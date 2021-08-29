@@ -3,31 +3,21 @@
 namespace App\Entities\Forms;
 
 use Symfony\Component\Validator\Constraints as Assert;
-
-//use Symfony\Component\Validator\Constraints\NotBlank;
-//use Symfony\Component\Validator\Constraints\Email;
+use App\Entities\Forms\RegistrationForm;
 
 /**
  * Registration Form with phone code and phone number
  *
  * @author Hristo
  */
-class RegistrationFormPhoneCodeNumber
+class RegistrationFormPhoneCodeNumber extends RegistrationForm
 {
-    /**
-     * @Assert\NotBlank
-     * @Assert\Email(
-     *      message = "The email '{{ value }}' is not a valid email."
-     * )
-     */
-    private $email;
-    
     /**
      * @Assert\NotBlank
      * @Assert\Length(max=6)
      * @Assert\Type(type="integer")
      */
-//    private $phoneCode;
+    private $phoneCode;
     
     /**
      * @Assert\NotBlank
@@ -37,65 +27,38 @@ class RegistrationFormPhoneCodeNumber
      */
     private $phoneNumber;
     
-    /**
-     * @Assert\NotBlank
-     * @Assert\Length(min=3)
-     * @Assert\Length(max=10)
-     */
-    private $password;
-    
     /**************************************************************************/
     /******************************* SETTERS **********************************/
     /**************************************************************************/
     
-    public function setEmail($email): void
+    public function setPhoneCode($phoneCode): void
     {
-        $this->email = $email;
+        $this->phoneCode = $phoneCode;
     }
-    
-//    public function setPhoneCode($phoneCode): void
-//    {
-//        $this->phoneCode = $phoneCode;
-//    }
     
     public function setPhoneNumber($phoneNumber): void
     {
         $this->phoneNumber = $phoneNumber;
     }
     
-    public function setPassword($password): void
-    {
-        $this->password = $password;
-    }
-    
     /**************************************************************************/
     /******************************* GETTERS **********************************/
     /**************************************************************************/
     
-    public function getEmail()
+    public function getPhoneCode()
     {
-        return $this->email;
+        return $this->phoneCode;
     }
-    
-//    public function getPhoneCode()
-//    {
-//        return $this->phoneCode;
-//    }
     
     public function getPhoneNumber()
     {
         return $this->phoneNumber;
     }
     
-    public function getPassword()
-    {
-        return $this->password;
-    }
-    
     public function getRegistrationFormArr() {
         $result = [
             'email' => $this->email,
-//            'phoneNumber' => $this->phoneCode,
+            'phoneNumber' => $this->phoneCode,
             'phoneNumber' => $this->phoneNumber,
             'password' => $this->password,
         ];

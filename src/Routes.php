@@ -31,18 +31,15 @@ class Routes
             return $response;
         });
         
-        
         $router->map('GET', URL_SUBFOLDER.'/hello/{name}', GreetingsController::class.'::index');
         $router->map('GET', URL_SUBFOLDER.'/add/{name}', GreetingsController::class.'::store');
         $router->map('GET', URL_SUBFOLDER.'/user', UserController::class.'::index');
-//        $router->addRoute('POST', URL_SUBFOLDER.'/registration', PhoneConfirmationController::class.'::index');
         
-        
-//        $router->group('/api/v1', function ($router) {
-            $router->map('POST', URL_SUBFOLDER.'/registration/assembled-phone-number', RegistrationController::class.'::registrateFormWithAssembledPhoneNumber');
-            $router->map('POST', URL_SUBFOLDER.'/confirmation/{transactionId}', ConfirmationController::class.'::index');
-            $router->map('GET', URL_SUBFOLDER.'/reset-code/{transactionId}', ResetController::class.'::resetCode');
-//        })->middleware(new CorsRequest($router));
+        $router->map('POST', URL_SUBFOLDER.'/registration/phone-code-number', RegistrationController::class.'::registrateFormFromPhoneCodeNumber');
+        $router->map('POST', URL_SUBFOLDER.'/registration/assembled-phone-number', RegistrationController::class.'::registrateFormFromAssembledPhoneNumber');
+            
+        $router->map('POST', URL_SUBFOLDER.'/confirmation/{transactionId}', ConfirmationController::class.'::index');
+        $router->map('GET', URL_SUBFOLDER.'/reset-code/{transactionId}', ResetController::class.'::resetCode');
         
 //        print_r($route); exit;
         

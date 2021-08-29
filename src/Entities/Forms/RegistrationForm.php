@@ -3,53 +3,58 @@
 namespace App\Entities\Forms;
 
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Entities\Forms\RegistrationForm;
+
+//use Symfony\Component\Validator\Constraints\NotBlank;
+//use Symfony\Component\Validator\Constraints\Email;
 
 /**
- * Registration Form with assembled phone code and phone number
+ * Registration Form
  *
  * @author Hristo
  */
-class RegistrationFormAssembledPhoneNumber extends RegistrationForm
+abstract class RegistrationForm
 {
     /**
      * @Assert\NotBlank
-     * @Assert\Length(min=5)
-     * @Assert\Length(max=20)
-     * @Assert\Type(type="integer")
+     * @Assert\Email(
+     *      message = "The email '{{ value }}' is not a valid email."
+     * )
      */
-    private $assembledPhoneNumber;
+    private $email;
+    
+    /**
+     * @Assert\NotBlank
+     * @Assert\Length(min=3)
+     * @Assert\Length(max=10)
+     */
+    private $password;
     
     /**************************************************************************/
     /******************************* SETTERS **********************************/
     /**************************************************************************/
     
-    public function setAssembledPhoneNumber($assembledPhoneNumber): void
+    public function setEmail($email): void
     {
-        $this->assembledPhoneNumber = $assembledPhoneNumber;
+        $this->email = $email;
+    }
+    
+    public function setPassword($password): void
+    {
+        $this->password = $password;
     }
     
     /**************************************************************************/
     /******************************* GETTERS **********************************/
     /**************************************************************************/
     
-    public function getAssembledPhoneNumber()
+    public function getEmail()
     {
-        return $this->assembledPhoneNumber;
+        return $this->email;
     }
     
-    public function getRegistrationFormArr() {
-        $result = [
-            'email' => $this->email,
-            'phoneNumber' => $this->assembledPhoneNumber,
-            'password' => $this->password,
-        ];
-        
-        return $result;
-    }
-    
-    public function getRegistrationFormJson() {
-        return \json_encode($this->getRegistrationFormArr());
+    public function getPassword()
+    {
+        return $this->password;
     }
     
     /**************************************************************************/

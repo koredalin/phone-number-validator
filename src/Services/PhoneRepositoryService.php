@@ -61,6 +61,22 @@ final class PhoneRepositoryService implements PhoneRepositoryServiceInterface
         return $this->anyError;
     }
     
+    public function getOrCreateByPhoneCodeNumber(int $phoneCode, string $phoneNumber): ?Phone
+    {
+        $countryObj = $this->countryRepository->findOneByPhoneCode($phoneCode);
+        if (is_null($countryObj)) {
+            return null;
+        }
+        $dbPhone = $this->findByOnePhoneCodeNumber($countryObj, $phoneNumber);
+        if ($dbPhone instanceof Phone && $dbPhone->getId() > 0) {
+            return $dbPhone;
+        }
+        
+        $phoneObj = $this->make($countryObj, $phoneNumber);
+        
+        return $phoneObj;
+    }
+    
     public function getOrCreateByAssembledPhoneNumber(string $assembledPhoneNumber): ?Phone
     {
         $countryObj = $this->getCountryFromAssembledNumber($assembledPhoneNumber);

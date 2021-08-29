@@ -20,7 +20,7 @@ interface CountryRepositoryInterface
     
     public function findByOneCountryName(string $countryName): Country;
     
-    public function findOneByPhoneCode(int $phoneCode): Country;
+    public function findOneByPhoneCode(int $phoneCode): ?Country;
     
     public function findAll(): Collection;
     

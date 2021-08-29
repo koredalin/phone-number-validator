@@ -56,9 +56,9 @@ final class CountryRepository implements CountryRepositoryInterface
         return $this->objectRepository->findBy(['country_name' => $countryName]);
     }
     
-    public function findOneByPhoneCode(int $phoneCode): Country
+    public function findOneByPhoneCode(int $phoneCode): ?Country
     {
-        return $this->objectRepository->findBy(['phone_code' => $phoneCode]);
+        return $this->objectRepository->findOneBy(['phoneCode' => $phoneCode]);
     }
     
     public function findAll(): Collection

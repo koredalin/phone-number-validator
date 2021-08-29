@@ -26,10 +26,31 @@ class RegistrationController extends BaseControllerJson
         $this->registrationService = $registrationService;
     }
     
-    public function registrateFormWithAssembledPhoneNumber(ServerRequestInterface $request, array $arguments): ResponseInterface
+    public function registrateFormFromPhoneCodeNumber(ServerRequestInterface $request, array $arguments): ResponseInterface
     {
         $requestBody = $request->getBody()->getContents();
-        $this->registrationService->createForm($requestBody);
+        $this->registrationService->createFormFromPhoneCodeNumber($requestBody);
+        
+        return $this->registrateForm($request, $arguments);
+    }
+    
+    public function registrateFormFromAssembledPhoneNumber(ServerRequestInterface $request, array $arguments): ResponseInterface
+    {
+        $requestBody = $request->getBody()->getContents();
+        $this->registrationService->createFormFromAssembledPhoneNumber($requestBody);
+        
+        return $this->registrateForm($request, $arguments);
+    }
+    
+    /**
+     * Needs generated Registration service form first.
+     * 
+     * @param ServerRequestInterface $request
+     * @param array $arguments
+     * @return ResponseInterface
+     */
+    private function registrateForm(ServerRequestInterface $request, array $arguments): ResponseInterface
+    {
         $response = ['isSuccess' => false];
         if (!$this->registrationService->isValidForm()) {
             return $this->render($response, $this->getServiceErrorsNextWebPage(), $this->registrationService->getResponseStatus());
@@ -45,7 +66,7 @@ class RegistrationController extends BaseControllerJson
             $response = array_merge($response, $this->getRestrictedEmailAndPhoneNumber($phoneConfirmation->getTransaction()));
         }
         
-        $parsedRequestBody = \json_decode($requestBody, true);
+        $parsedRequestBody = \json_decode($request->getBody()->getContents(), true);
         if (
             RETURN_GENERATED_CONFIRMATION_CODE
             && isset($parsedRequestBody[RETURN_GENERATED_CONFIRMATION_CODE_KEY])
