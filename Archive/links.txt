@@ -17,3 +17,7 @@ https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
 
 -- Right HTTP status code to wrong input
 https://stackoverflow.com/questions/7939137/right-http-status-code-to-wrong-input
+
+-- Bootstrap Themes
+https://bootswatch.com
+# Uses getbootstrap.com library.
