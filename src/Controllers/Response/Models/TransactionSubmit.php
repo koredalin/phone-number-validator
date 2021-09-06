@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers\ResponseModels;
+namespace App\Controllers\Response\Models;
 
 /**
  * OTP TransactionSubmit
