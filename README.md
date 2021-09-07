@@ -14,7 +14,7 @@ Please, review and the [front end Angular app](https://github.com/koredalin/phon
 * Dependency injection,
 * League Route,
 * Laminas Diactoros,
-* Laminas Httphandlerrunner,
+* Laminas HttpHandlerRunner,
 * Symfony Validator,
 * Doctrine,
 * Doctrine Migrations,
