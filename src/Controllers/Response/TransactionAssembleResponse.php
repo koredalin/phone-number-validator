@@ -3,7 +3,7 @@
 namespace App\Controllers\Response;
 
 use App\Controllers\Response\Interfaces\ResponseAssembleInterface;
-use App\Controllers\Response\Models\TransactionSubmit as TransactionResponse;
+use App\Controllers\Response\Models\TransactionSubmitResult as TransactionResponse;
 use App\Entities\Transaction;
 
 /**

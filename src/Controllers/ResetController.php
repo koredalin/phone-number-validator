@@ -16,34 +16,34 @@ use App\Controllers\Response\Interfaces\ResponseAssembleInterface;
  */
 class ResetController extends ApiTransactionSubmitController
 {
-    private ResetServiceInterface $confirmationService;
+    private ResetServiceInterface $codeResetService;
     private ResponseAssembleInterface $result;
     
     public function __construct(
         ResponseInterface $response,
-        ResetServiceInterface $confirmationService,
+        ResetServiceInterface $codeResetService,
         ResponseAssembleInterface $result
     ) {
         parent::__construct($response);
-        $this->confirmationService = $confirmationService;
+        $this->codeResetService = $codeResetService;
         $this->result = $result;
     }
     
     public function resetCode(ServerRequestInterface $request, array $arguments): ResponseInterface
     {
         $transactionId = (int)$arguments['transactionId'] ?? 0;
-        $phoneConfirmation = $this->confirmationService->resetConfirmationCode($transactionId);
+        $phoneConfirmation = $this->codeResetService->resetConfirmationCode($transactionId);
         
         $responseContent = is_null($phoneConfirmation) ? $this->failResult() : $this->successResult($phoneConfirmation);
         
-        return $this->render($responseContent, $arguments, $this->confirmationService->getResponseStatus());
+        return $this->render($responseContent, $arguments, $this->codeResetService->getResponseStatus());
     }
     
     private function failResult() {
-        return $this->result->assembleResponse(null, false, $this->confirmationService->getErrors(), true, $this->confirmationService->getNextWebPage());
+        return $this->result->assembleResponse(null, false, $this->codeResetService->getErrors(), true, $this->codeResetService->getNextWebPage());
     }
     
     private function successResult(PhoneConfirmation $phoneConfirmation) {
-        return $this->result->assembleResponse($phoneConfirmation->getTransaction(), $this->confirmationService->isSuccess(), $this->confirmationService->getErrors(), true, $this->confirmationService->getNextWebPage());
+        return $this->result->assembleResponse($phoneConfirmation->getTransaction(), $this->codeResetService->isSuccess(), $this->codeResetService->getErrors(), true, $this->codeResetService->getNextWebPage());
     }
 }

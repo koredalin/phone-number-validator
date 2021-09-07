@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use Psr\Http\Message\ResponseInterface;
 use App\Controllers\ResponseStatuses as ResStatus;
-use App\Controllers\Response\Models\TransactionSubmit;
+use App\Controllers\Response\Models\TransactionSubmitResult;
 
 /**
  * Description of BaseControllerJson
@@ -20,7 +20,7 @@ class ApiTransactionSubmitController
         $this->response = $response;
     }
     
-    public function render(TransactionSubmit $responseResult, array $arguments, int $status = ResStatus::SUCCESS): ResponseInterface
+    public function render(TransactionSubmitResult $responseResult, array $arguments, int $status = ResStatus::SUCCESS): ResponseInterface
     {
         $result = [
             'response' => $responseResult,

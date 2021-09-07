@@ -7,7 +7,7 @@ namespace App\Controllers\Response\Models;
  *
  * @author Hristo
  */
-class TransactionSubmit
+class TransactionSubmitResult
 {
     public ?bool $isSuccess;
     public ?int $transactionId;

@@ -39,7 +39,7 @@ class Routes
         $router->map('POST', URL_SUBFOLDER.'/registration/assembled-phone-number', RegistrationController::class.'::registrateFormFromAssembledPhoneNumber');
             
         $router->map('POST', URL_SUBFOLDER.'/confirmation/{transactionId}', ConfirmationController::class.'::index');
-        $router->map('GET', URL_SUBFOLDER.'/reset-code/{transactionId}', ResetController::class.'::resetCode');
+        $router->map('GET', URL_SUBFOLDER.'/reset-code/{transactionId}', ConfirmationController::class.'::resetCode');
         
 //        print_r($route); exit;
         

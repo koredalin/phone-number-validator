@@ -27,7 +27,7 @@ return [
         ->constructor(DI\get(CONTAINER_RESPONSE), DI\get(RegistrationServiceInterface::class), DI\get(ResponseAssembleInterface::class)),
     
     ConfirmationController::class => DI\create(ConfirmationController::class)
-        ->constructor(DI\get(CONTAINER_RESPONSE), DI\get(ConfirmationServiceInterface::class), DI\get(ResponseAssembleInterface::class)),
+        ->constructor(DI\get(CONTAINER_RESPONSE), DI\get(ConfirmationServiceInterface::class), DI\get(ResetServiceInterface::class), DI\get(ResponseAssembleInterface::class)),
     
     ResetController::class => DI\create(ResetController::class)
         ->constructor(DI\get(CONTAINER_RESPONSE), DI\get(ResetServiceInterface::class), DI\get(ResponseAssembleInterface::class)),

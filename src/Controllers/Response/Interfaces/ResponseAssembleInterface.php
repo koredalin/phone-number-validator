@@ -2,7 +2,7 @@
 
 namespace App\Controllers\Response\Interfaces;
 
-use App\Controllers\Response\Models\TransactionSubmit as TransactionResponse;
+use App\Controllers\Response\Models\TransactionSubmitResult as TransactionResponse;
 use App\Entities\Transaction;
 
 /**
