@@ -23,13 +23,16 @@ class TransactionAssembleResponse implements ResponseAssembleInterface
     
     public function assembleResponse(
         ?Transaction $transaction,
-        bool $isRestrictedInfo = true,
         ?bool $isSuccess = null,
-        string $nextWebPage = '',
-        string $error = ''
+        string $error = '',
+        bool $isRestrictedInfo = true,
+        string $nextWebPage = ''
     ): TransactionResponse {
         if (is_null($transaction)) {
-            $this->response = $this->resetResponse();
+            $this->resetResponse();
+            $this->response->isSuccess = false;
+            $this->response->error = $error;
+            $this->response->nextWebPage = $nextWebPage;
             return $this->response;
         }
         
@@ -39,8 +42,8 @@ class TransactionAssembleResponse implements ResponseAssembleInterface
         $this->response->phoneNumber = $isRestrictedInfo ? $this->getRestrictedPhoneNumber($transaction) : $transaction->getPhone()->getPhoneNumber();
         $this->response->transactionStatus = $transaction->getStatus();
         $this->response->isSuccess = $isSuccess;
-        $this->response->nextWebPage = $nextWebPage;
         $this->response->error = $error;
+        $this->response->nextWebPage = $nextWebPage;
         
         return $this->response;
     }
@@ -50,15 +53,20 @@ class TransactionAssembleResponse implements ResponseAssembleInterface
         $this->response = TransactionResponse::generateAnEmptyObject();
     }
     
-    private function getRestrictedEmail(Transaction $transaction): array
+    private function getRestrictedEmail(Transaction $transaction): string
     {
-        $email = $transaction->getUser()->getEmail();
-        return '***'.substr($email, -(int)(strlen($email) / 2));
+        $emailArr = explode('@', $transaction->getUser()->getEmail());
+        if (count($emailArr) != 2) {
+            return '';
+        }
+        
+        return '***'.substr($emailArr[0], -(int)(strlen($emailArr[0]) / 2)).'@'.$emailArr[1];
     }
     
-    protected function getRestrictedPhoneNumber(Transaction $transaction): array
+    protected function getRestrictedPhoneNumber(Transaction $transaction): string
     {
         $phoneNumber = $transaction->getPhone()->getPhoneNumber();
-        return '***'.substr($phoneNumber, -(int)(strlen($phoneNumber) / 2));
+        
+        return '***'.substr($phoneNumber, -(int)ceil(strlen($phoneNumber) / 2));
     }
 }

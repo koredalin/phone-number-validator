@@ -4,14 +4,14 @@ namespace App\Controllers;
 
 use Psr\Http\Message\ResponseInterface;
 use App\Controllers\ResponseStatuses as ResStatus;
-use App\Entities\Transaction;
+use App\Controllers\Response\Models\TransactionSubmit;
 
 /**
  * Description of BaseControllerJson
  *
  * @author Hristo
  */
-class BaseControllerJson
+class ApiTransactionSubmitController
 {
     protected ResponseInterface $response;
 
@@ -20,7 +20,7 @@ class BaseControllerJson
         $this->response = $response;
     }
     
-    public function render(array $responseResult, array $arguments, int $status = ResStatus::SUCCESS): ResponseInterface
+    public function render(TransactionSubmit $responseResult, array $arguments, int $status = ResStatus::SUCCESS): ResponseInterface
     {
         $result = [
             'response' => $responseResult,
@@ -31,15 +31,5 @@ class BaseControllerJson
         );
         
         return $this->response->withHeader('Content-Type', 'application/json')->withStatus($status);
-    }
-    
-    protected function getRestrictedEmailAndPhoneNumber(Transaction $transaction): array
-    {
-        $email = $transaction->getUser()->getEmail();
-        $result['email'] = '***'.substr($email, -(int)(strlen($email) / 2));
-        $phoneNumber = $transaction->getPhone()->getPhoneNumber();
-        $result['phoneNumber'] = '***'.substr($phoneNumber, -(int)(strlen($phoneNumber) / 2));
-            
-        return $result;
     }
 }

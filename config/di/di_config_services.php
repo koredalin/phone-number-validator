@@ -21,6 +21,8 @@ use App\Services\Interfaces\PhoneRepositoryServiceInterface;
 use App\Services\Interfaces\TransactionRepositoryServiceInterface;
 use App\Services\Interfaces\PhoneConfirmationRepositoryServiceInterface;
 use App\Services\Interfaces\PhoneConfirmationAttemptRepositoryServiceInterface;
+// General service interfaces
+use App\Controllers\Response\Interfaces\ResponseAssembleInterface;
 use App\Services\Interfaces\RegistrationServiceInterface;
 use App\Services\Interfaces\ConfirmationServiceInterface;
 use App\Services\Interfaces\ResetServiceInterface;
@@ -31,6 +33,8 @@ use App\Services\PhoneRepositoryService;
 use App\Services\TransactionRepositoryService;
 use App\Services\PhoneConfirmationRepositoryService;
 use App\Services\PhoneConfirmationAttemptRepositoryService;
+// General Services
+use App\Controllers\Response\TransactionAssembleResponse;
 use App\Services\RegistrationService;
 use App\Services\ConfirmationService;
 use App\Services\ResetService;
@@ -66,6 +70,8 @@ return [
         ->constructor(DI\get(TransactionRepositoryInterface::class), DI\get(PasswordGeneratorInterface::class), DI\get(DateTimeManagerInterface::class)),
 
     // General Services
+    ResponseAssembleInterface::class => DI\create(TransactionAssembleResponse::class),
+
     RegistrationServiceInterface::class => DI\create(RegistrationService::class)
         ->constructor(
             DI\get(RegistrationFormPhoneCodeNumber::class),
