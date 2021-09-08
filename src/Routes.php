@@ -12,7 +12,7 @@ use App\Http\Controllers\GreetingsController;
 use App\Controllers\UserController;
 use App\Controllers\ConfirmationController;
 use App\Controllers\RegistrationController;
-use App\Controllers\ResetController;
+use App\Controllers\TransactionInfoController;
 
 /**
  * Description of Routes
@@ -40,6 +40,8 @@ class Routes
             
         $router->map('POST', URL_SUBFOLDER.'/confirmation/{transactionId}', ConfirmationController::class.'::index');
         $router->map('GET', URL_SUBFOLDER.'/reset-code/{transactionId}', ConfirmationController::class.'::resetCode');
+        
+        $router->map('GET', URL_SUBFOLDER.'/transaction-info/{transactionId}', TransactionInfoController::class.'::index');
         
 //        print_r($route); exit;
         

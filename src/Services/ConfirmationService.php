@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Services\WebPageService;
 use App\Services\Interfaces\ConfirmationServiceInterface;
+// Routes
+use App\Controllers\RouteConstants as RC;
 // Entities
 use App\Entities\Transaction;
 use App\Entities\PhoneConfirmation;
@@ -26,8 +28,8 @@ use App\Controllers\ResponseStatuses as ResStatus;
  */
 class ConfirmationService extends WebPageService implements ConfirmationServiceInterface
 {
-    const CURRENT_WEB_PAGE_GROUP = '/confirmation';
-    const NEXT_WEB_PAGE_GROUP = '/success';
+    const CURRENT_WEB_PAGE_GROUP = RC::CONFIRMATION;
+    const NEXT_WEB_PAGE = RC::TRANSACTION_INFO;
     const COOL_DOWN_CONFIRMATION_ATTEMPTS_NUMBER = 3;
     const COOL_DOWN_MINUTES = 1;
     
@@ -70,7 +72,7 @@ class ConfirmationService extends WebPageService implements ConfirmationServiceI
         if ($transaction->getStatus() === Transaction::STATUS_CONFIRMED) {
             $this->responseStatus = ResStatus::ALREADY_REPORTED;
             $this->errors .= 'Already confirmed transaction.';
-            $this->nextWebPage = self::NEXT_WEB_PAGE_GROUP.'/'.$transactionId;
+            $this->nextWebPage = self::NEXT_WEB_PAGE.'/'.$transactionId;
             $this->isSuccess = true;
             return null;
         }
@@ -114,7 +116,7 @@ class ConfirmationService extends WebPageService implements ConfirmationServiceI
             }
         
             $this->isSuccess = true;
-            $this->nextWebPage = self::NEXT_WEB_PAGE_GROUP.'/'.$transactionId;
+            $this->nextWebPage = self::NEXT_WEB_PAGE.'/'.$transactionId;
             $this->setPhoneConfirmationSuccess($phoneConfirmation);
             $this->setTransactionSuccess($transaction);
         } else {

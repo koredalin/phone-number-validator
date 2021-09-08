@@ -7,13 +7,14 @@ use App\Controllers\GreetingsController;
 use App\Controllers\UserController;
 use App\Controllers\RegistrationController;
 use App\Controllers\ConfirmationController;
-use App\Controllers\ResetController;
+use App\Controllers\TransactionInfoController;
 // Query Services
 use App\Queries\Services\TransactionQueryService;
 // General Services
 use App\Services\Interfaces\RegistrationServiceInterface;
 use App\Services\Interfaces\ConfirmationServiceInterface;
 use App\Services\Interfaces\ResetServiceInterface;
+use App\Services\Interfaces\TransactionRepositoryServiceInterface;
 use App\Controllers\Response\Interfaces\ResponseAssembleInterface;
 
 return [
@@ -29,6 +30,6 @@ return [
     ConfirmationController::class => DI\create(ConfirmationController::class)
         ->constructor(DI\get(CONTAINER_RESPONSE), DI\get(ConfirmationServiceInterface::class), DI\get(ResetServiceInterface::class), DI\get(ResponseAssembleInterface::class)),
     
-    ResetController::class => DI\create(ResetController::class)
-        ->constructor(DI\get(CONTAINER_RESPONSE), DI\get(ResetServiceInterface::class), DI\get(ResponseAssembleInterface::class)),
+    TransactionInfoController::class => DI\create(TransactionInfoController::class)
+        ->constructor(DI\get(CONTAINER_RESPONSE), DI\get(TransactionRepositoryServiceInterface::class), DI\get(ResponseAssembleInterface::class)),
 ];

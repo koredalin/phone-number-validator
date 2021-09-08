@@ -41,6 +41,7 @@ class TransactionAssembleResponse implements ResponseAssembleInterface
         $this->response->phoneCode = $isRestrictedInfo ? null : $transaction->getPhone()->getCountry()->getPhoneCode();
         $this->response->phoneNumber = $isRestrictedInfo ? $this->getRestrictedPhoneNumber($transaction) : $transaction->getPhone()->getPhoneNumber();
         $this->response->transactionStatus = $transaction->getStatus();
+        $this->response->transactionConfirmedAt = $transaction->getConfirmedAt();
         $this->response->isSuccess = $isSuccess;
         $this->response->error = $error;
         $this->response->nextWebPage = $nextWebPage;

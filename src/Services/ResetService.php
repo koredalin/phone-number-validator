@@ -67,7 +67,7 @@ class ResetService extends WebPageService implements ResetServiceInterface
         if ($transaction->getStatus() === Transaction::STATUS_CONFIRMED) {
             $this->responseStatus = ResStatus::ALREADY_REPORTED;
             $this->errors .= 'Already confirmed transaction.';
-            $this->nextWebPage = RC::SUCCESS.'/'.$transactionId;
+            $this->nextWebPage = RC::TRANSACTION_INFO.'/'.$transactionId;
             $this->isSuccess = true;
             return null;
         }

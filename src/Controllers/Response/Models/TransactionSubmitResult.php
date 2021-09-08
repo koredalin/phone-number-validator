@@ -2,6 +2,8 @@
 
 namespace App\Controllers\Response\Models;
 
+use \DateTime;
+
 /**
  * OTP TransactionSubmit
  *
@@ -15,6 +17,7 @@ class TransactionSubmitResult
     public ?int $phoneCode;
     public string $phoneNumber;
     public string $transactionStatus;
+    public ?DateTime $transactionConfirmedAt;
     public string $error;
     public string $nextWebPage;
     public ?string $generatedConfirmationCode;
@@ -30,6 +33,7 @@ class TransactionSubmitResult
         $obj->phoneCode = null;
         $obj->phoneNumber = '';
         $obj->transactionStatus = '';
+        $obj->transactionConfirmedAt = null;
         $obj->error = '';
         $obj->nextWebPage = '';
         $obj->generatedConfirmationCode = null;
