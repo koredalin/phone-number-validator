@@ -23,8 +23,11 @@ use App\Services\Interfaces\TransactionRepositoryServiceInterface;
 use App\Services\Interfaces\PhoneConfirmationRepositoryServiceInterface;
 // SMS
 use App\Services\Interfaces\ConfirmationCodeSmsInterface;
-// Response
-use App\Controllers\ResponseStatuses as ResStatus;
+// Exceptions
+use \Exception;
+use App\Exceptions\NotValidInputException;
+use App\Exceptions\SMSConfirmationCodeNotSentException;
+use App\Exceptions\AlreadyMadeServiceActionException;
 
 /**
  * Description of Registration
@@ -126,48 +129,41 @@ class RegistrationService extends WebPageService implements RegistrationServiceI
     public function registrate(): ?PhoneConfirmation
     {
         if ($this->isFinishedServiceAction) {
-            throw new \Exception('The registration is already made.');
+            throw new AlreadyMadeServiceActionException($this->errors);
         }
         
         $this->notSetFormException();
         if (!$this->isValidForm()) {
-            $this->responseStatus = ResStatus::UNPROCESSABLE_ENTITY;
-            return null;
+            throw new NotValidInputException($this->formErrors->__toString());
         }
+        echo __LINE__; exit;
         
         $user = $this->getOrCreateByEmail();
         if (is_null($user)) {
-            $this->responseStatus = ResStatus::SERVICE_UNAVAILABLE;
-            return null;
+            throw new Exception($this->errors);
         }
         
         $phone = $this->getOrCreatePhone();
         if (is_null($phone)) {
-            $this->responseStatus = ResStatus::SERVICE_UNAVAILABLE;
-            return null;
+            throw new Exception($this->errors);
         }
         
         $transaction = $this->createTransaction($user, $phone);
         if (is_null($transaction)) {
-            $this->responseStatus = ResStatus::SERVICE_UNAVAILABLE;
-            return null;
+            throw new Exception($this->errors);
         }
         
         $phoneConfirmation = $this->createPhoneConfirmation($transaction);
         if (is_null($phoneConfirmation) || $phoneConfirmation->getId() < 1) {
-            $this->responseStatus = ResStatus::SERVICE_UNAVAILABLE;
-            return null;
+            throw new Exception($this->errors);
         }
         
         $phoneConfirmationSms = $this->confirmationCodeSms->sendConfirmationCodeMessage($phoneConfirmation->getId());
         if (is_null($phoneConfirmationSms) || $phoneConfirmationSms->getId() < 1) {
-            $this->responseStatus = ResStatus::SERVICE_UNAVAILABLE;
-            $this->errors .= 'Confirmation code SMS is not sent.';
-            return null;
+            throw new SMSConfirmationCodeNotSentException($this->errors);
         }
         
         $this->isFinishedServiceAction = true;
-        $this->isSuccess = true;
         $this->nextWebPage = self::NEXT_WEB_PAGE_GROUP.'/'.$transaction->getId();
         
         return $phoneConfirmation;
@@ -220,7 +216,7 @@ class RegistrationService extends WebPageService implements RegistrationServiceI
     private function notSetFormException(): void
     {
         if (!isset($this->form)) {
-            throw new \Exception('Registration form not set yet. Use Registration::createForm() first.');
+            throw new Exception('Registration form not set yet. Use Registration::createForm() first.');
         }
     }
 }

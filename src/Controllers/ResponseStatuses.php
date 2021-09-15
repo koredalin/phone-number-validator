@@ -9,5 +9,6 @@ final class ResponseStatuses
     const FORBIDDEN = 403;
     const NOT_FOUND = 404;
     const UNPROCESSABLE_ENTITY = 422;
+    const INTERNAL_SERVER_ERROR = 500;
     const SERVICE_UNAVAILABLE = 503;
 }

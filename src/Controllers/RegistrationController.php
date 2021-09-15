@@ -8,6 +8,14 @@ use App\Services\Interfaces\RegistrationServiceInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use App\Entities\PhoneConfirmation;
 use App\Controllers\Response\Interfaces\ResponseAssembleInterface;
+// Response
+use App\Controllers\ResponseStatuses as ResStatus;
+use App\Controllers\Response\Models\TransactionSubmitResult as TransactionResponse;
+// Exceptions
+use \Exception;
+use App\Exceptions\NotValidInputException;
+use App\Exceptions\SMSConfirmationCodeNotSentException;
+use App\Exceptions\AlreadyMadeServiceActionException;
 
 /**
  * Description of RegistrationFormController
@@ -54,17 +62,26 @@ class RegistrationController extends ApiTransactionSubmitController
      */
     private function registrateForm(ServerRequestInterface $request, array $arguments): ResponseInterface
     {
-        if (!$this->registrationService->isValidForm()) {
-            return $this->render($this->failResult(), $arguments, $this->registrationService->getResponseStatus());
+        try {
+            $phoneConfirmation = $this->registrationService->registrate();
+            $responseContent = $this->successResult($phoneConfirmation);
+            $responseContent = $this->testing($request, $phoneConfirmation, $responseContent);
+            return $this->render($responseContent, $arguments, ResStatus::SUCCESS);
+        } catch (NotValidInputException | SMSConfirmationCodeNotSentException | AlreadyMadeServiceActionException $ex) {
+            $responseStatusCode = (int)$ex->getCode() > 0 ? (int)$ex->getCode() : ResStatus::INTERNAL_SERVER_ERROR;
+            return $this->render($this->failResult($ex), $arguments, $responseStatusCode);
+        } catch (\Exception $ex) {
+            return $this->render($this->failResult($ex), $arguments, ResStatus::INTERNAL_SERVER_ERROR);
         }
-        
-        $phoneConfirmation = $this->registrationService->registrate();
-        if (is_null($phoneConfirmation)) {
-            return $this->render($this->failResult(), $arguments, $this->registrationService->getResponseStatus());
-        }
-        
-        $responseContent = $this->successResult($phoneConfirmation);
-        
+    }
+    
+    private function successResult(PhoneConfirmation $phoneConfirmation): TransactionResponse
+    {
+        return $this->result->assembleResponse($phoneConfirmation->getTransaction(), $this->registrationService->isSuccess(), $this->registrationService->getErrors(), true, $this->registrationService->getNextWebPage());
+    }
+    
+    private function testing(ServerRequestInterface $request, PhoneConfirmation $phoneConfirmation, TransactionResponse $responseContent): TransactionResponse
+    {
         $parsedRequestBody = \json_decode($request->getBody()->getContents(), true);
         if (
             RETURN_GENERATED_CONFIRMATION_CODE
@@ -74,14 +91,11 @@ class RegistrationController extends ApiTransactionSubmitController
             $responseContent->generatedConfirmationCode = $phoneConfirmation->getConfirmationCode();
         }
         
-        return $this->render($responseContent, $arguments, $this->registrationService->getResponseStatus());
+        return $responseContent;
     }
     
-    private function failResult() {
-        return $this->result->assembleResponse(null, false, $this->registrationService->getErrors(), true, $this->registrationService->getNextWebPage());
-    }
-    
-    private function successResult(PhoneConfirmation $phoneConfirmation) {
-        return $this->result->assembleResponse($phoneConfirmation->getTransaction(), $this->registrationService->isSuccess(), $this->registrationService->getErrors(), true, $this->registrationService->getNextWebPage());
+    private function failResult(string $exceptionMessage): TransactionResponse
+    {
+        return $this->result->assembleResponse(null, false, $exceptionMessage, true, '');
     }
 }
