@@ -49,17 +49,6 @@ class Phone
      */
     private DateTime $updatedAt;
     
-    /**
-     * @OneToMany(targetEntity="User", mappedBy="phone")
-     */
-//    private ArrayCollection $users;
-    
-//    public function __construct(Country $country)
-//    {
-//        $this->country = $country;
-//        $this->users = new ArrayCollection();
-//    }
-    
     /**************************************************************************/
     /******************************* SETTERS **********************************/
     /**************************************************************************/
@@ -89,16 +78,6 @@ class Phone
         $this->updatedAt = $updatedAt;
     }
     
-//    public function addUser(User $user): void
-//    {
-//        $this->users->add($user);
-//    }
-//    
-//    public function removeUser(User $user): void
-//    {
-//        $this->users->removeElement($user);
-//    }
-    
     /**************************************************************************/
     /******************************* GETTERS **********************************/
     /**************************************************************************/
@@ -127,11 +106,6 @@ class Phone
     {
         return $this->updatedAt;
     }
-    
-//    public function getUsers(): ArrayCollection
-//    {
-//        return $this->users;
-//    }
 
     /**************************************************************************/
     /**************************************************************************/
