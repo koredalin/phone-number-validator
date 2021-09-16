@@ -50,10 +50,10 @@ class TransactionInfoController extends ApiTransactionSubmitController
     }
     
     private function failResult() {
-        return $this->result->assembleResponse(null, false, 'No transaction found.', true, '');
+        return $this->result->assembleResponse(null, 'No transaction found.', true, '');
     }
     
     private function successResult(Transaction $transaction) {
-        return $this->result->assembleResponse($transaction, true, '', true, '');
+        return $this->result->assembleResponse($transaction, '', true, '');
     }
 }

@@ -110,7 +110,7 @@ class Phone
     
     public function getCountry(): Country
     {
-        return $this->counrty;
+        return $this->country;
     }
     
     public function getPhoneNumber(): int

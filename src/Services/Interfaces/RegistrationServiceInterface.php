@@ -21,5 +21,5 @@ interface RegistrationServiceInterface extends WebPageServiceInterface
     
     public function getFormErrors(): string;
     
-    public function registrate(): ?PhoneConfirmation;
+    public function registrate(): PhoneConfirmation;
 }

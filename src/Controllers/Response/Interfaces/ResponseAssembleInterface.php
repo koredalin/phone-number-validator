@@ -13,7 +13,6 @@ interface ResponseAssembleInterface
 {
     public function assembleResponse(
         ?Transaction $transaction,
-        ?bool $isSuccess = null,
         string $error = '',
         bool $isRestrictedInfo = true,
         string $nextWebPage = ''

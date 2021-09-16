@@ -66,18 +66,19 @@ class RegistrationController extends ApiTransactionSubmitController
             $phoneConfirmation = $this->registrationService->registrate();
             $responseContent = $this->successResult($phoneConfirmation);
             $responseContent = $this->testing($request, $phoneConfirmation, $responseContent);
-            return $this->render($responseContent, $arguments, ResStatus::SUCCESS);
         } catch (NotValidInputException | SMSConfirmationCodeNotSentException | AlreadyMadeServiceActionException $ex) {
             $responseStatusCode = (int)$ex->getCode() > 0 ? (int)$ex->getCode() : ResStatus::INTERNAL_SERVER_ERROR;
             return $this->render($this->failResult($ex), $arguments, $responseStatusCode);
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             return $this->render($this->failResult($ex), $arguments, ResStatus::INTERNAL_SERVER_ERROR);
         }
+        
+        return $this->render($responseContent, $arguments, ResStatus::SUCCESS);
     }
     
     private function successResult(PhoneConfirmation $phoneConfirmation): TransactionResponse
     {
-        return $this->result->assembleResponse($phoneConfirmation->getTransaction(), $this->registrationService->isSuccess(), $this->registrationService->getErrors(), true, $this->registrationService->getNextWebPage());
+        return $this->result->assembleResponse($phoneConfirmation->getTransaction(), $this->registrationService->getErrors(), true, $this->registrationService->getNextWebPage());
     }
     
     private function testing(ServerRequestInterface $request, PhoneConfirmation $phoneConfirmation, TransactionResponse $responseContent): TransactionResponse
@@ -96,6 +97,6 @@ class RegistrationController extends ApiTransactionSubmitController
     
     private function failResult(string $exceptionMessage): TransactionResponse
     {
-        return $this->result->assembleResponse(null, false, $exceptionMessage, true, '');
+        return $this->result->assembleResponse(null, $exceptionMessage, true, '');
     }
 }

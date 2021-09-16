@@ -55,7 +55,7 @@ class ConfirmationController extends ApiTransactionSubmitController
         } catch (AlreadyMadeServiceActionException | NotFoundTransactionException | AlreadyRegistratedTransactionException | ConfirmationCoolDownException | SMSSuccessNotSentException | WrongConfirmationCodeException $ex) {
             $responseStatusCode = (int)$ex->getCode() > 0 ? (int)$ex->getCode() : ResStatus::INTERNAL_SERVER_ERROR;
             return $this->render($this->failResult($ex), $arguments, $responseStatusCode);
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             return $this->render($this->failResult($ex), $arguments, ResStatus::INTERNAL_SERVER_ERROR);
         }
         
@@ -65,30 +65,36 @@ class ConfirmationController extends ApiTransactionSubmitController
     public function resetCode(ServerRequestInterface $request, array $arguments): ResponseInterface
     {
         $transactionId = (int)$arguments['transactionId'] ?? 0;
-        $phoneConfirmationAttempt = $this->codeResetService->resetConfirmationCode($transactionId);
-        
-        $responseContent = is_null($phoneConfirmationAttempt) ? $this->failCodeResetResult() : $this->successCodeResetResult($phoneConfirmationAttempt);
+        try {
+            $phoneConfirmationAttempt = $this->codeResetService->resetConfirmationCode($transactionId);
+            $responseContent = $this->successCodeResetResult($phoneConfirmationAttempt);
+        } catch (AlreadyMadeServiceActionException | NotFoundTransactionException | AlreadyRegistratedTransactionException | ConfirmationResetCoolDownException | SMSConfirmationCodeNotSentException $ex) {
+            $responseStatusCode = (int)$ex->getCode() > 0 ? (int)$ex->getCode() : ResStatus::INTERNAL_SERVER_ERROR;
+            return $this->render($this->failCodeResetResult($ex), $arguments, $responseStatusCode);
+        } catch (Exception $ex) {
+            return $this->render($this->failCodeResetResult($ex), $arguments, ResStatus::INTERNAL_SERVER_ERROR);
+        }
         
         return $this->render($responseContent, $arguments, $this->codeResetService->getResponseStatus());
     }
     
     private function failResult(string $exceptionMessage): TransactionSubmitResult
     {
-        return $this->result->assembleResponse(null, false, $exceptionMessage, true, '');
+        return $this->result->assembleResponse(null, $exceptionMessage, true, '');
     }
     
     private function successResult(PhoneConfirmationAttempt $phoneConfirmationAttempt): TransactionSubmitResult
     {
-        return $this->result->assembleResponse($phoneConfirmationAttempt->getPhoneConfirmation()->getTransaction(), $this->confirmationService->isSuccess(), $this->confirmationService->getErrors(), true, $this->confirmationService->getNextWebPage());
+        return $this->result->assembleResponse($phoneConfirmationAttempt->getPhoneConfirmation()->getTransaction(), $this->confirmationService->getErrors(), true, $this->confirmationService->getNextWebPage());
     }
     
-    private function failCodeResetResult(): TransactionSubmitResult
+    private function failCodeResetResult(string $exceptionMessage): TransactionSubmitResult
     {
-        return $this->result->assembleResponse(null, false, $this->codeResetService->getErrors(), true, $this->codeResetService->getNextWebPage());
+        return $this->result->assembleResponse(null, $exceptionMessage, true, '');
     }
     
     private function successCodeResetResult(PhoneConfirmation $phoneConfirmation): TransactionSubmitResult
     {
-        return $this->result->assembleResponse($phoneConfirmation->getTransaction(), $this->codeResetService->isSuccess(), $this->codeResetService->getErrors(), true, $this->codeResetService->getNextWebPage());
+        return $this->result->assembleResponse($phoneConfirmation->getTransaction(), $this->codeResetService->getErrors(), true, $this->codeResetService->getNextWebPage());
     }
 }

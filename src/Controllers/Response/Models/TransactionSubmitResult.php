@@ -11,7 +11,6 @@ use \DateTime;
  */
 class TransactionSubmitResult
 {
-    public ?bool $isSuccess;
     public ?int $transactionId;
     public string $email;
     public ?int $phoneCode;
@@ -27,7 +26,6 @@ class TransactionSubmitResult
     public static function generateAnEmptyObject(): self
     {
         $obj = new self();
-        $obj->isSuccess = null;
         $obj->transactionId = null;
         $obj->email = '';
         $obj->phoneCode = null;

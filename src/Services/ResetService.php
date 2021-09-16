@@ -17,6 +17,13 @@ use App\Common\Interfaces\DateTimeManagerInterface;
 use App\Services\Interfaces\ConfirmationCodeSmsInterface;
 // Response
 use App\Controllers\ResponseStatuses as ResStatus;
+// Exceptions
+use Exception;
+use App\Exceptions\AlreadyMadeServiceActionException;
+use App\Exceptions\NotFoundTransactionException;
+use App\Exceptions\AlreadyRegistratedTransactionException;
+use App\Exceptions\ConfirmationResetCoolDownException;
+use App\Exceptions\SMSConfirmationCodeNotSentException;
 
 /**
  * Reset confirmation code (eventually password) service.
@@ -48,56 +55,61 @@ class ResetService extends WebPageService implements ResetServiceInterface
     }
     
     
-    public function resetConfirmationCode(int $transactionId): ?PhoneConfirmation
+    public function resetConfirmationCode(int $transactionId): PhoneConfirmation
     {
         if ($this->isFinishedServiceAction) {
-            throw new \Exception('The registration is already made.');
+            throw new AlreadyMadeServiceActionException('The transaction confirmation reset is already made.');
         }
         $this->nextWebPage = self::CURRENT_WEB_PAGE_GROUP.'/'.$transactionId;
         $this->isFinishedServiceAction = true;
-        $this->isSuccess = false;
         
+        $transaction = $this->findTransaction($transactionId);
+        
+        $phoneConfirmation = $this->findPhoneConfirmation($transaction);
+        
+        $this->actionCoolDown($transaction);
+        
+        $this->setPhoneConfirmationAbandoned($phoneConfirmation);
+        
+        $newPhoneConfirmation = $this->phoneConfirmationService->make($transaction);
+        
+        $newPhoneConfirmationWithSmsStatus = $this->actionSendSmsConfirmationCode($newPhoneConfirmation);
+        
+        $this->nextWebPage = self::NEXT_WEB_PAGE_GROUP.'/'.$transactionId;
+        
+        return $newPhoneConfirmationWithSmsStatus;
+    }
+    
+    private function findTransaction(int $transactionId): Transaction
+    {
         $transaction = $this->transactionRepository->findOneById($transactionId);
         if (is_null($transaction)) {
-            $this->responseStatus = ResStatus::NOT_FOUND;
-            $this->errors .= 'Not found transaction.';
-            return null;
+            throw new NotFoundTransactionException('Not found transaction.');
         }
         
         if ($transaction->getStatus() === Transaction::STATUS_CONFIRMED) {
-            $this->responseStatus = ResStatus::ALREADY_REPORTED;
-            $this->errors .= 'Already confirmed transaction.';
-            $this->nextWebPage = RC::TRANSACTION_INFO.'/'.$transactionId;
-            $this->isSuccess = true;
-            return null;
+            $this->nextWebPage = RC::TRANSACTION_INFO.'/'.(int)$transaction->getId();
+            throw new AlreadyRegistratedTransactionException('Already confirmed transaction.');
         }
         
+        return $transaction;
+    }
+    
+    private function findPhoneConfirmation(Transaction $transaction): PhoneConfirmation
+    {
         $phoneConfirmation = $this->phoneConfirmationService->findLastByTransactionAwaitingStatus($transaction);
         if (is_null($phoneConfirmation)) {
-            $this->responseStatus = ResStatus::SERVICE_UNAVAILABLE;
-            $this->errors .= 'Not found phone code, number.';
-            return null;
+            throw new Exception('Not found phone code, number. '.$this->errors);
         }
         
+        return $phoneConfirmation;
+    }
+    
+    private function actionCoolDown(Transaction $transaction): void
+    {
         if ($transaction->getCreatedAt()->add(new \DateInterval('PT'.self::MINUTES_BEFORE_RESET_START.'M')) > $this->dtManager->now()) {
-            $this->responseStatus = ResStatus::FORBIDDEN;
-            $this->errors .= 'Minimum interval before confirmation code reset - '.self::MINUTES_BEFORE_RESET_START.' minutes.';
-            return null;
+            throw new ConfirmationResetCoolDownException('Minimum interval before confirmation code reset - '.self::MINUTES_BEFORE_RESET_START.' minutes. '.$this->errors);
         }
-        
-        $this->setPhoneConfirmationAbandoned($phoneConfirmation);
-        $newPhoneConfirmation = $this->phoneConfirmationService->make($transaction);
-        $newPhoneConfirmation = $this->confirmationCodeSms->sendConfirmationCodeMessage($newPhoneConfirmation->getId());
-        if (is_null($newPhoneConfirmation) || $newPhoneConfirmation->getId() < 1) {
-            $this->responseStatus = ResStatus::SERVICE_UNAVAILABLE;
-            $this->errors .= 'Confirmation code SMS is not sent.';
-            return null;
-        }
-        
-        $this->nextWebPage = self::NEXT_WEB_PAGE_GROUP.'/'.$transactionId;
-        $this->isSuccess = true;
-        
-        return $newPhoneConfirmation;
     }
     
     private function setPhoneConfirmationAbandoned(PhoneConfirmation $phoneConfirmation): void
@@ -106,5 +118,16 @@ class ResetService extends WebPageService implements ResetServiceInterface
         $phoneConfirmation->setStatus(PhoneConfirmation::STATUS_ABANDONED);
         $phoneConfirmation->setUpdatedAt($this->dtManager->now());
         $this->phoneConfirmationService->save($phoneConfirmation);
+    }
+    
+    private function actionSendSmsConfirmationCode(PhoneConfirmation $phoneConfirmation): PhoneConfirmation
+    {
+        $phoneConfirmationWithSmsStatus = $this->confirmationCodeSms->sendConfirmationCodeMessage($phoneConfirmation->getId());
+        if (is_null($phoneConfirmationWithSmsStatus) || $phoneConfirmationWithSmsStatus->getId() < 1) {
+            $this->responseStatus = ResStatus::SERVICE_UNAVAILABLE;
+            throw new SMSConfirmationCodeNotSentException(' Confirmation code SMS is not sent. '.$this->errors);
+        }
+        
+        return $phoneConfirmationWithSmsStatus;
     }
 }

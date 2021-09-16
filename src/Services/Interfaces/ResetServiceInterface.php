@@ -11,5 +11,5 @@ use App\Entities\PhoneConfirmation;
  */
 interface ResetServiceInterface extends WebPageServiceInterface
 {
-    public function resetConfirmationCode(int $transactionId): ?PhoneConfirmation;
+    public function resetConfirmationCode(int $transactionId): PhoneConfirmation;
 }

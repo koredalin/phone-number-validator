@@ -23,7 +23,6 @@ class TransactionAssembleResponse implements ResponseAssembleInterface
     
     public function assembleResponse(
         ?Transaction $transaction,
-        ?bool $isSuccess = null,
         string $error = '',
         bool $isRestrictedInfo = true,
         string $nextWebPage = ''
@@ -42,7 +41,6 @@ class TransactionAssembleResponse implements ResponseAssembleInterface
         $this->response->phoneNumber = $isRestrictedInfo ? $this->getRestrictedPhoneNumber($transaction) : $transaction->getPhone()->getPhoneNumber();
         $this->response->transactionStatus = $transaction->getStatus();
         $this->response->transactionConfirmedAt = $transaction->getConfirmedAt();
-        $this->response->isSuccess = $isSuccess;
         $this->response->error = $error;
         $this->response->nextWebPage = $nextWebPage;
         

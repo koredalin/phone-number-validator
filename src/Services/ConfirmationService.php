@@ -62,7 +62,7 @@ class ConfirmationService extends WebPageService implements ConfirmationServiceI
         $this->setDefaultWebPageProperties();
     }
     
-    public function confirmCode(int $transactionId, string $requestBody): ?PhoneConfirmationAttempt
+    public function confirmCode(int $transactionId, string $requestBody): PhoneConfirmationAttempt
     {
         if ($this->isFinishedServiceAction) {
             throw new AlreadyMadeServiceActionException('The code confirmation already made.');
@@ -71,24 +71,9 @@ class ConfirmationService extends WebPageService implements ConfirmationServiceI
         $this->nextWebPage = self::CURRENT_WEB_PAGE_GROUP.'/'.$transactionId;
         $this->isFinishedServiceAction = true;
         
-        $transaction = $this->transactionRepository->findOneById($transactionId);
-        if (is_null($transaction)) {
-            throw new NotFoundTransactionException('No such transaction.');
-        }
+        $transaction = $this->findTransaction($transactionId);
         
-        if ($transaction->getStatus() === Transaction::STATUS_CONFIRMED) {
-            $this->nextWebPage = self::NEXT_WEB_PAGE.'/'.$transactionId;
-            throw new AlreadyRegistratedTransactionException('The transaction is registrated.');
-        }
-        
-        $phoneConfirmation = $this->phoneConfirmationRepository->findLastByTransactionAwaitingStatus($transaction);
-        if (is_null($phoneConfirmation)) {
-            throw new Exception('Not found PhoneConfirmation object. '.$this->errors);
-        }
-        
-        if ($phoneConfirmation->getStatus() === PhoneConfirmation::STATUS_ABANDONED) {
-            throw new Exception('PhoneConfirmation status abandoned is not possible in such cases. transactionId: '.$transactionId.'. phoneConfirmationId: '.$phoneConfirmation->getId().'.');
-        }
+        $phoneConfirmation = $this->findPhoneConfirmation($transaction);
         
         $parsedRequestBody = \json_decode($requestBody, true);
         $inputConfirmationCode = (int)$parsedRequestBody['confirmationCode'];
@@ -97,6 +82,35 @@ class ConfirmationService extends WebPageService implements ConfirmationServiceI
         $phoneConfirmationAttempt = $this->actionFinalConfirmation($inputConfirmationCode, $transaction, $phoneConfirmation);
             
         return $phoneConfirmationAttempt;
+    }
+    
+    private function findTransaction(int $transactionId): Transaction
+    {
+        $transaction = $this->transactionRepository->findOneById($transactionId);
+        if (is_null($transaction)) {
+            throw new NotFoundTransactionException('No such transaction.');
+        }
+        
+        if ($transaction->getStatus() === Transaction::STATUS_CONFIRMED) {
+            $this->nextWebPage = self::NEXT_WEB_PAGE.'/'.$transaction->getId();
+            throw new AlreadyRegistratedTransactionException('The transaction is registrated.');
+        }
+        
+        return $transaction;
+    }
+    
+    private function findPhoneConfirmation(Transaction $transaction): PhoneConfirmation
+    {
+        $phoneConfirmation = $this->phoneConfirmationRepository->findLastByTransactionAwaitingStatus($transaction);
+        if (is_null($phoneConfirmation)) {
+            throw new Exception('Not found PhoneConfirmation object. '.$this->errors);
+        }
+        
+        if ($phoneConfirmation->getStatus() === PhoneConfirmation::STATUS_ABANDONED) {
+            throw new Exception('PhoneConfirmation status abandoned is not possible in such cases. transactionId: '.$transaction->getId().'. phoneConfirmationId: '.$phoneConfirmation->getId().'.');
+        }
+        
+        return $phoneConfirmation;
     }
     
     private function actionCoolDown(int $inputConfirmationCode, PhoneConfirmation $phoneConfirmation): void
@@ -109,8 +123,7 @@ class ConfirmationService extends WebPageService implements ConfirmationServiceI
             && $lastAttemptTime->add(new \DateInterval('PT'.self::COOL_DOWN_MINUTES.'M')) > $this->dtManager->now()
         ) {
             $this->phoneConfirmationAttemptService->createByPhoneConfirmationInputConfirmationCode($phoneConfirmation, $inputConfirmationCode, true);
-            $this->errors .= 'Minimum interval before next confirmation code attempt: '.self::COOL_DOWN_MINUTES.' minutes.';
-            throw new ConfirmationCoolDownException($this->errors);
+            throw new ConfirmationCoolDownException('Minimum interval before next confirmation code attempt: '.self::COOL_DOWN_MINUTES.' minutes. '.$this->errors);
         }
     }
     
@@ -122,13 +135,11 @@ class ConfirmationService extends WebPageService implements ConfirmationServiceI
             && $phoneConfirmationAttempt->getStatus() === PhoneConfirmationAttempt::STATUS_CONFIRMED
         ) {
             $this->actionSendSmsSuccess($transaction);
-        
-            $this->nextWebPage = self::NEXT_WEB_PAGE.'/'.(int)$transaction->getId();
             $this->setPhoneConfirmationSuccess($phoneConfirmation);
             $this->setTransactionSuccess($transaction);
+            $this->nextWebPage = self::NEXT_WEB_PAGE.'/'.(int)$transaction->getId();
         } else {
-            $this->errors .= 'Wrong confirmation code.';
-            throw new WrongConfirmationCodeException($this->errors);
+            throw new WrongConfirmationCodeException('Wrong confirmation code. '.$this->errors);
         }
         
         return $phoneConfirmationAttempt;
@@ -139,8 +150,7 @@ class ConfirmationService extends WebPageService implements ConfirmationServiceI
         $transactionSuccessSms = $this->successSms->sendSuccessMessage($transaction->getId());
         if (is_null($transactionSuccessSms) || $transactionSuccessSms->getId() < 1) {
             $this->responseStatus = ResStatus::SERVICE_UNAVAILABLE;
-            $this->errors .= 'Transaction success SMS is not sent.';
-            throw new SMSSuccessNotSentException($this->errors);
+            throw new SMSSuccessNotSentException('Transaction success SMS is not sent. '.$this->errors);
         }
     }
     

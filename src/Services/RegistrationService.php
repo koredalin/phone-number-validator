@@ -126,7 +126,7 @@ class RegistrationService extends WebPageService implements RegistrationServiceI
         return (string)$this->formErrors;
     }
     
-    public function registrate(): ?PhoneConfirmation
+    public function registrate(): PhoneConfirmation
     {
         if ($this->isFinishedServiceAction) {
             throw new AlreadyMadeServiceActionException($this->errors);
@@ -138,78 +138,19 @@ class RegistrationService extends WebPageService implements RegistrationServiceI
         }
         
         $user = $this->getOrCreateByEmail();
-        if (is_null($user)) {
-            throw new Exception('No User generated. '.$this->errors);
-        }
         
         $phone = $this->getOrCreatePhone();
-        if (is_null($phone)) {
-            throw new Exception('No Phone generated. '.$this->errors);
-        }
         
         $transaction = $this->createTransaction($user, $phone);
-        if (is_null($transaction)) {
-            throw new Exception('No Transaction generated. '.$this->errors);
-        }
         
         $phoneConfirmation = $this->createPhoneConfirmation($transaction);
-        if (is_null($phoneConfirmation) || $phoneConfirmation->getId() < 1) {
-            throw new Exception('No PhoneConfirmation generated. '.$this->errors);
-        }
         
-        $phoneConfirmationSms = $this->confirmationCodeSms->sendConfirmationCodeMessage($phoneConfirmation->getId());
-        if (is_null($phoneConfirmationSms) || $phoneConfirmationSms->getId() < 1) {
-            throw new SMSConfirmationCodeNotSentException($this->errors);
-        }
+        $phoneConfirmationWithSmsStatus = $this->actionSendSmsConfirmationCode($phoneConfirmation);
         
         $this->isFinishedServiceAction = true;
         $this->nextWebPage = self::NEXT_WEB_PAGE_GROUP.'/'.$transaction->getId();
         
-        return $phoneConfirmation;
-    }
-    
-    private function getOrCreateByEmail(): ?User
-    {
-        $user = $this->userService->getOrCreateByEmail($this->form->getEmail());
-        if ((int)$user->getId() < 1) {
-            return null;
-        }
-        
-        return $user;
-    }
-    
-    private function getOrCreatePhone(): ?Phone
-    {
-        $phone = $this->form instanceof RegistrationFormPhoneCodeNumber
-            ? $this->phoneService->getOrCreateByPhoneCodeNumber($this->form->getPhoneCode(), $this->form->getPhoneNumber())
-            : $this->phoneService->getOrCreateByAssembledPhoneNumber($this->form->getAssembledPhoneNumber());
-        $phoneAnyError = $this->phoneService->getAnyError();
-        if (is_null($phone) || $phoneAnyError !== '' || (int)$phone->getId() < 1) {
-            $this->errors .= $phoneAnyError;
-            return null;
-        }
-    
-        return $phone;
-    }
-    
-    private function createTransaction(User $user, Phone $phone): ?Transaction
-    {
-        $transaction = $this->transactionService->make($user, $phone, $this->form->getPassword());
-        if ((int)$transaction->getId() < 1) {
-            return null;
-        }
-    
-        return $transaction;
-    }
-    
-    private function createPhoneConfirmation(Transaction $transaction): ?PhoneConfirmation
-    {
-        $phoneConfirmation = $this->phoneConfirmationService->getOrCreateByTransactionAwaitingStatus($transaction);
-        if ((int)$phoneConfirmation->getId() < 1) {
-            return null;
-        }
-    
-        return $phoneConfirmation;
+        return $phoneConfirmationWithSmsStatus;
     }
     
     private function notSetFormException(): void
@@ -217,5 +158,59 @@ class RegistrationService extends WebPageService implements RegistrationServiceI
         if (!isset($this->form)) {
             throw new Exception('Registration form not set yet. Use Registration::createForm() first.');
         }
+    }
+    
+    private function getOrCreateByEmail(): User
+    {
+        $user = $this->userService->getOrCreateByEmail($this->form->getEmail());
+        if ((int)$user->getId() < 1) {
+            throw new Exception('No User generated. '.$this->errors);
+        }
+        
+        return $user;
+    }
+    
+    private function getOrCreatePhone(): Phone
+    {
+        $phone = $this->form instanceof RegistrationFormPhoneCodeNumber
+            ? $this->phoneService->getOrCreateByPhoneCodeNumber($this->form->getPhoneCode(), $this->form->getPhoneNumber())
+            : $this->phoneService->getOrCreateByAssembledPhoneNumber($this->form->getAssembledPhoneNumber());
+        $phoneAnyError = $this->phoneService->getAnyError();
+        if (is_null($phone) || $phoneAnyError !== '' || (int)$phone->getId() < 1) {
+            $this->errors .= $phoneAnyError;
+            throw new Exception('No Phone generated. '.$this->errors);
+        }
+    
+        return $phone;
+    }
+    
+    private function createTransaction(User $user, Phone $phone): Transaction
+    {
+        $transaction = $this->transactionService->make($user, $phone, $this->form->getPassword());
+        if ((int)$transaction->getId() < 1) {
+            throw new Exception('No Transaction generated. '.$this->errors);
+        }
+    
+        return $transaction;
+    }
+    
+    private function createPhoneConfirmation(Transaction $transaction): PhoneConfirmation
+    {
+        $phoneConfirmation = $this->phoneConfirmationService->getOrCreateByTransactionAwaitingStatus($transaction);
+        if ((int)$phoneConfirmation->getId() < 1) {
+            throw new Exception('No PhoneConfirmation generated. '.$this->errors);
+        }
+    
+        return $phoneConfirmation;
+    }
+    
+    private function actionSendSmsConfirmationCode(PhoneConfirmation $phoneConfirmation): PhoneConfirmation
+    {
+        $phoneConfirmationSms = $this->confirmationCodeSms->sendConfirmationCodeMessage($phoneConfirmation->getId());
+        if (is_null($phoneConfirmationSms) || $phoneConfirmationSms->getId() < 1) {
+            throw new SMSConfirmationCodeNotSentException($this->errors);
+        }
+        
+        return $phoneConfirmationSms;
     }
 }
