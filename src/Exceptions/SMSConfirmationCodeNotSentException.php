@@ -6,7 +6,7 @@ namespace App\Exceptions;
 use App\Controllers\ResponseStatuses as ResStatus;
 
 /**
- * Description of ProgramOrDbException
+ * Description of SMSConfirmationCodeNotSentException
  *
  * @author Hristo
  */

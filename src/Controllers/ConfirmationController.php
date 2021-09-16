@@ -11,6 +11,16 @@ use App\Entities\PhoneConfirmation;
 use App\Entities\PhoneConfirmationAttempt;
 use App\Controllers\Response\Interfaces\ResponseAssembleInterface;
 use App\Controllers\Response\Models\TransactionSubmitResult;
+// Response
+use App\Controllers\ResponseStatuses as ResStatus;
+// Exceptions
+use \Exception;
+use App\Exceptions\AlreadyMadeServiceActionException;
+use App\Exceptions\NotFoundTransactionException;
+use App\Exceptions\AlreadyRegistratedTransactionException;
+use App\Exceptions\ConfirmationCoolDownException;
+use App\Exceptions\SMSSuccessNotSentException;
+use App\Exceptions\WrongConfirmationCodeException;
 
 /**
  * Description of ConfirmationController
@@ -39,8 +49,15 @@ class ConfirmationController extends ApiTransactionSubmitController
     {
         $requestBody = $request->getBody()->getContents();
         $transactionId = (int)$arguments['transactionId'] ?? 0;
-        $phoneConfirmationAttempt = $this->confirmationService->confirmCode($transactionId, $requestBody);
-        $responseContent = is_null($phoneConfirmationAttempt) ? $this->failResult() : $this->successResult($phoneConfirmationAttempt);
+        try {
+            $phoneConfirmationAttempt = $this->confirmationService->confirmCode($transactionId, $requestBody);
+            $responseContent = $this->successResult($phoneConfirmationAttempt);
+        } catch (AlreadyMadeServiceActionException | NotFoundTransactionException | AlreadyRegistratedTransactionException | ConfirmationCoolDownException | SMSSuccessNotSentException | WrongConfirmationCodeException $ex) {
+            $responseStatusCode = (int)$ex->getCode() > 0 ? (int)$ex->getCode() : ResStatus::INTERNAL_SERVER_ERROR;
+            return $this->render($this->failResult($ex), $arguments, $responseStatusCode);
+        } catch (\Exception $ex) {
+            return $this->render($this->failResult($ex), $arguments, ResStatus::INTERNAL_SERVER_ERROR);
+        }
         
         return $this->render($responseContent, $arguments, $this->confirmationService->getResponseStatus());
     }
@@ -55,9 +72,9 @@ class ConfirmationController extends ApiTransactionSubmitController
         return $this->render($responseContent, $arguments, $this->codeResetService->getResponseStatus());
     }
     
-    private function failResult(): TransactionSubmitResult
+    private function failResult(string $exceptionMessage): TransactionSubmitResult
     {
-        return $this->result->assembleResponse(null, false, $this->confirmationService->getErrors(), true, $this->confirmationService->getNextWebPage());
+        return $this->result->assembleResponse(null, false, $exceptionMessage, true, '');
     }
     
     private function successResult(PhoneConfirmationAttempt $phoneConfirmationAttempt): TransactionSubmitResult

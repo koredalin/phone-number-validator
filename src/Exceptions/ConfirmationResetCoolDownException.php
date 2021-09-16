@@ -6,16 +6,18 @@ namespace App\Exceptions;
 use App\Controllers\ResponseStatuses as ResStatus;
 
 /**
- * Description of AlreadyRegistratedTransactionException
+ * Class ConfirmationResetCoolDownException
+ * If the user input is not valid.
+ * Standard response status code should be: 422.
  *
  * @author Hristo
  */
-class AlreadyRegistratedTransactionException
+class ConfirmationResetCoolDownException extends \Exception
 {
     // Redefine the exception so message isn't optional
     public function __construct($message, $code = 0, \Throwable $previous = null)
     {
-        $currentCode = $code > 0 ? $code : ResStatus::ALREADY_REPORTED;
+        $currentCode = $code > 0 ? $code : ResStatus::SERVICE_UNAVAILABLE;
         // make sure everything is assigned properly
         parent::__construct($message, $currentCode, $previous);
     }

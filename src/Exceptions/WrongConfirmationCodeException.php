@@ -6,16 +6,18 @@ namespace App\Exceptions;
 use App\Controllers\ResponseStatuses as ResStatus;
 
 /**
- * Description of ProgramOrDbException
+ * Class WrongConfirmationCodeException
+ * If the user input is not valid.
+ * Standard response status code should be: 422.
  *
  * @author Hristo
  */
-class ProgramOrDbException
+class WrongConfirmationCodeException extends \Exception
 {
     // Redefine the exception so message isn't optional
     public function __construct($message, $code = 0, \Throwable $previous = null)
     {
-        $currentCode = $code > 0 ? $code : ResStatus::SERVICE_UNAVAILABLE;
+        $currentCode = $code > 0 ? $code : ResStatus::UNPROCESSABLE_ENTITY;
         // make sure everything is assigned properly
         parent::__construct($message, $currentCode, $previous);
     }

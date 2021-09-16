@@ -136,26 +136,25 @@ class RegistrationService extends WebPageService implements RegistrationServiceI
         if (!$this->isValidForm()) {
             throw new NotValidInputException($this->formErrors->__toString());
         }
-        echo __LINE__; exit;
         
         $user = $this->getOrCreateByEmail();
         if (is_null($user)) {
-            throw new Exception($this->errors);
+            throw new Exception('No User generated. '.$this->errors);
         }
         
         $phone = $this->getOrCreatePhone();
         if (is_null($phone)) {
-            throw new Exception($this->errors);
+            throw new Exception('No Phone generated. '.$this->errors);
         }
         
         $transaction = $this->createTransaction($user, $phone);
         if (is_null($transaction)) {
-            throw new Exception($this->errors);
+            throw new Exception('No Transaction generated. '.$this->errors);
         }
         
         $phoneConfirmation = $this->createPhoneConfirmation($transaction);
         if (is_null($phoneConfirmation) || $phoneConfirmation->getId() < 1) {
-            throw new Exception($this->errors);
+            throw new Exception('No PhoneConfirmation generated. '.$this->errors);
         }
         
         $phoneConfirmationSms = $this->confirmationCodeSms->sendConfirmationCodeMessage($phoneConfirmation->getId());

@@ -6,16 +6,16 @@ namespace App\Exceptions;
 use App\Controllers\ResponseStatuses as ResStatus;
 
 /**
- * Description of AlreadyRegistratedTransactionException
+ * Description of ProgramOrDbException
  *
  * @author Hristo
  */
-class AlreadyRegistratedTransactionException
+class NotFoundTransactionException
 {
     // Redefine the exception so message isn't optional
     public function __construct($message, $code = 0, \Throwable $previous = null)
     {
-        $currentCode = $code > 0 ? $code : ResStatus::ALREADY_REPORTED;
+        $currentCode = $code > 0 ? $code : ResStatus::NOT_FOUND;
         // make sure everything is assigned properly
         parent::__construct($message, $currentCode, $previous);
     }
