@@ -6,6 +6,8 @@ use App\Services\WebPageService;
 use App\Services\Interfaces\ConfirmationServiceInterface;
 // Routes
 use App\Controllers\RouteConstants as RC;
+// Input
+use App\Controllers\Input\Models\ConfirmationCodeModel;
 // Entities
 use App\Entities\Transaction;
 use App\Entities\PhoneConfirmation;
@@ -62,7 +64,7 @@ class ConfirmationService extends WebPageService implements ConfirmationServiceI
         $this->setDefaultWebPageProperties();
     }
     
-    public function confirmCode(int $transactionId, string $requestBody): PhoneConfirmationAttempt
+    public function confirmCode(int $transactionId, ConfirmationCodeModel $confirmationCodeModel): PhoneConfirmationAttempt
     {
         if ($this->isFinishedServiceAction) {
             throw new AlreadyMadeServiceActionException('The code confirmation already made.');
@@ -75,9 +77,8 @@ class ConfirmationService extends WebPageService implements ConfirmationServiceI
         
         $phoneConfirmation = $this->findPhoneConfirmation($transaction);
         
-        $parsedRequestBody = \json_decode($requestBody, true);
-        $inputConfirmationCode = (int)$parsedRequestBody['confirmationCode'];
-        $this->actionCoolDown($inputConfirmationCode, $phoneConfirmation);
+        $inputConfirmationCode = $confirmationCodeModel->getConfirmationCode();
+        $this->actionCoolDown($confirmationCodeModel->getConfirmationCode(), $phoneConfirmation);
         
         $phoneConfirmationAttempt = $this->actionFinalConfirmation($inputConfirmationCode, $transaction, $phoneConfirmation);
             

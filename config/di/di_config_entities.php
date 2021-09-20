@@ -6,7 +6,7 @@ use App\Entities\Country;
 use App\Entities\Phone;
 use App\Entities\PhoneConfirmation;
 use App\Entities\PhoneConfirmationAttempt;
-use App\Entities\Forms\RegistrationFormAssembledPhoneNumber;
+use App\Controllers\Input\Models\RegistrationModelAssembledPhoneNumber;
 
 return [
     Transaction::class => DI\create(),

@@ -11,6 +11,11 @@ use App\Entities\PhoneConfirmation;
 use App\Entities\PhoneConfirmationAttempt;
 use App\Controllers\Response\Interfaces\ResponseAssembleInterface;
 use App\Controllers\Response\Models\TransactionSubmitResult;
+// Input
+use App\Controllers\Input\Models\ConfirmationCodeModel;
+// Validation
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 // Response
 use App\Controllers\ResponseStatuses as ResStatus;
 // Exceptions
@@ -33,6 +38,8 @@ class ConfirmationController extends ApiTransactionSubmitController
     private ConfirmationServiceInterface $confirmationService;
     private ResetServiceInterface $codeResetService;
     
+    private ValidatorInterface $validator;
+    
     public function __construct(
         ResponseInterface $response,
         ConfirmationServiceInterface $confirmationService,
@@ -43,14 +50,27 @@ class ConfirmationController extends ApiTransactionSubmitController
         $this->confirmationService = $confirmationService;
         $this->codeResetService = $codeResetService;
         $this->result = $result;
+        
+        $this->validator = Validation::createValidatorBuilder()
+            ->enableAnnotationMapping()
+            ->addDefaultDoctrineAnnotationReader()
+            ->getValidator();
     }
     
     public function index(ServerRequestInterface $request, array $arguments): ResponseInterface
     {
-        $requestBody = $request->getBody()->getContents();
+        // Input mapping, model generation.
+        $parsedRequestBodyArr = \json_decode($request->getBody()->getContents(), true);
+        $confirmationCodeModel = new ConfirmationCodeModel();
+        $confirmationCodeModel->setConfirmationCode((int)$parsedRequestBodyArr['confirmationCode']);
+        $formErrors = $this->validator->validate($confirmationCodeModel);
+        if (count($formErrors) > 0) {
+            return $this->render($this->failResult((string)$formErrors), $arguments, ResStatus::UNPROCESSABLE_ENTITY);
+        }
+        // Action.
         $transactionId = (int)$arguments['transactionId'] ?? 0;
         try {
-            $phoneConfirmationAttempt = $this->confirmationService->confirmCode($transactionId, $requestBody);
+            $phoneConfirmationAttempt = $this->confirmationService->confirmCode($transactionId, $confirmationCodeModel);
             $responseContent = $this->successResult($phoneConfirmationAttempt);
         } catch (AlreadyMadeServiceActionException | NotFoundTransactionException | AlreadyRegistratedTransactionException | ConfirmationCoolDownException | SMSSuccessNotSentException | WrongConfirmationCodeException $ex) {
             $responseStatusCode = (int)$ex->getCode() > 0 ? (int)$ex->getCode() : ResStatus::INTERNAL_SERVER_ERROR;
@@ -58,7 +78,7 @@ class ConfirmationController extends ApiTransactionSubmitController
         } catch (Exception $ex) {
             return $this->render($this->failResult($ex), $arguments, ResStatus::INTERNAL_SERVER_ERROR);
         }
-        
+        // Success.
         return $this->render($responseContent, $arguments, $this->confirmationService->getResponseStatus());
     }
     

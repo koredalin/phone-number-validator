@@ -5,8 +5,8 @@ use App\Common\Interfaces\DateTimeManagerInterface;
 use App\Common\Interfaces\PasswordGeneratorInterface;
 use App\Common\Interfaces\ConfirmationCodeGeneratorInterface;
 // Forms
-use App\Entities\Forms\RegistrationFormPhoneCodeNumber;
-use App\Entities\Forms\RegistrationFormAssembledPhoneNumber;
+use App\Controllers\Input\Models\RegistrationModelPhoneCodeNumber;
+use App\Controllers\Input\Models\RegistrationModelAssembledPhoneNumber;
 // Repository Interfaces
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Repositories\Interfaces\CountryRepositoryInterface;
@@ -74,8 +74,8 @@ return [
 
     RegistrationServiceInterface::class => DI\create(RegistrationService::class)
         ->constructor(
-            DI\get(RegistrationFormPhoneCodeNumber::class),
-            DI\get(RegistrationFormAssembledPhoneNumber::class),
+            DI\get(RegistrationModelPhoneCodeNumber::class),
+            DI\get(RegistrationModelAssembledPhoneNumber::class),
             DI\get(UserRepositoryServiceInterface::class),
             DI\get(PhoneRepositoryServiceInterface::class),
             DI\get(TransactionRepositoryServiceInterface::class),

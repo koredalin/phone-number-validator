@@ -4,9 +4,9 @@ namespace App\Services;
 
 use App\Services\WebPageService;
 use App\Services\Interfaces\RegistrationServiceInterface;
-use App\Entities\Forms\RegistrationForm;
-use App\Entities\Forms\RegistrationFormPhoneCodeNumber;
-use App\Entities\Forms\RegistrationFormAssembledPhoneNumber;
+use App\Controllers\Input\Models\RegistrationModel;
+use App\Controllers\Input\Models\RegistrationModelPhoneCodeNumber;
+use App\Controllers\Input\Models\RegistrationModelAssembledPhoneNumber;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -41,9 +41,9 @@ class RegistrationService extends WebPageService implements RegistrationServiceI
     
     private ValidatorInterface $validator;
     
-    private RegistrationForm $form;
-    private RegistrationFormPhoneCodeNumber $formPhoneCodeNumber;
-    private RegistrationFormAssembledPhoneNumber $formAssembledPhoneNumber;
+    private RegistrationModel $form;
+    private RegistrationModelPhoneCodeNumber $formPhoneCodeNumber;
+    private RegistrationModelAssembledPhoneNumber $formAssembledPhoneNumber;
     
     private ?ConstraintViolationList $formErrors;
     
@@ -54,8 +54,8 @@ class RegistrationService extends WebPageService implements RegistrationServiceI
     private ConfirmationCodeSmsInterface $confirmationCodeSms;
 
     public function __construct(
-        RegistrationFormPhoneCodeNumber $registrationFormPhoneCodeNumber,
-        RegistrationFormAssembledPhoneNumber $registrationFormAssembledPhoneNumber,
+        RegistrationModelPhoneCodeNumber $registrationFormPhoneCodeNumber,
+        RegistrationModelAssembledPhoneNumber $registrationFormAssembledPhoneNumber,
         UserRepositoryServiceInterface $userService,
         PhoneRepositoryServiceInterface $phoneService,
         TransactionRepositoryServiceInterface $transactionService,
@@ -80,7 +80,7 @@ class RegistrationService extends WebPageService implements RegistrationServiceI
     }
     
     
-    public function createFormFromPhoneCodeNumber(string $requestBody): RegistrationFormPhoneCodeNumber
+    public function createFormFromPhoneCodeNumber(string $requestBody): RegistrationModelPhoneCodeNumber
     {
         $parsedRequestBody = \json_decode($requestBody, true);
         $this->formPhoneCodeNumber->setEmail($parsedRequestBody['email']);
@@ -94,7 +94,7 @@ class RegistrationService extends WebPageService implements RegistrationServiceI
     }
     
     
-    public function createFormFromAssembledPhoneNumber(string $requestBody): RegistrationFormAssembledPhoneNumber
+    public function createFormFromAssembledPhoneNumber(string $requestBody): RegistrationModelAssembledPhoneNumber
     {
         $parsedRequestBody = \json_decode($requestBody, true);
         $this->formAssembledPhoneNumber->setEmail($parsedRequestBody['email']);
@@ -172,7 +172,7 @@ class RegistrationService extends WebPageService implements RegistrationServiceI
     
     private function getOrCreatePhone(): Phone
     {
-        $phone = $this->form instanceof RegistrationFormPhoneCodeNumber
+        $phone = $this->form instanceof RegistrationModelPhoneCodeNumber
             ? $this->phoneService->getOrCreateByPhoneCodeNumber($this->form->getPhoneCode(), $this->form->getPhoneNumber())
             : $this->phoneService->getOrCreateByAssembledPhoneNumber($this->form->getAssembledPhoneNumber());
         $phoneAnyError = $this->phoneService->getAnyError();

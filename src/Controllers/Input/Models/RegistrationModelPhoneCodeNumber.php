@@ -1,47 +1,65 @@
 <?php
 
-namespace App\Entities\Forms;
+namespace App\Controllers\Input\Models;
 
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Entities\Forms\RegistrationForm;
+use App\Controllers\Input\Models\RegistrationModel;
 
 /**
- * Registration Form with assembled phone code and phone number
+ * Registration Form with phone code and phone number
  *
  * @author Hristo
  */
-class RegistrationFormAssembledPhoneNumber extends RegistrationForm
+class RegistrationModelPhoneCodeNumber extends RegistrationModel
 {
+    /**
+     * @Assert\NotBlank
+     * @Assert\Length(max=6)
+     * @Assert\Type(type="integer")
+     */
+    private $phoneCode;
+    
     /**
      * @Assert\NotBlank
      * @Assert\Length(min=5)
      * @Assert\Length(max=20)
      * @Assert\Type(type="integer")
      */
-    private $assembledPhoneNumber;
+    private $phoneNumber;
     
     /**************************************************************************/
     /******************************* SETTERS **********************************/
     /**************************************************************************/
     
-    public function setAssembledPhoneNumber($assembledPhoneNumber): void
+    public function setPhoneCode($phoneCode): void
     {
-        $this->assembledPhoneNumber = $assembledPhoneNumber;
+        $this->phoneCode = $phoneCode;
+    }
+    
+    public function setPhoneNumber($phoneNumber): void
+    {
+        $this->phoneNumber = $phoneNumber;
     }
     
     /**************************************************************************/
     /******************************* GETTERS **********************************/
     /**************************************************************************/
     
-    public function getAssembledPhoneNumber()
+    public function getPhoneCode()
     {
-        return $this->assembledPhoneNumber;
+        return $this->phoneCode;
+    }
+    
+    public function getPhoneNumber()
+    {
+        return $this->phoneNumber;
     }
     
     public function getRegistrationFormArr() {
         $result = [
             'email' => $this->email,
-            'phoneNumber' => $this->assembledPhoneNumber,
+            'phoneNumber' => $this->phoneCode,
+            'phoneNumber' => $this->phoneNumber,
             'password' => $this->password,
         ];
         

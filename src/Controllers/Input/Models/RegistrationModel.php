@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Entities\Forms;
+namespace App\Controllers\Input\Models;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @author Hristo
  */
-abstract class RegistrationForm
+abstract class RegistrationModel
 {
     /**
      * @Assert\NotBlank

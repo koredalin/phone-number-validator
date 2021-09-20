@@ -3,8 +3,8 @@
 namespace App\Services\Interfaces;
 
 use App\Services\Interfaces\WebPageServiceInterface;
-use App\Entities\Forms\RegistrationFormPhoneCodeNumber;
-use App\Entities\Forms\RegistrationFormAssembledPhoneNumber;
+use App\Controllers\Input\Models\RegistrationModelPhoneCodeNumber;
+use App\Controllers\Input\Models\RegistrationModelAssembledPhoneNumber;
 use App\Entities\PhoneConfirmation;
 
 /**
@@ -13,9 +13,9 @@ use App\Entities\PhoneConfirmation;
  */
 interface RegistrationServiceInterface extends WebPageServiceInterface
 {
-    public function createFormFromPhoneCodeNumber(string $requestBody): RegistrationFormPhoneCodeNumber;
+    public function createFormFromPhoneCodeNumber(string $requestBody): RegistrationModelPhoneCodeNumber;
     
-    public function createFormFromAssembledPhoneNumber(string $requestBody): RegistrationFormAssembledPhoneNumber;
+    public function createFormFromAssembledPhoneNumber(string $requestBody): RegistrationModelAssembledPhoneNumber;
     
     public function isValidForm(): bool;
     
