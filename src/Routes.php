@@ -46,7 +46,7 @@ class Routes
         $router->map('GET', URL_SUBFOLDER.RC::RESET_CODE.'/{transactionId}', ConfirmationController::class.'::resetCode');
         // Info
         $router->map('GET', URL_SUBFOLDER.RC::TRANSACTION_INFO.'/{transactionId}', TransactionInfoController::class.'::index');
-        $router->map('GET', URL_SUBFOLDER.RC::TRANSACTION_DETAILED_INFO.'/{transactionId}', TransactionInfoController::class.'::detailedInfo');
+        $router->map('POST', URL_SUBFOLDER.RC::TRANSACTION_DETAILED_INFO.'/{transactionId}', TransactionInfoController::class.'::detailedInfo');
         
         return $router;
     }
