@@ -17,9 +17,9 @@ class NotValidInputException extends \Exception
     // Redefine the exception so message isn't optional
     public function __construct($message, $code = 0, \Throwable $previous = null)
     {
-        $currentCode = $code > 0 ? $code : ResStatus::UNPROCESSABLE_ENTITY;
+        $instanceCode = $code > 0 ? $code : ResStatus::UNPROCESSABLE_ENTITY;
         // make sure everything is assigned properly
-        parent::__construct($message, $currentCode, $previous);
+        parent::__construct($message, $instanceCode, $previous);
     }
 
     // custom string representation of object

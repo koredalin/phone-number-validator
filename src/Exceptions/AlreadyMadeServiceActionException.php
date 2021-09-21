@@ -15,9 +15,10 @@ class AlreadyMadeServiceActionException extends \Exception
     // Redefine the exception so message isn't optional
     public function __construct($message, $code = 0, \Throwable $previous = null)
     {
-        $currentCode = $code > 0 ? $code : ResStatus::INTERNAL_SERVER_ERROR;
+        $instanceMessage = 'Already made service action type: '.trim($message).'.';
+        $instanceCode = $code > 0 ? $code : ResStatus::INTERNAL_SERVER_ERROR;
         // make sure everything is assigned properly
-        parent::__construct($message, $currentCode, $previous);
+        parent::__construct($instanceMessage, $instanceCode, $previous);
     }
 
     // custom string representation of object

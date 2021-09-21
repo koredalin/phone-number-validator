@@ -15,9 +15,10 @@ class AlreadyRegistratedTransactionException extends \Exception
     // Redefine the exception so message isn't optional
     public function __construct($message, $code = 0, \Throwable $previous = null)
     {
-        $currentCode = $code > 0 ? $code : ResStatus::ALREADY_REPORTED;
+        $instanceMessage = 'The transaction is already registrated.';
+        $instanceCode = $code > 0 ? $code : ResStatus::ALREADY_REPORTED;
         // make sure everything is assigned properly
-        parent::__construct($message, $currentCode, $previous);
+        parent::__construct($instanceMessage, $instanceCode, $previous);
     }
 
     // custom string representation of object

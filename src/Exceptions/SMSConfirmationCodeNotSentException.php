@@ -15,9 +15,10 @@ class SMSConfirmationCodeNotSentException extends \Exception
     // Redefine the exception so message isn't optional
     public function __construct($message, $code = 0, \Throwable $previous = null)
     {
-        $currentCode = $code > 0 ? $code : ResStatus::SERVICE_UNAVAILABLE;
+        $instanceMessage = 'SMS confirmation code not sent. Reason: "'.$message.'".';
+        $instanceCode = $code > 0 ? $code : ResStatus::SERVICE_UNAVAILABLE;
         // make sure everything is assigned properly
-        parent::__construct($message, $currentCode, $previous);
+        parent::__construct($instanceMessage, $instanceCode, $previous);
     }
 
     // custom string representation of object

@@ -11,15 +11,15 @@ use App\Controllers\ResponseStatuses as ResStatus;
  *
  * @author Hristo
  */
-class WrongTransactionIdPasswordException extends \Exception
+class WrongTransactionIdOrPasswordException extends \Exception
 {
     // Redefine the exception so message isn't optional
     public function __construct($message, $code = 0, \Throwable $previous = null)
     {
-        $message = trim($message) === '' ? 'Wrong transaction id or password.' : $message;
-        $currentCode = $code > 0 ? $code : ResStatus::FORBIDDEN;
+        $instanceMessage = 'Wrong transaction id or password.';
+        $instanceCode = $code > 0 ? $code : ResStatus::FORBIDDEN;
         // make sure everything is assigned properly
-        parent::__construct($message, $currentCode, $previous);
+        parent::__construct($instanceMessage, $instanceCode, $previous);
     }
 
     // custom string representation of object

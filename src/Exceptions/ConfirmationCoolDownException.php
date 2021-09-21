@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 // Response
 use App\Controllers\ResponseStatuses as ResStatus;
+use App\Services\ConfirmationService;
 
 /**
  * Class ConfirmationCoolDownException
@@ -17,9 +18,10 @@ class ConfirmationCoolDownException extends \Exception
     // Redefine the exception so message isn't optional
     public function __construct($message, $code = 0, \Throwable $previous = null)
     {
-        $currentCode = $code > 0 ? $code : ResStatus::FORBIDDEN;
+        $instanceMessage = 'Minimum interval before next confirmation code attempt: '.ConfirmationService::COOL_DOWN_MINUTES.' minutes. ';
+        $instanceCode = $code > 0 ? $code : ResStatus::FORBIDDEN;
         // make sure everything is assigned properly
-        parent::__construct($message, $currentCode, $previous);
+        parent::__construct($instanceMessage, $instanceCode, $previous);
     }
 
     // custom string representation of object

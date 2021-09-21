@@ -12,7 +12,7 @@ use App\Entities\Phone;
 use App\Entities\Transaction;
 // Exceptions
 use App\Exceptions\NotFoundTransactionException;
-use App\Exceptions\WrongTransactionIdPasswordException;
+use App\Exceptions\WrongTransactionIdOrPasswordException;
 
 final class TransactionRepositoryService implements TransactionRepositoryServiceInterface, SuccessSmsInterface
 {
@@ -56,11 +56,11 @@ final class TransactionRepositoryService implements TransactionRepositoryService
     {
         $transaction = $this->findOneById($transactionId);
         if (is_null($transaction)) {
-            throw new NotFoundTransactionException('');
+            throw new NotFoundTransactionException((string)$transactionId);
         }
         
         if ($transaction->getPassword() !== $this->passwordGenerator->encode($comparisonPassword)) {
-            throw new WrongTransactionIdPasswordException('');
+            throw new WrongTransactionIdOrPasswordException('');
         }
         
         return $transaction;

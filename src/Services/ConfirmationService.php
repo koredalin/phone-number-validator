@@ -67,7 +67,7 @@ class ConfirmationService extends WebPageService implements ConfirmationServiceI
     public function confirmCode(int $transactionId, ConfirmationCodeModel $confirmationCodeModel): PhoneConfirmationAttempt
     {
         if ($this->isFinishedServiceAction) {
-            throw new AlreadyMadeServiceActionException('The code confirmation already made.');
+            throw new AlreadyMadeServiceActionException('Code confirmation');
         }
         
         $this->nextWebPage = self::CURRENT_WEB_PAGE_GROUP.'/'.$transactionId;
@@ -89,12 +89,12 @@ class ConfirmationService extends WebPageService implements ConfirmationServiceI
     {
         $transaction = $this->transactionRepository->findOneById($transactionId);
         if (is_null($transaction)) {
-            throw new NotFoundTransactionException('No such transaction.');
+            throw new NotFoundTransactionException((string)$transactionId);
         }
         
         if ($transaction->getStatus() === Transaction::STATUS_CONFIRMED) {
             $this->nextWebPage = self::NEXT_WEB_PAGE.'/'.$transaction->getId();
-            throw new AlreadyRegistratedTransactionException('The transaction is registrated.');
+            throw new AlreadyRegistratedTransactionException('');
         }
         
         return $transaction;
@@ -124,7 +124,7 @@ class ConfirmationService extends WebPageService implements ConfirmationServiceI
             && $lastAttemptTime->add(new \DateInterval('PT'.self::COOL_DOWN_MINUTES.'M')) > $this->dtManager->now()
         ) {
             $this->phoneConfirmationAttemptService->createByPhoneConfirmationInputConfirmationCode($phoneConfirmation, $inputConfirmationCode, true);
-            throw new ConfirmationCoolDownException('Minimum interval before next confirmation code attempt: '.self::COOL_DOWN_MINUTES.' minutes. '.$this->errors);
+            throw new ConfirmationCoolDownException('');
         }
     }
     
@@ -151,7 +151,7 @@ class ConfirmationService extends WebPageService implements ConfirmationServiceI
         $transactionSuccessSms = $this->successSms->sendSuccessMessage($transaction->getId());
         if (is_null($transactionSuccessSms) || $transactionSuccessSms->getId() < 1) {
             $this->responseStatus = ResStatus::SERVICE_UNAVAILABLE;
-            throw new SMSSuccessNotSentException('Transaction success SMS is not sent. '.$this->errors);
+            throw new SMSSuccessNotSentException($this->errors);
         }
     }
     

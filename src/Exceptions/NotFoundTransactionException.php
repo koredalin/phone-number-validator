@@ -15,10 +15,10 @@ class NotFoundTransactionException extends \Exception
     // Redefine the exception so message isn't optional
     public function __construct($message, $code = 0, \Throwable $previous = null)
     {
-        $message = trim($message) === '' ? 'Not found transaction.' : $message;
-        $currentCode = $code > 0 ? $code : ResStatus::NOT_FOUND;
+        $instanceMessage = 'Not found transaction. Transaction id: '.(int)$message.'.';
+        $instanceCode = $code > 0 ? $code : ResStatus::NOT_FOUND;
         // make sure everything is assigned properly
-        parent::__construct($message, $currentCode, $previous);
+        parent::__construct($instanceMessage, $instanceCode, $previous);
     }
 
     // custom string representation of object

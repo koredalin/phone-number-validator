@@ -129,7 +129,7 @@ class RegistrationService extends WebPageService implements RegistrationServiceI
     public function registrate(): PhoneConfirmation
     {
         if ($this->isFinishedServiceAction) {
-            throw new AlreadyMadeServiceActionException($this->errors);
+            throw new AlreadyMadeServiceActionException('Registration');
         }
         
         $this->notSetFormException();

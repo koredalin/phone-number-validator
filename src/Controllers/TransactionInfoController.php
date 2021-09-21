@@ -18,7 +18,7 @@ use App\Controllers\ResponseStatuses as ResStatus;
 // Exceptions
 use \Exception;
 use App\Exceptions\NotFoundTransactionException;
-use App\Exceptions\WrongTransactionIdPasswordException;
+use App\Exceptions\WrongTransactionIdOrPasswordException;
 
 /**
  * Description of ResetController
@@ -74,7 +74,7 @@ class TransactionInfoController extends ApiTransactionSubmitController
             $transaction = $this->transactionRepositoryService->comparePassword($transactionId, $detailedInfoModel->getPassword());
             $responseContent = $this->successResult($transaction, false);
             $responseStatus = ResStatus::SUCCESS;
-        } catch (NotFoundTransactionException | WrongTransactionIdPasswordException | Exception $ex) {
+        } catch (NotFoundTransactionException | WrongTransactionIdOrPasswordException | Exception $ex) {
             return $this->render($this->failResult($ex), $arguments, $ex->getCode());
         }
         
