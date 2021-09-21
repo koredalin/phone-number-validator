@@ -72,11 +72,9 @@ class ConfirmationController extends ApiTransactionSubmitController
         try {
             $phoneConfirmationAttempt = $this->confirmationService->confirmCode($transactionId, $confirmationCodeModel);
             $responseContent = $this->successResult($phoneConfirmationAttempt);
-        } catch (AlreadyMadeServiceActionException | NotFoundTransactionException | AlreadyRegistratedTransactionException | ConfirmationCoolDownException | SMSSuccessNotSentException | WrongConfirmationCodeException $ex) {
+        } catch (AlreadyMadeServiceActionException | NotFoundTransactionException | AlreadyRegistratedTransactionException | ConfirmationCoolDownException | SMSSuccessNotSentException | WrongConfirmationCodeException | Exception $ex) {
             $responseStatusCode = (int)$ex->getCode() > 0 ? (int)$ex->getCode() : ResStatus::INTERNAL_SERVER_ERROR;
             return $this->render($this->failResult($ex), $arguments, $responseStatusCode);
-        } catch (Exception $ex) {
-            return $this->render($this->failResult($ex), $arguments, ResStatus::INTERNAL_SERVER_ERROR);
         }
         // Success.
         return $this->render($responseContent, $arguments, $this->confirmationService->getResponseStatus());
@@ -88,11 +86,9 @@ class ConfirmationController extends ApiTransactionSubmitController
         try {
             $phoneConfirmationAttempt = $this->codeResetService->resetConfirmationCode($transactionId);
             $responseContent = $this->successCodeResetResult($phoneConfirmationAttempt);
-        } catch (AlreadyMadeServiceActionException | NotFoundTransactionException | AlreadyRegistratedTransactionException | ConfirmationResetCoolDownException | SMSConfirmationCodeNotSentException $ex) {
+        } catch (AlreadyMadeServiceActionException | NotFoundTransactionException | AlreadyRegistratedTransactionException | ConfirmationResetCoolDownException | SMSConfirmationCodeNotSentException | Exception $ex) {
             $responseStatusCode = (int)$ex->getCode() > 0 ? (int)$ex->getCode() : ResStatus::INTERNAL_SERVER_ERROR;
             return $this->render($this->failCodeResetResult($ex), $arguments, $responseStatusCode);
-        } catch (Exception $ex) {
-            return $this->render($this->failCodeResetResult($ex), $arguments, ResStatus::INTERNAL_SERVER_ERROR);
         }
         
         return $this->render($responseContent, $arguments, $this->codeResetService->getResponseStatus());

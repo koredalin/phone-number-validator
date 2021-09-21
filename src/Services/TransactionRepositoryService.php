@@ -10,6 +10,9 @@ use App\Common\Interfaces\PasswordGeneratorInterface;
 use App\Entities\User;
 use App\Entities\Phone;
 use App\Entities\Transaction;
+// Exceptions
+use App\Exceptions\NotFoundTransactionException;
+use App\Exceptions\WrongTransactionIdPasswordException;
 
 final class TransactionRepositoryService implements TransactionRepositoryServiceInterface, SuccessSmsInterface
 {
@@ -47,6 +50,20 @@ final class TransactionRepositoryService implements TransactionRepositoryService
         $transaction->setUpdatedAt($this->dtManager->now());
         
         return $this->save($transaction);
+    }
+    
+    public function comparePassword(int $transactionId, string $comparisonPassword): Transaction
+    {
+        $transaction = $this->findOneById($transactionId);
+        if (is_null($transaction)) {
+            throw new NotFoundTransactionException('');
+        }
+        
+        if ($transaction->getPassword() !== $this->passwordGenerator->encode($comparisonPassword)) {
+            throw new WrongTransactionIdPasswordException('');
+        }
+        
+        return $transaction;
     }
     
     private function save(Transaction $transaction): Transaction

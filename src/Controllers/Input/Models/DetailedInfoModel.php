@@ -13,9 +13,9 @@ class DetailedInfoModel
 {
     /**
      * @Assert\NotBlank
-     * @Assert\Length(min=6)
-     * @Assert\Length(max=10)
-     * @Assert\Type(type="integer")
+     * @Assert\Length(min=4)
+     * @Assert\Length(max=20)
+     * @Assert\Type(type="string")
      */
     private string $password;
     
@@ -23,9 +23,9 @@ class DetailedInfoModel
     /******************************* SETTERS **********************************/
     /**************************************************************************/
     
-    public function setPassword($phoneCode): void
+    public function setPassword(string $password): void
     {
-        $this->password = $phoneCode;
+        $this->password = $password;
     }
     
     /**************************************************************************/

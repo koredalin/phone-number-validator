@@ -66,11 +66,9 @@ class RegistrationController extends ApiTransactionSubmitController
             $phoneConfirmation = $this->registrationService->registrate();
             $responseContent = $this->successResult($phoneConfirmation);
             $responseContent = $this->testing($request, $phoneConfirmation, $responseContent);
-        } catch (NotValidInputException | SMSConfirmationCodeNotSentException | AlreadyMadeServiceActionException $ex) {
+        } catch (NotValidInputException | SMSConfirmationCodeNotSentException | AlreadyMadeServiceActionException | Exception $ex) {
             $responseStatusCode = (int)$ex->getCode() > 0 ? (int)$ex->getCode() : ResStatus::INTERNAL_SERVER_ERROR;
             return $this->render($this->failResult($ex), $arguments, $responseStatusCode);
-        } catch (Exception $ex) {
-            return $this->render($this->failResult($ex), $arguments, ResStatus::INTERNAL_SERVER_ERROR);
         }
         
         return $this->render($responseContent, $arguments, ResStatus::SUCCESS);

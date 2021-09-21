@@ -6,16 +6,18 @@ namespace App\Exceptions;
 use App\Controllers\ResponseStatuses as ResStatus;
 
 /**
- * Description of SMSSuccessNotSentException
+ * Class WrongTransactionIdPasswordException
+ * Not valid transaction id, password couple.
  *
  * @author Hristo
  */
-class SMSSuccessNotSentException extends \Exception
+class WrongTransactionIdPasswordException extends \Exception
 {
     // Redefine the exception so message isn't optional
     public function __construct($message, $code = 0, \Throwable $previous = null)
     {
-        $currentCode = $code > 0 ? $code : ResStatus::SERVICE_UNAVAILABLE;
+        $message = trim($message) === '' ? 'Wrong transaction id or password.' : $message;
+        $currentCode = $code > 0 ? $code : ResStatus::FORBIDDEN;
         // make sure everything is assigned properly
         parent::__construct($message, $currentCode, $previous);
     }

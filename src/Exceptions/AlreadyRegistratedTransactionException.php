@@ -10,7 +10,7 @@ use App\Controllers\ResponseStatuses as ResStatus;
  *
  * @author Hristo
  */
-class AlreadyRegistratedTransactionException
+class AlreadyRegistratedTransactionException extends \Exception
 {
     // Redefine the exception so message isn't optional
     public function __construct($message, $code = 0, \Throwable $previous = null)

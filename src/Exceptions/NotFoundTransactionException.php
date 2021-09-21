@@ -10,11 +10,12 @@ use App\Controllers\ResponseStatuses as ResStatus;
  *
  * @author Hristo
  */
-class NotFoundTransactionException
+class NotFoundTransactionException extends \Exception
 {
     // Redefine the exception so message isn't optional
     public function __construct($message, $code = 0, \Throwable $previous = null)
     {
+        $message = trim($message) === '' ? 'Not found transaction.' : $message;
         $currentCode = $code > 0 ? $code : ResStatus::NOT_FOUND;
         // make sure everything is assigned properly
         parent::__construct($message, $currentCode, $previous);

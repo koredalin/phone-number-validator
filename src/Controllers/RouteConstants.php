@@ -13,4 +13,5 @@ class RouteConstants
     const CONFIRMATION = '/confirmation';
     const RESET_CODE = '/reset-code';
     const TRANSACTION_INFO = '/transaction-info';
+    const TRANSACTION_DETAILED_INFO = '/transaction-detailed-info';
 }

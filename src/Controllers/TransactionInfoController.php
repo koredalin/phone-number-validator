@@ -8,8 +8,17 @@ use Psr\Http\Message\ServerRequestInterface;
 use App\Services\Interfaces\TransactionRepositoryServiceInterface;
 use App\Entities\Transaction;
 use App\Controllers\Response\Interfaces\ResponseAssembleInterface;
+// Input
+use App\Controllers\Input\Models\DetailedInfoModel;
+// Validation
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 // Response
 use App\Controllers\ResponseStatuses as ResStatus;
+// Exceptions
+use \Exception;
+use App\Exceptions\NotFoundTransactionException;
+use App\Exceptions\WrongTransactionIdPasswordException;
 
 /**
  * Description of ResetController
@@ -21,6 +30,8 @@ class TransactionInfoController extends ApiTransactionSubmitController
     private TransactionRepositoryServiceInterface $transactionRepositoryService;
     private ResponseAssembleInterface $result;
     
+    private ValidatorInterface $validator;
+    
     public function __construct(
         ResponseInterface $response,
         TransactionRepositoryServiceInterface $transactionRepositoryService,
@@ -29,6 +40,11 @@ class TransactionInfoController extends ApiTransactionSubmitController
         parent::__construct($response);
         $this->transactionRepositoryService = $transactionRepositoryService;
         $this->result = $result;
+        
+        $this->validator = Validation::createValidatorBuilder()
+            ->enableAnnotationMapping()
+            ->addDefaultDoctrineAnnotationReader()
+            ->getValidator();
     }
     
     public function index(ServerRequestInterface $request, array $arguments): ResponseInterface
@@ -44,16 +60,32 @@ class TransactionInfoController extends ApiTransactionSubmitController
     
     public function detailedInfo(ServerRequestInterface $request, array $arguments): ResponseInterface
     {
-        // Temporary decision
-        // TODO Implementation.
-        return $this->index($request, $arguments);
+        // Input mapping, model generation.
+        $parsedRequestBodyArr = \json_decode($request->getBody()->getContents(), true);
+        $detailedInfoModel = new DetailedInfoModel();
+        $detailedInfoModel->setPassword((string)$parsedRequestBodyArr['password']);
+        $formErrors = $this->validator->validate($detailedInfoModel);
+        if (count($formErrors) > 0) {
+            return $this->render($this->failResult((string)$formErrors), $arguments, ResStatus::UNPROCESSABLE_ENTITY);
+        }
+        // Action.
+        $transactionId = (int)$arguments['transactionId'] ?? 0;
+        try {
+            $transaction = $this->transactionRepositoryService->comparePassword($transactionId, $detailedInfoModel->getPassword());
+            $responseContent = $this->successResult($transaction, false);
+            $responseStatus = ResStatus::SUCCESS;
+        } catch (NotFoundTransactionException | WrongTransactionIdPasswordException | Exception $ex) {
+            return $this->render($this->failResult($ex), $arguments, $ex->getCode());
+        }
+        
+        return $this->render($responseContent, $arguments, $responseStatus);
     }
     
-    private function failResult() {
-        return $this->result->assembleResponse(null, 'No transaction found.', true, '');
+    private function failResult($error = 'No transaction found.') {
+        return $this->result->assembleResponse(null, $error, true, '');
     }
     
-    private function successResult(Transaction $transaction) {
-        return $this->result->assembleResponse($transaction, '', true, '');
+    private function successResult(Transaction $transaction, bool $isRestrictedInfo = true) {
+        return $this->result->assembleResponse($transaction, '', $isRestrictedInfo, '');
     }
 }
