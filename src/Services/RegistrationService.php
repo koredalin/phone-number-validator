@@ -7,11 +7,7 @@ use App\Services\Interfaces\RegistrationServiceInterface;
 use App\Controllers\Input\Models\RegistrationModel;
 use App\Controllers\Input\Models\RegistrationModelPhoneCodeNumber;
 use App\Controllers\Input\Models\RegistrationModelAssembledPhoneNumber;
-use Symfony\Component\Validator\Validation;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\Validator\ConstraintViolationList;
 // Entities
-use App\Entities\Country;
 use App\Entities\User;
 use App\Entities\Phone;
 use App\Entities\Transaction;
@@ -25,7 +21,6 @@ use App\Services\Interfaces\PhoneConfirmationRepositoryServiceInterface;
 use App\Services\Interfaces\ConfirmationCodeSmsInterface;
 // Exceptions
 use \Exception;
-use App\Exceptions\NotValidInputException;
 use App\Exceptions\SMSConfirmationCodeNotSentException;
 use App\Exceptions\AlreadyMadeServiceActionException;
 
@@ -39,13 +34,9 @@ class RegistrationService extends WebPageService implements RegistrationServiceI
     const CURRENT_WEB_PAGE = '/registration';
     private const NEXT_WEB_PAGE_GROUP = '/confirmation';
     
-//    private ValidatorInterface $validator;
-    
     private RegistrationModel $form;
     private RegistrationModelPhoneCodeNumber $formPhoneCodeNumber;
     private RegistrationModelAssembledPhoneNumber $formAssembledPhoneNumber;
-    
-//    private ?ConstraintViolationList $formErrors;
     
     private UserRepositoryServiceInterface $userService;
     private PhoneRepositoryServiceInterface $phoneService;
@@ -54,22 +45,12 @@ class RegistrationService extends WebPageService implements RegistrationServiceI
     private ConfirmationCodeSmsInterface $confirmationCodeSms;
 
     public function __construct(
-//        RegistrationModelPhoneCodeNumber $registrationFormPhoneCodeNumber,
-//        RegistrationModelAssembledPhoneNumber $registrationFormAssembledPhoneNumber,
         UserRepositoryServiceInterface $userService,
         PhoneRepositoryServiceInterface $phoneService,
         TransactionRepositoryServiceInterface $transactionService,
         PhoneConfirmationRepositoryServiceInterface $phoneConfirmationService,
         ConfirmationCodeSmsInterface $confirmationCodeSms
     ) {
-//        $this->formPhoneCodeNumber = $registrationFormPhoneCodeNumber;
-//        $this->formAssembledPhoneNumber = $registrationFormAssembledPhoneNumber;
-        
-//        $this->validator = Validation::createValidatorBuilder()
-//            ->enableAnnotationMapping()
-//            ->addDefaultDoctrineAnnotationReader()
-//            ->getValidator();
-//        $this->formErrors = null;
         $this->userService = $userService;
         $this->phoneService = $phoneService;
         $this->transactionService = $transactionService;
@@ -80,67 +61,42 @@ class RegistrationService extends WebPageService implements RegistrationServiceI
     }
     
     
-//    public function createFormFromPhoneCodeNumber(string $requestBody): RegistrationModelPhoneCodeNumber
-//    {
-//        $parsedRequestBody = \json_decode($requestBody, true);
-//        $this->formPhoneCodeNumber->setEmail($parsedRequestBody['email']);
-//        $this->formPhoneCodeNumber->setPhoneCode((int)$parsedRequestBody['phoneCode']);
-//        $phoneNumberInput = (string)preg_replace('/[^0-9]/', '', $parsedRequestBody['phoneNumber']);
-//        $this->formPhoneCodeNumber->setPhoneNumber((int)$phoneNumberInput);
-//        $this->formPhoneCodeNumber->setPassword($parsedRequestBody['password']);
-//        $this->form = $this->formPhoneCodeNumber;
-//        
-//        return $this->formPhoneCodeNumber;
-//    }
-//    
-//    
-//    public function createFormFromAssembledPhoneNumber(string $requestBody): RegistrationModelAssembledPhoneNumber
-//    {
-//        $parsedRequestBody = \json_decode($requestBody, true);
-//        $this->formAssembledPhoneNumber->setEmail($parsedRequestBody['email']);
-//        $phoneNumberInput = (string)preg_replace('/[^0-9]/', '', $parsedRequestBody['assembledPhoneNumber']);
-//        $phoneNumberInt = substr($phoneNumberInput, 0, 1) === '0'
-//            ? (int)(Country::BG_PHONE_CODE.substr($phoneNumberInput, 1))
-//            : (int)$phoneNumberInput;
-//        $this->formAssembledPhoneNumber->setAssembledPhoneNumber($phoneNumberInt);
-//        $this->formAssembledPhoneNumber->setPassword($parsedRequestBody['password']);
-//        $this->form = $this->formAssembledPhoneNumber;
-//        
-//        return $this->formAssembledPhoneNumber;
-//    }
-//    
-//    public function isValidForm(): bool
-//    {
-//        $this->notSetFormException();
-//        
-//        $errors = $this->validator->validate($this->form);
-//        $this->formErrors = $errors;
-//        
-//        return count($errors) == 0;
-//    }
-    
-//    public function getFormErrors(): string
-//    {
-//        $this->notSetFormException();
-//        
-//        return (string)$this->formErrors;
-//    }
-    
-    public function registrate(RegistrationModel $form): PhoneConfirmation
+    public function registratePhoneCodeNumber(RegistrationModelPhoneCodeNumber $form): PhoneConfirmation
     {
         if ($this->isFinishedServiceAction) {
             throw new AlreadyMadeServiceActionException('Registration');
         }
         
-//        $this->notSetFormException();
-//        if (!$this->isValidForm()) {
-//            throw new NotValidInputException($this->formErrors->__toString());
-//        }
         $this->form = $form;
+        try {
+            $phone = $this->phoneService->getOrCreateByPhoneCodeNumber($this->form->getPhoneCode(), $this->form->getPhoneNumber());
+        } catch (Exception $ex) {
+            throw new Exception('No Phone generated. '.$ex.' '.$this->phoneService->getAnyError());
+        }
+        
+        return $this->registrate($phone);
+    }
+    
+    public function registrateAssembledPhoneNumber(RegistrationModelAssembledPhoneNumber $form): PhoneConfirmation
+    {
+        if ($this->isFinishedServiceAction) {
+            throw new AlreadyMadeServiceActionException('Registration');
+        }
+        
+        $this->form = $form;
+        try {
+            $phone = $this->phoneService->getOrCreateByAssembledPhoneNumber($this->form->getAssembledPhoneNumber());
+        } catch (Exception $ex) {
+            throw new Exception('No Phone generated. '.$ex.' '.$this->phoneService->getAnyError());
+        }
+        
+        return $this->registrate($phone);
+    }
+    
+    public function registrate(Phone $phone): PhoneConfirmation
+    {
         
         $user = $this->getOrCreateByEmail();
-        
-        $phone = $this->getOrCreatePhone();
         
         $transaction = $this->createTransaction($user, $phone);
         
@@ -154,13 +110,6 @@ class RegistrationService extends WebPageService implements RegistrationServiceI
         return $phoneConfirmationWithSmsStatus;
     }
     
-//    private function notSetFormException(): void
-//    {
-//        if (!isset($this->form)) {
-//            throw new Exception('Registration form not set yet. Use Registration::createForm() first.');
-//        }
-//    }
-    
     private function getOrCreateByEmail(): User
     {
         $user = $this->userService->getOrCreateByEmail($this->form->getEmail());
@@ -169,20 +118,6 @@ class RegistrationService extends WebPageService implements RegistrationServiceI
         }
         
         return $user;
-    }
-    
-    private function getOrCreatePhone(): Phone
-    {
-        $phone = $this->form instanceof RegistrationModelPhoneCodeNumber
-            ? $this->phoneService->getOrCreateByPhoneCodeNumber($this->form->getPhoneCode(), $this->form->getPhoneNumber())
-            : $this->phoneService->getOrCreateByAssembledPhoneNumber($this->form->getAssembledPhoneNumber());
-        $phoneAnyError = $this->phoneService->getAnyError();
-        if (is_null($phone) || $phoneAnyError !== '' || (int)$phone->getId() < 1) {
-            $this->errors .= $phoneAnyError;
-            throw new Exception('No Phone generated. '.$this->errors);
-        }
-    
-        return $phone;
     }
     
     private function createTransaction(User $user, Phone $phone): Transaction

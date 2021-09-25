@@ -21,7 +21,6 @@ use App\Controllers\ResponseStatuses as ResStatus;
 use App\Controllers\Response\Models\TransactionSubmitResult as TransactionResponse;
 // Exceptions
 use \Exception;
-use App\Exceptions\NotValidInputException;
 use App\Exceptions\SMSConfirmationCodeNotSentException;
 use App\Exceptions\AlreadyMadeServiceActionException;
 
@@ -62,7 +61,14 @@ class RegistrationController extends ApiTransactionSubmitController
             return $this->render($this->failResult($this->getFormErrors()), $arguments, ResStatus::UNPROCESSABLE_ENTITY);
         }
         
-        return $this->registrateForm($request, $arguments);
+        try {
+            $phoneConfirmation = $this->registrationService->registratePhoneCodeNumber($this->form);
+        } catch (SMSConfirmationCodeNotSentException | AlreadyMadeServiceActionException | Exception $ex) {
+            $responseStatusCode = (int)$ex->getCode() > 0 ? (int)$ex->getCode() : ResStatus::INTERNAL_SERVER_ERROR;
+            return $this->render($this->failResult($ex), $arguments, $responseStatusCode);
+        }
+        
+        return $this->registrateForm($request, $arguments, $phoneConfirmation);
     }
     
     public function registrateFormFromAssembledPhoneNumber(ServerRequestInterface $request, array $arguments): ResponseInterface
@@ -73,7 +79,14 @@ class RegistrationController extends ApiTransactionSubmitController
             return $this->render($this->failResult($this->getFormErrors()), $arguments, ResStatus::UNPROCESSABLE_ENTITY);
         }
         
-        return $this->registrateForm($request, $arguments);
+        try {
+            $phoneConfirmation = $this->registrationService->registrateAssembledPhoneNumber($this->form);
+        } catch (SMSConfirmationCodeNotSentException | AlreadyMadeServiceActionException | Exception $ex) {
+            $responseStatusCode = (int)$ex->getCode() > 0 ? (int)$ex->getCode() : ResStatus::INTERNAL_SERVER_ERROR;
+            return $this->render($this->failResult($ex), $arguments, $responseStatusCode);
+        }
+        
+        return $this->registrateForm($request, $arguments, $phoneConfirmation);
     }
     
     
@@ -115,6 +128,13 @@ class RegistrationController extends ApiTransactionSubmitController
         return count($errors) == 0;
     }
     
+    private function notSetFormException(): void
+    {
+        if (!isset($this->form)) {
+            throw new Exception('Registration form not set yet. Use Registration::createForm() first.');
+        }
+    }
+    
     private function getFormErrors(): string
     {
         $this->notSetFormException();
@@ -129,16 +149,10 @@ class RegistrationController extends ApiTransactionSubmitController
      * @param array $arguments
      * @return ResponseInterface
      */
-    private function registrateForm(ServerRequestInterface $request, array $arguments): ResponseInterface
+    private function registrateForm(ServerRequestInterface $request, array $arguments, PhoneConfirmation $phoneConfirmation): ResponseInterface
     {
-        try {
-            $phoneConfirmation = $this->registrationService->registrate($this->form);
-            $responseContent = $this->successResult($phoneConfirmation);
-            $responseContent = $this->testing($request, $phoneConfirmation, $responseContent);
-        } catch (NotValidInputException | SMSConfirmationCodeNotSentException | AlreadyMadeServiceActionException | Exception $ex) {
-            $responseStatusCode = (int)$ex->getCode() > 0 ? (int)$ex->getCode() : ResStatus::INTERNAL_SERVER_ERROR;
-            return $this->render($this->failResult($ex), $arguments, $responseStatusCode);
-        }
+        $responseContent = $this->successResult($phoneConfirmation);
+        $responseContent = $this->testing($request, $phoneConfirmation, $responseContent);
         
         return $this->render($responseContent, $arguments, ResStatus::SUCCESS);
     }
@@ -165,12 +179,5 @@ class RegistrationController extends ApiTransactionSubmitController
     private function failResult(string $exceptionMessage): TransactionResponse
     {
         return $this->result->assembleResponse(null, $exceptionMessage, true, '');
-    }
-    
-    private function notSetFormException(): void
-    {
-        if (!isset($this->form)) {
-            throw new Exception('Registration form not set yet. Use Registration::createForm() first.');
-        }
     }
 }

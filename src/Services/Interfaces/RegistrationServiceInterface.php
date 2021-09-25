@@ -26,7 +26,7 @@ interface RegistrationServiceInterface extends WebPageServiceInterface
     
 //    public function registrate(RegistrationModel $form): PhoneConfirmation;
     
-    public function registratePhoneCodeNumber(RegistrationModel $form): PhoneConfirmation;
+    public function registratePhoneCodeNumber(RegistrationModelPhoneCodeNumber $form): PhoneConfirmation;
     
-    public function registrateAssembledPhoneNumber(RegistrationModel $form): PhoneConfirmation;
+    public function registrateAssembledPhoneNumber(RegistrationModelAssembledPhoneNumber $form): PhoneConfirmation;
 }
