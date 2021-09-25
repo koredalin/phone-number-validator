@@ -8,6 +8,14 @@ use App\Services\Interfaces\RegistrationServiceInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use App\Entities\PhoneConfirmation;
 use App\Controllers\Response\Interfaces\ResponseAssembleInterface;
+// Input
+use App\Controllers\Input\Models\RegistrationModel;
+use App\Controllers\Input\Models\RegistrationModelPhoneCodeNumber;
+use App\Controllers\Input\Models\RegistrationModelAssembledPhoneNumber;
+// Input Validation
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
 // Response
 use App\Controllers\ResponseStatuses as ResStatus;
 use App\Controllers\Response\Models\TransactionSubmitResult as TransactionResponse;
@@ -27,6 +35,10 @@ class RegistrationController extends ApiTransactionSubmitController
     private RegistrationServiceInterface $registrationService;
     private ResponseAssembleInterface $result;
     
+    private ValidatorInterface $validator;
+    private ?ConstraintViolationList $formErrors;
+    private RegistrationModel $form;
+    
     public function __construct(
         ResponseInterface $response,
         RegistrationServiceInterface $registrationService,
@@ -35,12 +47,20 @@ class RegistrationController extends ApiTransactionSubmitController
         parent::__construct($response);
         $this->registrationService = $registrationService;
         $this->result = $result;
+        
+        $this->validator = Validation::createValidatorBuilder()
+            ->enableAnnotationMapping()
+            ->addDefaultDoctrineAnnotationReader()
+            ->getValidator();
     }
     
     public function registrateFormFromPhoneCodeNumber(ServerRequestInterface $request, array $arguments): ResponseInterface
     {
         $requestBody = $request->getBody()->getContents();
-        $this->registrationService->createFormFromPhoneCodeNumber($requestBody);
+        $this->form = $this->createFormFromPhoneCodeNumber($requestBody);
+        if (!$this->isValidForm()) {
+            return $this->render($this->failResult($this->getFormErrors()), $arguments, ResStatus::UNPROCESSABLE_ENTITY);
+        }
         
         return $this->registrateForm($request, $arguments);
     }
@@ -48,9 +68,58 @@ class RegistrationController extends ApiTransactionSubmitController
     public function registrateFormFromAssembledPhoneNumber(ServerRequestInterface $request, array $arguments): ResponseInterface
     {
         $requestBody = $request->getBody()->getContents();
-        $this->registrationService->createFormFromAssembledPhoneNumber($requestBody);
+        $this->form = $this->createFormFromAssembledPhoneNumber($requestBody);
+        if (!$this->isValidForm()) {
+            return $this->render($this->failResult($this->getFormErrors()), $arguments, ResStatus::UNPROCESSABLE_ENTITY);
+        }
         
         return $this->registrateForm($request, $arguments);
+    }
+    
+    
+    private function createFormFromPhoneCodeNumber(string $requestBody): RegistrationModelPhoneCodeNumber
+    {
+        $parsedRequestBody = \json_decode($requestBody, true);
+        $formPhoneCodeNumber = new RegistrationModelPhoneCodeNumber();
+        $formPhoneCodeNumber->setEmail($parsedRequestBody['email']);
+        $formPhoneCodeNumber->setPhoneCode((int)$parsedRequestBody['phoneCode']);
+        $formPhoneCodeNumber->setPhoneNumber((int)$parsedRequestBody['phoneNumber']);
+        $formPhoneCodeNumber->setPassword($parsedRequestBody['password']);
+        
+        return $formPhoneCodeNumber;
+    }
+    
+    
+    private function createFormFromAssembledPhoneNumber(string $requestBody): RegistrationModelAssembledPhoneNumber
+    {
+        $parsedRequestBody = \json_decode($requestBody, true);
+        $formAssembledPhoneNumber = new RegistrationModelAssembledPhoneNumber();
+        $formAssembledPhoneNumber->setEmail($parsedRequestBody['email']);
+        $phoneNumberInput = (string)preg_replace('/[^0-9]/', '', $parsedRequestBody['assembledPhoneNumber']);
+        $phoneNumberInt = substr($phoneNumberInput, 0, 1) === '0'
+            ? (int)(Country::BG_PHONE_CODE.substr($phoneNumberInput, 1))
+            : (int)$phoneNumberInput;
+        $formAssembledPhoneNumber->setAssembledPhoneNumber($phoneNumberInt);
+        $formAssembledPhoneNumber->setPassword($parsedRequestBody['password']);
+        
+        return $formAssembledPhoneNumber;
+    }
+    
+    private function isValidForm(): bool
+    {
+        $this->notSetFormException();
+        
+        $errors = $this->validator->validate($this->form);
+        $this->formErrors = $errors;
+        
+        return count($errors) == 0;
+    }
+    
+    private function getFormErrors(): string
+    {
+        $this->notSetFormException();
+        
+        return (string)$this->formErrors;
     }
     
     /**
@@ -63,7 +132,7 @@ class RegistrationController extends ApiTransactionSubmitController
     private function registrateForm(ServerRequestInterface $request, array $arguments): ResponseInterface
     {
         try {
-            $phoneConfirmation = $this->registrationService->registrate();
+            $phoneConfirmation = $this->registrationService->registrate($this->form);
             $responseContent = $this->successResult($phoneConfirmation);
             $responseContent = $this->testing($request, $phoneConfirmation, $responseContent);
         } catch (NotValidInputException | SMSConfirmationCodeNotSentException | AlreadyMadeServiceActionException | Exception $ex) {
@@ -96,5 +165,12 @@ class RegistrationController extends ApiTransactionSubmitController
     private function failResult(string $exceptionMessage): TransactionResponse
     {
         return $this->result->assembleResponse(null, $exceptionMessage, true, '');
+    }
+    
+    private function notSetFormException(): void
+    {
+        if (!isset($this->form)) {
+            throw new Exception('Registration form not set yet. Use Registration::createForm() first.');
+        }
     }
 }

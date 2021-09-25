@@ -74,8 +74,8 @@ return [
 
     RegistrationServiceInterface::class => DI\create(RegistrationService::class)
         ->constructor(
-            DI\get(RegistrationModelPhoneCodeNumber::class),
-            DI\get(RegistrationModelAssembledPhoneNumber::class),
+//            DI\get(RegistrationModelPhoneCodeNumber::class),
+//            DI\get(RegistrationModelAssembledPhoneNumber::class),
             DI\get(UserRepositoryServiceInterface::class),
             DI\get(PhoneRepositoryServiceInterface::class),
             DI\get(TransactionRepositoryServiceInterface::class),

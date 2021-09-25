@@ -39,13 +39,13 @@ class RegistrationService extends WebPageService implements RegistrationServiceI
     const CURRENT_WEB_PAGE = '/registration';
     private const NEXT_WEB_PAGE_GROUP = '/confirmation';
     
-    private ValidatorInterface $validator;
+//    private ValidatorInterface $validator;
     
     private RegistrationModel $form;
     private RegistrationModelPhoneCodeNumber $formPhoneCodeNumber;
     private RegistrationModelAssembledPhoneNumber $formAssembledPhoneNumber;
     
-    private ?ConstraintViolationList $formErrors;
+//    private ?ConstraintViolationList $formErrors;
     
     private UserRepositoryServiceInterface $userService;
     private PhoneRepositoryServiceInterface $phoneService;
@@ -54,22 +54,22 @@ class RegistrationService extends WebPageService implements RegistrationServiceI
     private ConfirmationCodeSmsInterface $confirmationCodeSms;
 
     public function __construct(
-        RegistrationModelPhoneCodeNumber $registrationFormPhoneCodeNumber,
-        RegistrationModelAssembledPhoneNumber $registrationFormAssembledPhoneNumber,
+//        RegistrationModelPhoneCodeNumber $registrationFormPhoneCodeNumber,
+//        RegistrationModelAssembledPhoneNumber $registrationFormAssembledPhoneNumber,
         UserRepositoryServiceInterface $userService,
         PhoneRepositoryServiceInterface $phoneService,
         TransactionRepositoryServiceInterface $transactionService,
         PhoneConfirmationRepositoryServiceInterface $phoneConfirmationService,
         ConfirmationCodeSmsInterface $confirmationCodeSms
     ) {
-        $this->formPhoneCodeNumber = $registrationFormPhoneCodeNumber;
-        $this->formAssembledPhoneNumber = $registrationFormAssembledPhoneNumber;
+//        $this->formPhoneCodeNumber = $registrationFormPhoneCodeNumber;
+//        $this->formAssembledPhoneNumber = $registrationFormAssembledPhoneNumber;
         
-        $this->validator = Validation::createValidatorBuilder()
-            ->enableAnnotationMapping()
-            ->addDefaultDoctrineAnnotationReader()
-            ->getValidator();
-        $this->formErrors = null;
+//        $this->validator = Validation::createValidatorBuilder()
+//            ->enableAnnotationMapping()
+//            ->addDefaultDoctrineAnnotationReader()
+//            ->getValidator();
+//        $this->formErrors = null;
         $this->userService = $userService;
         $this->phoneService = $phoneService;
         $this->transactionService = $transactionService;
@@ -80,62 +80,63 @@ class RegistrationService extends WebPageService implements RegistrationServiceI
     }
     
     
-    public function createFormFromPhoneCodeNumber(string $requestBody): RegistrationModelPhoneCodeNumber
-    {
-        $parsedRequestBody = \json_decode($requestBody, true);
-        $this->formPhoneCodeNumber->setEmail($parsedRequestBody['email']);
-        $this->formPhoneCodeNumber->setPhoneCode((int)$parsedRequestBody['phoneCode']);
-        $phoneNumberInput = (string)preg_replace('/[^0-9]/', '', $parsedRequestBody['phoneNumber']);
-        $this->formPhoneCodeNumber->setPhoneNumber((int)$phoneNumberInput);
-        $this->formPhoneCodeNumber->setPassword($parsedRequestBody['password']);
-        $this->form = $this->formPhoneCodeNumber;
-        
-        return $this->formPhoneCodeNumber;
-    }
+//    public function createFormFromPhoneCodeNumber(string $requestBody): RegistrationModelPhoneCodeNumber
+//    {
+//        $parsedRequestBody = \json_decode($requestBody, true);
+//        $this->formPhoneCodeNumber->setEmail($parsedRequestBody['email']);
+//        $this->formPhoneCodeNumber->setPhoneCode((int)$parsedRequestBody['phoneCode']);
+//        $phoneNumberInput = (string)preg_replace('/[^0-9]/', '', $parsedRequestBody['phoneNumber']);
+//        $this->formPhoneCodeNumber->setPhoneNumber((int)$phoneNumberInput);
+//        $this->formPhoneCodeNumber->setPassword($parsedRequestBody['password']);
+//        $this->form = $this->formPhoneCodeNumber;
+//        
+//        return $this->formPhoneCodeNumber;
+//    }
+//    
+//    
+//    public function createFormFromAssembledPhoneNumber(string $requestBody): RegistrationModelAssembledPhoneNumber
+//    {
+//        $parsedRequestBody = \json_decode($requestBody, true);
+//        $this->formAssembledPhoneNumber->setEmail($parsedRequestBody['email']);
+//        $phoneNumberInput = (string)preg_replace('/[^0-9]/', '', $parsedRequestBody['assembledPhoneNumber']);
+//        $phoneNumberInt = substr($phoneNumberInput, 0, 1) === '0'
+//            ? (int)(Country::BG_PHONE_CODE.substr($phoneNumberInput, 1))
+//            : (int)$phoneNumberInput;
+//        $this->formAssembledPhoneNumber->setAssembledPhoneNumber($phoneNumberInt);
+//        $this->formAssembledPhoneNumber->setPassword($parsedRequestBody['password']);
+//        $this->form = $this->formAssembledPhoneNumber;
+//        
+//        return $this->formAssembledPhoneNumber;
+//    }
+//    
+//    public function isValidForm(): bool
+//    {
+//        $this->notSetFormException();
+//        
+//        $errors = $this->validator->validate($this->form);
+//        $this->formErrors = $errors;
+//        
+//        return count($errors) == 0;
+//    }
     
+//    public function getFormErrors(): string
+//    {
+//        $this->notSetFormException();
+//        
+//        return (string)$this->formErrors;
+//    }
     
-    public function createFormFromAssembledPhoneNumber(string $requestBody): RegistrationModelAssembledPhoneNumber
-    {
-        $parsedRequestBody = \json_decode($requestBody, true);
-        $this->formAssembledPhoneNumber->setEmail($parsedRequestBody['email']);
-        $phoneNumberInput = (string)preg_replace('/[^0-9]/', '', $parsedRequestBody['assembledPhoneNumber']);
-        $phoneNumberInt = substr($phoneNumberInput, 0, 1) === '0'
-            ? (int)(Country::BG_PHONE_CODE.substr($phoneNumberInput, 1))
-            : (int)$phoneNumberInput;
-        $this->formAssembledPhoneNumber->setAssembledPhoneNumber($phoneNumberInt);
-        $this->formAssembledPhoneNumber->setPassword($parsedRequestBody['password']);
-        $this->form = $this->formAssembledPhoneNumber;
-        
-        return $this->formAssembledPhoneNumber;
-    }
-    
-    public function isValidForm(): bool
-    {
-        $this->notSetFormException();
-        
-        $errors = $this->validator->validate($this->form);
-        $this->formErrors = $errors;
-        
-        return count($errors) == 0;
-    }
-    
-    public function getFormErrors(): string
-    {
-        $this->notSetFormException();
-        
-        return (string)$this->formErrors;
-    }
-    
-    public function registrate(): PhoneConfirmation
+    public function registrate(RegistrationModel $form): PhoneConfirmation
     {
         if ($this->isFinishedServiceAction) {
             throw new AlreadyMadeServiceActionException('Registration');
         }
         
-        $this->notSetFormException();
-        if (!$this->isValidForm()) {
-            throw new NotValidInputException($this->formErrors->__toString());
-        }
+//        $this->notSetFormException();
+//        if (!$this->isValidForm()) {
+//            throw new NotValidInputException($this->formErrors->__toString());
+//        }
+        $this->form = $form;
         
         $user = $this->getOrCreateByEmail();
         
@@ -153,12 +154,12 @@ class RegistrationService extends WebPageService implements RegistrationServiceI
         return $phoneConfirmationWithSmsStatus;
     }
     
-    private function notSetFormException(): void
-    {
-        if (!isset($this->form)) {
-            throw new Exception('Registration form not set yet. Use Registration::createForm() first.');
-        }
-    }
+//    private function notSetFormException(): void
+//    {
+//        if (!isset($this->form)) {
+//            throw new Exception('Registration form not set yet. Use Registration::createForm() first.');
+//        }
+//    }
     
     private function getOrCreateByEmail(): User
     {
