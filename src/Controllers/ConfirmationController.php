@@ -62,7 +62,8 @@ class ConfirmationController extends ApiTransactionSubmitController
         // Input mapping, model generation.
         $parsedRequestBodyArr = \json_decode($request->getBody()->getContents(), true);
         $confirmationCodeModel = new ConfirmationCodeModel();
-        $confirmationCodeModel->setConfirmationCode((int)$parsedRequestBodyArr['confirmationCode']);
+        $confirmationCode = is_numeric(trim($parsedRequestBodyArr['confirmationCode'])) ? (int)$parsedRequestBodyArr['confirmationCode'] : $parsedRequestBodyArr['confirmationCode'];
+        $confirmationCodeModel->setConfirmationCode($confirmationCode);
         $formErrors = $this->validator->validate($confirmationCodeModel);
         if (count($formErrors) > 0) {
             return $this->render($this->failResult((string)$formErrors), $arguments, ResStatus::UNPROCESSABLE_ENTITY);
