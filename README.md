@@ -16,6 +16,7 @@ Please, review and the [front end Angular app](https://github.com/koredalin/phon
 * Laminas Diactoros,
 * Laminas HttpHandlerRunner,
 * Symfony Validator,
+* Request/ Response DTO pattern used in the controllers,
 * Doctrine,
 * Doctrine Migrations,
 * Codeception functional tests,
